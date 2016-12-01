@@ -5,14 +5,14 @@ package pl.golm.game.exception;
  */
 public class IllegalMoveException extends RuntimeException
 {
-	public IllegalMoveException()
-        {
-            super("Illegal move");
-        }
+    public IllegalMoveException()
+    {
+        super("Illegal move");
+    }
 
-	public IllegalMoveException(String message)
-        {
-            super(message);
-        }
+    public IllegalMoveException(String message)
+    {
+        super(message);
+    }
 
 }
