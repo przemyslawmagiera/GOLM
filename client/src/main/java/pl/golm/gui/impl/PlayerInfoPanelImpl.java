@@ -33,9 +33,7 @@ public class PlayerInfoPanelImpl extends JPanel implements PlayerInfoPanel
         setLayout(new GridLayout(1,2));
         add(getYou());
         add(getOpponent());
-        setSize(Main.APPLICATION_WIDTH, Main.PANEL_PLAYERS_INFO_HEIGHT);
-//        setMinimumSize(new Dimension(Main.APPLICATION_WIDTH, Main.APPLICATION_HEIGHT));
-//        setMaximumSize(new Dimension(Main.APPLICATION_WIDTH, Main.APPLICATION_HEIGHT));
+        setPreferredSize(new Dimension(Main.APPLICATION_WIDTH, Main.PANEL_PLAYERS_INFO_HEIGHT));
         setVisible(true);
     }
 

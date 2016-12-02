@@ -37,7 +37,7 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel
         add(pass);
         add(surrender);
         setBackground(Main.APPLICATION_BACKGROUND);
-        setSize(Main.APPLICATION_WIDTH, Main.PANEL_PLAYER_HEIGHT);
+        setPreferredSize(new Dimension(Main.APPLICATION_WIDTH, Main.PANEL_PLAYER_HEIGHT));
         setVisible(true);
     }
 

@@ -21,13 +21,14 @@ public class MainWindow extends JFrame
     public MainWindow(GameDto gameDto)
     {
         super(Main.APPLICATION_NAME);
-        setLayout(new FlowLayout());
+        setLayout(new BorderLayout());
         setSize(Main.APPLICATION_WIDTH, Main.APPLICATION_HEIGHT);
         setBoard(new BoardPanelImpl());
         setPlayerPanel(new PlayerPanelImpl());
         setPlayersInfo(new PlayerInfoPanelImpl("DUPA", PlayerColor.BLACK, "GOWNO"));
-        add((JPanel) getPlayersInfo());
-        add((JPanel) getPlayerPanel());
+        add((JPanel) getPlayersInfo(), BorderLayout.NORTH);
+        add((JPanel) getBoard(), BorderLayout.CENTER);
+        add((JPanel) getPlayerPanel(), BorderLayout.SOUTH);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
