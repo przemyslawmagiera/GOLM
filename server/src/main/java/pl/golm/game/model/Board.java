@@ -5,7 +5,8 @@ import java.util.List;
 /**
  * Created by Ktoś on 29.11.2016.
  */
-public interface Board {
+public interface Board
+{
     int getSize();
 
     void setSize(int size);
