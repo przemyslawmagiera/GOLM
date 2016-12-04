@@ -22,12 +22,4 @@ public class UtilGUI
     public static final Integer PANEL_PLAYER_HEIGHT = 130;
     public static final Double DEFAULT_CIRCLE_SIZE = 10.0;
 
-    public static void main(String[] args)
-    {
-        GameController controller = GameController.getInstance();
-        controller.init();
-    }
-
-
-
 }

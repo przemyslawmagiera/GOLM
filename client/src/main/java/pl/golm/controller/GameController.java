@@ -1,7 +1,7 @@
 package pl.golm.controller;
 
 
-import pl.golm.communication.Player;
+import pl.golm.gui.Player;
 import pl.golm.gui.*;
 
 import java.awt.*;
@@ -69,5 +69,10 @@ public class GameController
         }
 
         //TODO send request
+    }
+
+    public BoardPanel getBoardPanel()
+    {
+        return mainWindow.getBoard();
     }
 }
