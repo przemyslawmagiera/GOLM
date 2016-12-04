@@ -1,5 +1,6 @@
 package pl.golm;
 
+import pl.golm.controller.GameController;
 import pl.golm.gui.Circle;
 import pl.golm.gui.MainWindow;
 
@@ -23,7 +24,8 @@ public class UtilGUI
 
     public static void main(String[] args)
     {
-        MainWindow mainWindow = new MainWindow(null);
+        GameController controller = GameController.getInstance();
+        controller.init();
     }
 
 

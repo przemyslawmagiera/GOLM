@@ -1,6 +1,7 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.gui.GUIComponent;
 import pl.golm.gui.PlayerPanel;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.awt.event.ActionEvent;
 /**
  * Created by Przemek on 30.11.2016.
  */
-public class PlayerPanelImpl extends JPanel implements PlayerPanel
+public class PlayerPanelImpl extends JPanel implements PlayerPanel, GUIComponent
 {
     private JButton pass;
     private JButton surrender;

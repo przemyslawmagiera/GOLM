@@ -1,6 +1,7 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.gui.GUIComponent;
 import pl.golm.gui.PlayerColor;
 import pl.golm.gui.PlayerInfoPanel;
 
@@ -10,7 +11,7 @@ import java.awt.*;
 /**
  * Created by Przemek on 30.11.2016.
  */
-public class PlayerInfoPanelImpl extends JPanel implements PlayerInfoPanel
+public class PlayerInfoPanelImpl extends JPanel implements PlayerInfoPanel, GUIComponent
 {
     private JLabel you;
     private JLabel opponent;

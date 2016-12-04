@@ -1,12 +1,13 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.controller.GameController;
 import pl.golm.gui.BoardPanel;
 import pl.golm.gui.Circle;
+import pl.golm.gui.GUIComponent;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.List;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
@@ -15,11 +16,12 @@ import java.util.*;
 /**
  * Created by Przemek on 30.11.2016.
  */
-public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener
+public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener, GUIComponent
 {
     private int option;
     private ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
+    private GameController controller = GameController.getInstance();
 
     public BoardPanelImpl()
     {
@@ -72,8 +74,16 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener
             for (int j = 0; j < option; j++)
             {
                 Circle actual = circles.get(j).get(i);
-                g2d.setColor(actual.getColor());
-                g2d.draw(actual);
+                if(actual.isOccupied())
+                {
+                    g2d.setColor(actual.getColor());
+                    g2d.fill(actual);
+                    g2d.setColor(null);
+                }
+                else
+                {
+                    g2d.draw(actual);
+                }
             }
             g2d.draw(grid.get(2*i));
             g2d.draw(grid.get(2*i+1));
@@ -82,12 +92,24 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener
 
     public void mouseClicked(MouseEvent mouseEvent)
     {
+        if(controller.isYourTurn())
+        {
+            for (int i = 0; i < option; i++)
+            {
+                for (int j = 0; j < option; j++)
+                {//get y, get x
+                    if (circles.get(j).get(i).contains(mouseEvent.getPoint().getX(), mouseEvent.getPoint().getY()))
+                    {
+                        controller.moveRequest(i, j);
+                    }
+                }
+            }
+        }
         repaint();
     }
 
     public void mousePressed(MouseEvent mouseEvent)
     {
-
     }
 
     public void mouseReleased(MouseEvent mouseEvent)
@@ -113,5 +135,15 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener
     public void setOption(int option)
     {
         this.option = option;
+    }
+
+    public ArrayList<ArrayList<Circle>> getCircles()
+    {
+        return circles;
+    }
+
+    public void setCircles(ArrayList<ArrayList<Circle>> circles)
+    {
+        this.circles = circles;
     }
 }

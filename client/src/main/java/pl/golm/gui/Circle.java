@@ -1,8 +1,6 @@
 package pl.golm.gui;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 
 /**
@@ -11,7 +9,7 @@ import java.awt.geom.Ellipse2D;
 public class Circle extends Ellipse2D.Double
 {
     private Color color;
-    private boolean active;
+    private boolean occupied;
     private double r,x,y;
 
     public Circle(double x, double y, double r)
@@ -19,7 +17,7 @@ public class Circle extends Ellipse2D.Double
         this.r = r;
         this.x = x;
         this.y = y;
-        active = false;
+        occupied = false;
         setFrame(x - r, y - r, 2 * r, 2 * r);
     }
 
@@ -29,14 +27,14 @@ public class Circle extends Ellipse2D.Double
         setFrame(x - r, y - r, 2 * r, 2 * r);
     }
 
-    public boolean isActive()
+    public boolean isOccupied()
     {
-        return active;
+        return occupied;
     }
 
-    public void setActive(boolean active)
+    public void setOccupied(boolean occupied)
     {
-        this.active = active;
+        this.occupied = occupied;
     }
 
     public Color getColor()
