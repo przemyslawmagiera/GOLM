@@ -45,14 +45,50 @@ public class GameUtils
         return true;
     }
 
-    public static int countTerritories(Board board, Player player)
+    public static Set<Field> getTerritories(Board board, Player player)
     {
-        return 0;//TODO
+        Set<Field> territories = new HashSet<Field>(); // zoptymalizowac
+        for (int i = 0; i < board.getSize(); i++)
+            for(int j = 0; j < board.getSize(); j++)
+            {
+                if (board.getBoard().get(i).get(j).getPlayer().equals(null)) // if field is empty
+                {
+                    Set<Field> checked = new HashSet<Field>();
+                    if(fieldIsTerritory(board, player, board.getBoard().get(i).get(j), checked))
+                        territories.add(board.getBoard().get(i).get(j));
+                }
+            }
+        return territories;
     }
 
-    public static int countPoints(Board board, Player player)
+    private static boolean fieldIsTerritory(Board board, Player player, Field field, Set<Field> checked) // function for empty fields checking if are terrs
+    { //todo check if works
+        if (field.getPlayer().equals(player) || field.getPlayer().equals(null))
+        {
+            if (checked.contains(field))
+                return true;
+            else if (field.getPlayer().equals(player))
+            {
+                checked.add(field);
+                return true;
+            }
+            else
+            {
+                boolean onlyPlayerOrNullBorders = true;
+                for (Field neighbour : getFieldNeighbors(board, field))
+                    if (!fieldIsTerritory(board, player, neighbour, checked))
+                        onlyPlayerOrNullBorders = false;
+                checked.add(field);
+                return onlyPlayerOrNullBorders;
+            }
+        }
+        else
+            return false;
+    }
+
+    public static int countPoints(Player player)
     {
-        return 0;//TODO
+       return  player.getPrisonerAmount() + player.getTerritoryAmount();
     }
 
     public static List<Field> moveKills(Board board, Move move)
