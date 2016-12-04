@@ -1,6 +1,9 @@
 package pl.golm.communication;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import pl.golm.controller.GameController;
+import pl.golm.gui.ConfigurationWindow;
+import pl.golm.gui.impl.ConfigurationWindowImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,15 +20,7 @@ public class Client
     private BufferedReader reader;
     private PrintWriter writer;
 
-    public static void main(String[] args)
-    {
-        Client client = new Client();
-        client.configure();
-        GameController controller = GameController.getInstance();
-        controller.init();
-    }
-
-    private void configure()
+    public void configure()
     {
         try
         {
@@ -37,6 +32,39 @@ public class Client
         catch (IOException ex)
         {
             System.out.println("nie moge polaczyc sie z serwerem");
+        }
+    }
+
+    public void sendMessage(String message)
+    {
+        try
+        {
+            writer.println(message);
+            writer.flush();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public class MessageReciver implements Runnable
+    {
+        String message;
+        public void run()
+        {
+            try
+            {
+                while ((message = reader.readLine()) != null)
+                {
+                    //TODO parse messages, interpretation
+                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
         }
     }
 }

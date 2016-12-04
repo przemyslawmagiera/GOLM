@@ -7,7 +7,18 @@ import pl.golm.gui.PlayerColor;
  */
 public class Player
 {
+    private Player name;
     private PlayerColor color;
+
+    public Player getName()
+    {
+        return name;
+    }
+
+    public void setName(Player name)
+    {
+        this.name = name;
+    }
 
     public PlayerColor getColor()
     {
