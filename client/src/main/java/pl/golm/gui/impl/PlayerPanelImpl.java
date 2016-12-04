@@ -1,6 +1,6 @@
 package pl.golm.gui.impl;
 
-import pl.golm.Main;
+import pl.golm.UtilGUI;
 import pl.golm.gui.PlayerPanel;
 
 import javax.swing.*;
@@ -36,8 +36,8 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel
         setLayout(new FlowLayout());
         add(pass);
         add(surrender);
-        setBackground(Main.APPLICATION_BACKGROUND);
-        setPreferredSize(new Dimension(Main.APPLICATION_WIDTH, Main.PANEL_PLAYER_HEIGHT));
+        setBackground(UtilGUI.APPLICATION_BACKGROUND);
+        setPreferredSize(new Dimension(UtilGUI.APPLICATION_WIDTH, UtilGUI.PANEL_PLAYER_HEIGHT));
         setVisible(true);
     }
 

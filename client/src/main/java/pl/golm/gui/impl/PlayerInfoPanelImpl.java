@@ -1,6 +1,6 @@
 package pl.golm.gui.impl;
 
-import pl.golm.Main;
+import pl.golm.UtilGUI;
 import pl.golm.gui.PlayerColor;
 import pl.golm.gui.PlayerInfoPanel;
 
@@ -29,11 +29,11 @@ public class PlayerInfoPanelImpl extends JPanel implements PlayerInfoPanel
             getOpponent().setForeground(Color.WHITE);
             getYou().setForeground(Color.BLACK);
         }
-        setBackground(Main.APPLICATION_BACKGROUND);
+        setBackground(UtilGUI.APPLICATION_BACKGROUND);
         setLayout(new GridLayout(1,2));
         add(getYou());
         add(getOpponent());
-        setPreferredSize(new Dimension(Main.APPLICATION_WIDTH, Main.PANEL_PLAYERS_INFO_HEIGHT));
+        setPreferredSize(new Dimension(UtilGUI.APPLICATION_WIDTH, UtilGUI.PANEL_PLAYERS_INFO_HEIGHT));
         setVisible(true);
     }
 

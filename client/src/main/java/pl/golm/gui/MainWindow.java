@@ -1,6 +1,6 @@
 package pl.golm.gui;
 
-import pl.golm.Main;
+import pl.golm.UtilGUI;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.gui.impl.BoardPanelImpl;
 import pl.golm.gui.impl.PlayerInfoPanelImpl;
@@ -20,9 +20,9 @@ public class MainWindow extends JFrame
 
     public MainWindow(GameDto gameDto)
     {
-        super(Main.APPLICATION_NAME);
+        super(UtilGUI.APPLICATION_NAME);
         setLayout(new BorderLayout());
-        setSize(Main.APPLICATION_WIDTH, Main.APPLICATION_HEIGHT);
+        setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
         setBoard(new BoardPanelImpl());
         setPlayerPanel(new PlayerPanelImpl());
         setPlayersInfo(new PlayerInfoPanelImpl("DUPA", PlayerColor.BLACK, "GOWNO"));
