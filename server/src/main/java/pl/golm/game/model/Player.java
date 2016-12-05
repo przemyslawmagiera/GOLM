@@ -6,6 +6,10 @@ package pl.golm.game.model;
 public interface Player
 {
 
+    String getName();
+
+    void setName(String name);
+
     int getPrisonerAmount();
 
     void setPrisonerAmount(int prisonerAmount);
