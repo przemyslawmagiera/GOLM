@@ -7,7 +7,9 @@ import pl.golm.game.model.impl.BoardImpl;
 import pl.golm.game.model.impl.PlayerImpl;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * class linking all the model aspects of a single game
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public class Game
 {
@@ -16,13 +18,19 @@ public class Game
     private Board board;
     private Result result;
 
+    /**
+     * constructor that prepares a game to be ready to start
+     * @param boardSize size of a single dimension of the board
+     * @param player1Name player1's nick name
+     * @param player2Name player2's nick name
+     */
     public Game(int boardSize, String player1Name, String player2Name)
     {
         setGameState(GameState.WAITING_FOR_START);
         setResult(null);
         setBoard(new BoardImpl(boardSize));
-        setPlayer1(new PlayerImpl(player1Name, PlayerColor.BLACK));
-        setPlayer2(new PlayerImpl(player2Name, PlayerColor.WHITE));
+        setPlayer1(new PlayerImpl(player1Name, PlayerColor.BLACK)); // player1 is always black and gets first move
+        setPlayer2(new PlayerImpl(player2Name, PlayerColor.WHITE)); // while player2 is white and gets komi bonus
     }
 
     public Player getPlayer1()

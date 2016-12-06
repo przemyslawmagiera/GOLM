@@ -1,7 +1,9 @@
 package pl.golm.game;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * enum of possible game states each game may currently be in
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public enum GameState
 {

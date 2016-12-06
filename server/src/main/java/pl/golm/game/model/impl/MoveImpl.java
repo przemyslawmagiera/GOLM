@@ -1,18 +1,28 @@
 package pl.golm.game.model.impl;
 
+import pl.golm.game.mechanics.util.GameUtils;
 import pl.golm.game.model.Field;
 import pl.golm.game.model.Move;
 import pl.golm.game.model.Player;
 import java.util.List;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * Class implementation of Move interface
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public class MoveImpl implements Move
 {
     private Player player;
     private Field field;
     private List<Field> killed;
+
+    /**
+     * constructor preparing instance to use
+     * @param player player who places a stone
+     * @param field filed on which a stone was placed, null if player passsed
+     * @param killed list of killed stones (fields of where they where)
+     */
 
     public MoveImpl(Player player, Field field, List<Field> killed)
     {

@@ -4,7 +4,9 @@ import pl.golm.game.model.Field;
 import pl.golm.game.model.Player;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * Class implementation of Field interface
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public class FieldImpl implements Field
 {
@@ -12,6 +14,11 @@ public class FieldImpl implements Field
     private int row;
     private Player player; // null - empty
 
+    /**
+     * constructor preparing field to use
+     * @param column column on board
+     * @param row row on board
+     */
     public FieldImpl(int column, int row)
     {
         setColumn(column);
