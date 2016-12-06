@@ -47,7 +47,7 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
                     gameDto.setPlayerName(nameField.getText());
                     gameDto.setSize(sizes.getSelectedValue());
                     gameDto.setType(types.getSelectedValue());
-                    controller.startGame(gameDto);
+                    controller.requestGame(gameDto);
                 }
             }
         });

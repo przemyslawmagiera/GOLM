@@ -1,12 +1,6 @@
 package pl.golm;
 
-import pl.golm.controller.GameController;
-import pl.golm.gui.Circle;
-import pl.golm.gui.MainWindow;
-
 import java.awt.*;
-import java.util.*;
-import java.util.List;
 
 /**
  * Created by Przemek on 30.11.2016.

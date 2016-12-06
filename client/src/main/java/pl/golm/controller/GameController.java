@@ -4,8 +4,9 @@ package pl.golm.controller;
 import pl.golm.communication.Client;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.parser.BasicOperationParser;
-import pl.golm.gui.Player;
+import pl.golm.communication.Player;
 import pl.golm.gui.*;
+import pl.golm.gui.impl.CircleImpl;
 
 import java.awt.*;
 
@@ -59,7 +60,7 @@ public class GameController
 
     public void moveRequest(int x, int y)
     {
-        Circle actual = mainWindow.getBoard().getCircles().get(y).get(x);
+        CircleImpl actual = mainWindow.getBoard().getCircles().get(y).get(x);
         if(player.getColor().equals(PlayerColor.BLACK))
         {
             actual.setColor(Color.BLACK);
@@ -74,12 +75,16 @@ public class GameController
         //TODO send request
     }
 
-    public void startGame(GameDto gameDto)
+    public void requestGame(GameDto gameDto)
     {
         client = new Client();
         client.configure();
         client.sendMessage(BasicOperationParser.parseGameDto(gameDto));
-        //initMainWindow(gameDto);
+    }
+
+    public void startGame(GameDto gameDto)
+    {
+        initMainWindow(gameDto);
     }
 
     public BoardPanel getBoardPanel()
