@@ -198,4 +198,99 @@ public class GameUtilsTest
         assertTrue(GameUtils.moveKills(board3, board3.getBoard().get(4).get(2), black).contains(board3.getBoard().get(5).get(2)));
         assertTrue(GameUtils.moveKills(board3, board3.getBoard().get(4).get(2), black).contains(board3.getBoard().get(5).get(3)));
     }
+    @Test
+    public void getTerritoriesTest()
+    {
+        Player black = new PlayerImpl("black", PlayerColor.BLACK);
+        Player white = new PlayerImpl("white", PlayerColor.WHITE);
+        Board board0 = new BoardImpl(9);
+        board0.getBoard().get(0).get(0).setPlayer(black);
+        board0.getBoard().get(3).get(2).setPlayer(black);
+        board0.getBoard().get(2).get(6).setPlayer(black);
+        board0.getBoard().get(1).get(8).setPlayer(black);
+        board0.getBoard().get(4).get(0).setPlayer(black);
+        board0.getBoard().get(5).get(2).setPlayer(black);
+        board0.getBoard().get(6).get(6).setPlayer(black);
+        board0.getBoard().get(7).get(8).setPlayer(black);
+        assertEquals(73,GameUtils.getTerritories(board0, black).size());
+        Board board1 = new BoardImpl(9);
+        board1.getBoard().get(0).get(0).setPlayer(black);
+        board1.getBoard().get(3).get(2).setPlayer(black);
+        board1.getBoard().get(2).get(6).setPlayer(black);
+        board1.getBoard().get(1).get(8).setPlayer(black);
+        board1.getBoard().get(4).get(0).setPlayer(black);
+        board1.getBoard().get(5).get(2).setPlayer(black);
+        board1.getBoard().get(6).get(6).setPlayer(black);
+        board1.getBoard().get(7).get(8).setPlayer(white);
+        assertTrue(GameUtils.getTerritories(board1, white).isEmpty());
+        assertTrue(GameUtils.getTerritories(board1, black).isEmpty());
+        Board board2 = new BoardImpl(13);
+        assertEquals(169,GameUtils.getTerritories(board2, black).size());
+        assertEquals(169,GameUtils.getTerritories(board2, white).size());
+        Board board3 = new BoardImpl(19);
+        board3.getBoard().get(16).get(3).setPlayer(black);
+        board3.getBoard().get(16).get(2).setPlayer(black);
+        board3.getBoard().get(16).get(1).setPlayer(black);
+        board3.getBoard().get(16).get(0).setPlayer(black);
+        board3.getBoard().get(17).get(3).setPlayer(black);
+        board3.getBoard().get(17).get(4).setPlayer(black);
+        board3.getBoard().get(17).get(5).setPlayer(black);
+        board3.getBoard().get(18).get(3).setPlayer(black);
+        board3.getBoard().get(18).get(5).setPlayer(black);
+        board3.getBoard().get(16).get(17).setPlayer(black);
+        board3.getBoard().get(17).get(16).setPlayer(black);
+        board3.getBoard().get(17).get(18).setPlayer(black);
+        board3.getBoard().get(18).get(17).setPlayer(black);
+        board3.getBoard().get(0).get(16).setPlayer(white);
+        board3.getBoard().get(1).get(17).setPlayer(white);
+        board3.getBoard().get(2).get(18).setPlayer(white);
+        board3.getBoard().get(1).get(2).setPlayer(white);
+        board3.getBoard().get(1).get(3).setPlayer(white);
+        board3.getBoard().get(1).get(4).setPlayer(white);
+        board3.getBoard().get(2).get(1).setPlayer(white);
+        board3.getBoard().get(2).get(5).setPlayer(white);
+        board3.getBoard().get(3).get(2).setPlayer(white);
+        board3.getBoard().get(3).get(4).setPlayer(white);
+        board3.getBoard().get(4).get(3).setPlayer(white);
+        assertEquals(7,GameUtils.getTerritories(board3, white).size());
+        assertEquals(9,GameUtils.getTerritories(board3, black).size());
+        board3.getBoard().get(18).get(1).setPlayer(white);
+        assertEquals(7,GameUtils.getTerritories(board3, white).size());
+        assertEquals(3,GameUtils.getTerritories(board3, black).size());
+        assertTrue(GameUtils.getTerritories(board3, white).contains( board3.getBoard().get(0).get(17)));
+        assertTrue(GameUtils.getTerritories(board3, black).contains( board3.getBoard().get(17).get(17)));
+    }
+    @Test
+    public void countPointsTest()
+    {
+        Player player1 = new PlayerImpl("b", PlayerColor.BLACK), player2 = new PlayerImpl("w", PlayerColor.WHITE);
+        assertEquals(0.0, GameUtils.countPoints(player1), 0.1);
+        assertEquals(GameUtils.KOMI, GameUtils.countPoints(player2), 0.1);
+        player1.setTerritoryAmount(2);
+        player2.setTerritoryAmount(4);
+        player1.setPrisonerAmount(11);
+        player2.setPrisonerAmount(1);
+        assertEquals(13.0, GameUtils.countPoints(player1), 0.1);
+        assertEquals(5.0 + GameUtils.KOMI, GameUtils.countPoints(player2), 0.1);
+    }
+    @Test
+    public void getDeadGroupsTest()
+    {
+        Board board = new BoardImpl(19);
+        Player white = new PlayerImpl("w", PlayerColor.WHITE), black = new PlayerImpl("b", PlayerColor.BLACK);
+        assertTrue(GameUtils.getDeadGroups(board, white).isEmpty());
+        assertTrue(GameUtils.getDeadGroups(board, black).isEmpty());
+        board.getBoard().get(0).get(0).setPlayer(white);
+        board.getBoard().get(3).get(4).setPlayer(black);
+        assertTrue(GameUtils.getDeadGroups(board, white).contains(board.getBoard().get(0).get(0)));
+        assertTrue(GameUtils.getDeadGroups(board, black).contains(board.getBoard().get(3).get(4)));
+        assertEquals(1, GameUtils.getDeadGroups(board, white).size());
+        assertEquals(1, GameUtils.getDeadGroups(board, black).size());
+        board.getBoard().get(0).get(1).setPlayer(white);
+        board.getBoard().get(4).get(5).setPlayer(black);
+        assertTrue(GameUtils.getDeadGroups(board, white).isEmpty());
+        assertTrue(GameUtils.getDeadGroups(board, black).contains(board.getBoard().get(3).get(4)));
+        assertTrue(GameUtils.getDeadGroups(board, black).contains(board.getBoard().get(4).get(5)));
+        assertEquals(2, GameUtils.getDeadGroups(board, black).size());
+    }
 }

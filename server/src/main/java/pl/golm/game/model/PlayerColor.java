@@ -1,7 +1,9 @@
 package pl.golm.game.model;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * enum containing possible colours for players, black always moves first, white gets komi bonus
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public enum PlayerColor
 {

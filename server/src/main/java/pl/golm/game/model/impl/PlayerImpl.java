@@ -4,7 +4,9 @@ import pl.golm.game.model.Player;
 import pl.golm.game.model.PlayerColor;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * Class implementation of Player interface
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public class PlayerImpl implements Player
 {
@@ -13,6 +15,11 @@ public class PlayerImpl implements Player
     private PlayerColor color;
     private String name;
 
+    /**
+     * constructor preparing instance to use
+     * @param name player's name
+     * @param color player's colour (black or white)
+     */
     public PlayerImpl(String name, PlayerColor color)
     {
         setPrisonerAmount(0);

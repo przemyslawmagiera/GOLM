@@ -4,12 +4,13 @@ import pl.golm.game.exception.WrongBoardSizeException;
 import pl.golm.game.model.Board;
 import pl.golm.game.model.Field;
 import pl.golm.game.model.Move;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * Class implementation of Board interface
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 
 public class BoardImpl implements Board
@@ -19,6 +20,11 @@ public class BoardImpl implements Board
     private List<Move> history;
     private Field lastMoved;
 
+    /**
+     * constructor preparing Board to use
+     * @throws WrongBoardSizeException when size is not equal to 9, 13 or 19
+     * @param size size of one dimension
+     */
     public BoardImpl(int size)
     {
         if (size != 9 && size != 13 && size != 19)

@@ -3,7 +3,9 @@ package pl.golm.game.model;
 import java.util.List;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * interface of functions that every Move implementation must have
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public interface Move
 {

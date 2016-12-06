@@ -1,7 +1,9 @@
 package pl.golm.game.model;
 
 /**
- * Created by Ktoś on 29.11.2016.
+ * interface of functions that every Player implementation must have
+ * @author Dominik Lachowicz, Przemysław Magiera
+ * @version 1.0
  */
 public interface Player
 {
