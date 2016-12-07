@@ -1,8 +1,12 @@
 package pl.golm.controller;
 
 
+import pl.golm.communication.Client;
+import pl.golm.communication.dto.GameDto;
+import pl.golm.communication.parser.BasicOperationParser;
 import pl.golm.communication.Player;
 import pl.golm.gui.*;
+import pl.golm.gui.impl.CircleImpl;
 
 import java.awt.*;
 
@@ -15,6 +19,7 @@ public class GameController
     private PlayerInfoPanel playerInfoPanel;
     private PlayerPanel playerPanel;
     private MainWindow mainWindow;
+    private Client client;
     private boolean yourTurn;
     private Player player;
     private static volatile GameController instance;
@@ -26,9 +31,9 @@ public class GameController
         player.setColor(PlayerColor.BLACK);
     }
 
-    public void init()
+    public void initMainWindow(GameDto gameDto)
     {
-        this.mainWindow = new MainWindow(null);
+        this.mainWindow = new MainWindow(gameDto);
     }
 
     public boolean isYourTurn()
@@ -55,8 +60,7 @@ public class GameController
 
     public void moveRequest(int x, int y)
     {
-        System.out.println("wysylam do serwera zapytanie o ruch x:" + x + " y: " + y);
-        Circle actual = mainWindow.getBoard().getCircles().get(y).get(x);
+        CircleImpl actual = mainWindow.getBoard().getCircles().get(y).get(x);
         if(player.getColor().equals(PlayerColor.BLACK))
         {
             actual.setColor(Color.BLACK);
@@ -69,5 +73,22 @@ public class GameController
         }
 
         //TODO send request
+    }
+
+    public void requestGame(GameDto gameDto)
+    {
+        client = new Client();
+        client.configure();
+        client.sendMessage(BasicOperationParser.parseGameDto(gameDto));
+    }
+
+    public void startGame(GameDto gameDto)
+    {
+        initMainWindow(gameDto);
+    }
+
+    public BoardPanel getBoardPanel()
+    {
+        return mainWindow.getBoard();
     }
 }

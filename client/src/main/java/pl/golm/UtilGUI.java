@@ -1,12 +1,6 @@
 package pl.golm;
 
-import pl.golm.controller.GameController;
-import pl.golm.gui.Circle;
-import pl.golm.gui.MainWindow;
-
 import java.awt.*;
-import java.util.*;
-import java.util.List;
 
 /**
  * Created by Przemek on 30.11.2016.
@@ -21,13 +15,5 @@ public class UtilGUI
     public static final Integer PANEL_PLAYERS_INFO_HEIGHT = 50;
     public static final Integer PANEL_PLAYER_HEIGHT = 130;
     public static final Double DEFAULT_CIRCLE_SIZE = 10.0;
-
-    public static void main(String[] args)
-    {
-        GameController controller = GameController.getInstance();
-        controller.init();
-    }
-
-
 
 }
