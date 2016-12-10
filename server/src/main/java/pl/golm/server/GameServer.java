@@ -37,7 +37,10 @@ public class GameServer
                 playerWritter.write("Connected to server. Please specify game settings.");
                 playerWritter.flush();
                 BufferedReader playerReader = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
-                GameSettings gameSettings = new GameSettings(playerReader.readLine());
+                int boardSize = Integer.parseInt(playerReader.readLine());
+                boolean isMultiplayer = Boolean.parseBoolean(playerReader.readLine());
+                String playerName = playerReader.readLine();
+                GameSettings gameSettings = new GameSettings(boardSize, isMultiplayer, playerName);
                 ClientSettings clientSettings = new ClientSettings(playerSocket, playerReader, playerWritter);
                 if (!gameSettings.isMultiPlayer())
                 {
@@ -53,7 +56,7 @@ public class GameServer
                         if (entry.getKey().equals(gameSettings))
                         {
                             foundOpponent = true;
-                            GameService gameService = new GameService(entry.getValue(), clientSettings, gameSettings);
+                            GameService gameService = new GameService(entry.getValue(), entry.getKey(), clientSettings, gameSettings);
                             gameService.run();
                             entries.remove();
                         }
@@ -67,7 +70,5 @@ public class GameServer
         {
             exception.printStackTrace();
         }
-
     }
-
 }

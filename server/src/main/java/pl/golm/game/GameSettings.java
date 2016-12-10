@@ -7,19 +7,13 @@ public class GameSettings
 {
     private int boardSize;
     private boolean multiPlayer;
+    private String playerName;
 
-    public GameSettings(String gameSettings)
+    public GameSettings(int boardSize, boolean multiPlayer, String playerName)
     {
-        if (gameSettings.startsWith("9"))
-            setBoardSize(9);
-        else if (gameSettings.startsWith("13"))
-            setBoardSize(13);
-        else
-            setBoardSize(19);
-        if (gameSettings.endsWith("true"))
-            setMultiPlayer(true);
-        else
-            setMultiPlayer(false);
+        setBoardSize(boardSize);
+        setMultiPlayer(multiPlayer);
+        setPlayerName(playerName);
     }
 
     public int getBoardSize()
@@ -40,6 +34,16 @@ public class GameSettings
     public void setMultiPlayer(boolean multiPlayer)
     {
         this.multiPlayer = multiPlayer;
+    }
+
+    public String getPlayerName()
+    {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName)
+    {
+        this.playerName = playerName;
     }
 
     @Override

@@ -35,10 +35,5 @@ public class BoardImplTest
         assertNotNull(board.getHistory());
         assertEquals(0, board.getHistory().size());
     }
-    @Test
-    public void getLastMovedTest()
-    {
-        Board board = new BoardImpl(13);
-        assertEquals(null, board.getLastMoved());
-    }
+
 }
