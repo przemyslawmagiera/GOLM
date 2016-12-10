@@ -9,9 +9,9 @@ import java.net.Socket;
  */
 public class ClientSettings
 {
-    Socket socket;
-    BufferedReader bufferedReader;
-    BufferedWriter bufferedWriter;
+    private Socket socket;
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
 
     public ClientSettings(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter)
     {
