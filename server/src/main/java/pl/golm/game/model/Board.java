@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * interface of functions that every Board implementation must have
  * @author Dominik Lachowicz, Przemysław Magiera
- * @version 1.0
+ * @version 1.01
  */
 public interface Board
 {
@@ -21,7 +21,4 @@ public interface Board
 
     void setHistory(List<Move> history);
 
-    Field getLastMoved();
-
-    void setLastMoved(Field lastMoved);
 }

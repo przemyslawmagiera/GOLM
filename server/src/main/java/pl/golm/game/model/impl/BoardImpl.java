@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Class implementation of Board interface
  * @author Dominik Lachowicz, Przemysław Magiera
- * @version 1.0
+ * @version 1.01
  */
 
 public class BoardImpl implements Board
@@ -18,7 +18,6 @@ public class BoardImpl implements Board
     private int size; // size of one dimension
     private List<List<Field>> board;
     private List<Move> history;
-    private Field lastMoved;
 
     /**
      * constructor preparing Board to use
@@ -30,7 +29,6 @@ public class BoardImpl implements Board
         if (size != 9 && size != 13 && size != 19)
             throw new WrongBoardSizeException("Board could not be created. GO board must be size 9, 13 or 19");
         setSize(size);
-        setLastMoved(null);
         setBoard(new ArrayList<List<Field>>());
         setHistory(new ArrayList<Move>());
         createFields();
@@ -74,16 +72,6 @@ public class BoardImpl implements Board
     public void setHistory(List<Move> history)
     {
         this.history = history;
-    }
-
-    public Field getLastMoved()
-    {
-        return lastMoved;
-    }
-
-    public void setLastMoved(Field lastMoved)
-    {
-        this.lastMoved = lastMoved;
     }
 
 }
