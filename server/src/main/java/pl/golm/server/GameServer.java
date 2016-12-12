@@ -1,5 +1,7 @@
 package pl.golm.server;
 
+import pl.golm.bot.Bot;
+import pl.golm.bot.impl.Ticobot;
 import pl.golm.game.GameSettings;
 
 import java.io.*;
@@ -8,6 +10,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -28,7 +31,7 @@ public class GameServer
 
     private void start()
     {
-        try (ServerSocket serverSocket = new ServerSocket(5000))
+        try (ServerSocket serverSocket = new ServerSocket(5000); ServerSocket botSocket = new ServerSocket(5724))
         {
             while (true)
             {
@@ -44,7 +47,20 @@ public class GameServer
                 ClientSettings clientSettings = new ClientSettings(playerSocket, playerReader, playerWritter);
                 if (!gameSettings.isMultiPlayer())
                 {
-                    //TODO implement running a single player game
+                    Bot bot = new Ticobot(gameSettings);
+                    bot.run();
+                    Socket socket = botSocket.accept();
+                    BufferedWriter botWriter = new BufferedWriter(new BufferedWriter(new PrintWriter(socket.getOutputStream())));
+                    botWriter.write("Connected to server.");
+                    botWriter.flush();
+                    BufferedReader botReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    GameService gameService;
+                    Random random = new Random();
+                    if (random.nextBoolean())
+                        gameService = new GameService( new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName), clientSettings, gameSettings);
+                    else
+                        gameService = new GameService(clientSettings, gameSettings, new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName));
+                    gameService.run();
                 }
                 else
                 {
