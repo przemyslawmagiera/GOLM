@@ -5,6 +5,7 @@ import pl.golm.game.GameState;
 import pl.golm.game.Result;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
@@ -15,9 +16,11 @@ public class SurrenderListener implements Runnable
     private Game game;
     private BufferedReader player1reader;
     private BufferedReader player2reader;
+    private BufferedWriter player1writer;
+    private BufferedWriter player2writer;
     private int mode; // 1 or 2
 
-    public SurrenderListener(Game game, BufferedReader player1reader, BufferedReader player2reader, int mode)
+    public SurrenderListener(Game game, BufferedReader player1reader, BufferedWriter player1writer, BufferedReader player2reader, BufferedWriter player2writer, int mode)
     {
         setGame(game);
         setPlayer1reader(player1reader);
@@ -34,25 +37,30 @@ public class SurrenderListener implements Runnable
             {
                 if (mode == 1 && player1reader.ready())
                 {
-                    if (player1reader.readLine().equals("surrender"))
+                    synchronized(this)
                     {
-                        synchronized(this)
+                        if (player1reader.readLine().equals("surrender"))
                         {
                             game.setResult(Result.PLAYER2_WON);
                             game.setGameState(GameState.FINISHED);
+                            player1writer.write("You surrendered");
+                            player2writer.write("Opponent surrendered");
                             setMode(0);
                         }
                     }
                 }
                 else if (mode == 2 && player2reader.ready())
                 {
-                    if (player2reader.readLine().equals("surrender"))
+                    synchronized(this)
                     {
-                        synchronized(this)
+                        if (player2reader.readLine().equals("surrender"))
                         {
                             game.setResult(Result.PLAYER1_WON);
                             game.setGameState(GameState.FINISHED);
+                            player2writer.write("You surrendered");
+                            player1writer.write("Opponent surrendered");
                             setMode(0);
+
                         }
                     }
                 }
@@ -102,5 +110,25 @@ public class SurrenderListener implements Runnable
     public void setMode(int mode)
     {
         this.mode = mode;
+    }
+
+    public BufferedWriter getPlayer1writer()
+    {
+        return player1writer;
+    }
+
+    public void setPlayer1writer(BufferedWriter player1writer)
+    {
+        this.player1writer = player1writer;
+    }
+
+    public BufferedWriter getPlayer2writer()
+    {
+        return player2writer;
+    }
+
+    public void setPlayer2writer(BufferedWriter player2writer)
+    {
+        this.player2writer = player2writer;
     }
 }
