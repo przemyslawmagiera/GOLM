@@ -1,20 +1,51 @@
-package pl.golm.gui;
+package pl.golm.gui.impl;
+
+import pl.golm.gui.Circle;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 /**
- * Created by Przemek on 06.12.2016.
+ * Created by Przemek on 02.12.2016.
  */
-public interface Circle
+public class CircleImpl extends Ellipse2D.Double implements Circle
 {
+    private Color color;
+    private boolean occupied;
+    private double r,x,y;
 
-    void setR(double r);
+    public CircleImpl(double x, double y, double r)
+    {
+        this.r = r;
+        this.x = x;
+        this.y = y;
+        occupied = false;
+        setFrame(x - r, y - r, 2 * r, 2 * r);
+    }
 
-    boolean isOccupied();
+    public void setR(double r)
+    {
+        this.r = r;
+        setFrame(x - r, y - r, 2 * r, 2 * r);
+    }
 
-    void setOccupied(boolean occupied);
+    public boolean isOccupied()
+    {
+        return occupied;
+    }
 
-    Color getColor();
+    public void setOccupied(boolean occupied)
+    {
+        this.occupied = occupied;
+    }
 
-    void setColor(Color color);
+    public Color getColor()
+    {
+        return color;
+    }
+
+    public void setColor(Color color)
+    {
+        this.color = color;
+    }
 }

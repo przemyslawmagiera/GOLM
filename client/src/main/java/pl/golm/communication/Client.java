@@ -20,19 +20,12 @@ public class Client
     private BufferedReader reader;
     private PrintWriter writer;
 
-    public void configure()
+    public void configure() throws IOException
     {
-        try
-        {
-            socket = new Socket("localhost", 5000);
-            InputStreamReader readStream = new InputStreamReader(socket.getInputStream());
-            reader = new BufferedReader(readStream);
-            writer = new PrintWriter(socket.getOutputStream());
-        }
-        catch (IOException ex)
-        {
-            System.out.println("nie moge polaczyc sie z serwerem");
-        }
+        socket = new Socket("localhost", 5000);
+        InputStreamReader readStream = new InputStreamReader(socket.getInputStream());
+        reader = new BufferedReader(readStream);
+        writer = new PrintWriter(socket.getOutputStream());
     }
 
     public void sendMessage(String message)
@@ -41,8 +34,7 @@ public class Client
         {
             writer.println(message);
             writer.flush();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -51,6 +43,7 @@ public class Client
     public class MessageReciver implements Runnable
     {
         String message;
+
         public void run()
         {
             try
@@ -59,8 +52,7 @@ public class Client
                 {
                     //TODO parse messages, interpretation
                 }
-            }
-            catch (IOException e)
+            } catch (IOException e)
             {
                 e.printStackTrace();
             }

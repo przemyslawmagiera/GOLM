@@ -3,6 +3,7 @@ package pl.golm.gui.impl;
 import pl.golm.UtilGUI;
 import pl.golm.controller.GameController;
 import pl.golm.gui.BoardPanel;
+import pl.golm.gui.Circle;
 import pl.golm.gui.GUIComponent;
 
 import javax.swing.*;
@@ -18,13 +19,13 @@ import java.util.*;
 public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener, GUIComponent
 {
     private int option;
-    private ArrayList<ArrayList<CircleImpl>> circles;
+    private ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
     private GameController controller = GameController.getInstance();
 
     public BoardPanelImpl()
     {
-        circles = new ArrayList<ArrayList<CircleImpl>>();
+        circles = new ArrayList<ArrayList<Circle>>();
         grid = new ArrayList<Line2D.Double>();
         option = 13;
         setBackground(UtilGUI.BOARD_BACKGROUND);
@@ -55,10 +56,10 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
         double y2 = y1*(option);
         for(int i = 1; i <= option; i++)
         {
-            ArrayList<CircleImpl> buffer = new ArrayList<CircleImpl>();
+            ArrayList<Circle> buffer = new ArrayList<Circle>();
             for (int j = 1; j <= option; j++)
             {
-                buffer.add(new CircleImpl(x1*j,y1*i,UtilGUI.DEFAULT_CIRCLE_SIZE));
+                buffer.add(new Circle(x1*j,y1*i,UtilGUI.DEFAULT_CIRCLE_SIZE));
             }
             circles.add(buffer);
             grid.add(new Line2D.Double(x1, y1*i, x2, y1*i));
@@ -72,7 +73,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
         {
             for (int j = 0; j < option; j++)
             {
-                CircleImpl actual = circles.get(j).get(i);
+                Circle actual = circles.get(j).get(i);
                 if(actual.isOccupied())
                 {
                     g2d.setColor(actual.getColor());
@@ -136,12 +137,12 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
         this.option = option;
     }
 
-    public ArrayList<ArrayList<CircleImpl>> getCircles()
+    public ArrayList<ArrayList<Circle>> getCircles()
     {
         return circles;
     }
 
-    public void setCircles(ArrayList<ArrayList<CircleImpl>> circles)
+    public void setCircles(ArrayList<ArrayList<Circle>> circles)
     {
         this.circles = circles;
     }

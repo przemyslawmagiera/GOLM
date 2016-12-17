@@ -7,7 +7,7 @@ import pl.golm.communication.dto.GameDto;
  */
 public class BasicOperationParser
 {
-    public static String parseGameDto(GameDto gameDto)
+    public static String parseRequestGame(GameDto gameDto)
     {
         return "START GAME " + gameDto.getType() + gameDto.getSize() + gameDto.getPlayerName();
     }

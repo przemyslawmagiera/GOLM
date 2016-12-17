@@ -6,9 +6,10 @@ import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.parser.BasicOperationParser;
 import pl.golm.communication.Player;
 import pl.golm.gui.*;
-import pl.golm.gui.impl.CircleImpl;
+import pl.golm.gui.Circle;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -60,26 +61,30 @@ public class GameController
 
     public void moveRequest(int x, int y)
     {
-        CircleImpl actual = mainWindow.getBoard().getCircles().get(y).get(x);
-        if(player.getColor().equals(PlayerColor.BLACK))
+        Circle actual = mainWindow.getBoard().getCircles().get(y).get(x);
+        if (player.getColor().equals(PlayerColor.BLACK))
         {
             actual.setColor(Color.BLACK);
             actual.setOccupied(true);
-        }
-        else
+        } else
         {
             actual.setColor(Color.WHITE);
             actual.setOccupied(true);
         }
-
         //TODO send request
     }
 
     public void requestGame(GameDto gameDto)
     {
         client = new Client();
-        client.configure();
-        client.sendMessage(BasicOperationParser.parseGameDto(gameDto));
+        try
+        {
+            client.configure();
+            client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
+        } catch (IOException ex)
+        {
+
+        }
     }
 
     public void startGame(GameDto gameDto)
