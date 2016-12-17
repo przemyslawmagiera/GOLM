@@ -1,6 +1,4 @@
-package pl.golm.gui.impl;
-
-import pl.golm.gui.Circle;
+package pl.golm.gui;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -8,13 +6,13 @@ import java.awt.geom.Ellipse2D;
 /**
  * Created by Przemek on 02.12.2016.
  */
-public class CircleImpl extends Ellipse2D.Double implements Circle
+public class Circle extends Ellipse2D.Double
 {
     private Color color;
     private boolean occupied;
     private double r,x,y;
 
-    public CircleImpl(double x, double y, double r)
+    public Circle(double x, double y, double r)
     {
         this.r = r;
         this.x = x;
