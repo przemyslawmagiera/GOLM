@@ -9,7 +9,6 @@ import pl.golm.gui.*;
 import pl.golm.gui.Circle;
 
 import java.awt.*;
-import java.io.IOException;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -81,10 +80,19 @@ public class GameController
         {
             client.configure();
             client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
-
+            ex.printStackTrace();
         }
+        if(client.readMessage().contains("White"))
+        {
+            gameDto.setPlayerColor(PlayerColor.WHITE);
+        }
+        else
+        {
+            gameDto.setPlayerColor(PlayerColor.BLACK);
+        }
+        startGame(gameDto);
     }
 
     public void startGame(GameDto gameDto)

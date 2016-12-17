@@ -1,5 +1,7 @@
 package pl.golm.communication.dto;
 
+import pl.golm.gui.PlayerColor;
+
 /**
  * Created by Przemek on 30.11.2016.
  */
@@ -9,6 +11,17 @@ public class GameDto
     private String type;
     private String playerName;
     private String opponentName;
+    private PlayerColor playerColor;
+
+    public PlayerColor getPlayerColor()
+    {
+        return playerColor;
+    }
+
+    public void setPlayerColor(PlayerColor playerColor)
+    {
+        this.playerColor = playerColor;
+    }
 
     public String getOpponentName()
     {

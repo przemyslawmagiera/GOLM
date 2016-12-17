@@ -9,7 +9,6 @@ import pl.golm.game.model.Field;
 import pl.golm.game.model.PlayerColor;
 import pl.golm.game.model.impl.MoveImpl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +41,9 @@ public class GameService implements Runnable
         {
             //as game starts information about start is sent to the clients
             game.setGameState(GameState.RUNNING);
-            client1Settings.getBufferedWriter().write("Game started. You are player 1. Black");
+            client1Settings.getBufferedWriter().println("Game started. You are player 1. Black");
             client1Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().write("Game started. You are player 2. White");
+            client2Settings.getBufferedWriter().println("Game started. You are player 2. White");
             client2Settings.getBufferedWriter().flush();
             // start listening if any of the players surrendered has already surrendered
             getSurrenderListener().run();
@@ -54,37 +53,37 @@ public class GameService implements Runnable
             // as game ends proper info about result of the match is sent
             if (game.getResult().equals(Result.DRAW))
             {
-                client1Settings.getBufferedWriter().write("Draw");
+                client1Settings.getBufferedWriter().println("Draw");
                 client1Settings.getBufferedWriter().flush();
-                client2Settings.getBufferedWriter().write("Draw");
+                client2Settings.getBufferedWriter().println("Draw");
                 client2Settings.getBufferedWriter().flush();
             }
             else if (game.getResult().equals(Result.PLAYER1_WON))
             {
-                client1Settings.getBufferedWriter().write("You won");
+                client1Settings.getBufferedWriter().println("You won");
                 client1Settings.getBufferedWriter().flush();
-                client2Settings.getBufferedWriter().write("You lost");
+                client2Settings.getBufferedWriter().println("You lost");
                 client2Settings.getBufferedWriter().flush();
             }
             else
             {
-                client1Settings.getBufferedWriter().write("You lost");
+                client1Settings.getBufferedWriter().println("You lost");
                 client1Settings.getBufferedWriter().flush();
-                client2Settings.getBufferedWriter().write("You won");
+                client2Settings.getBufferedWriter().println("You won");
                 client2Settings.getBufferedWriter().flush();
             }
-            client1Settings.getBufferedWriter().write("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
+            client1Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
             client1Settings.getBufferedWriter().flush();
-            client1Settings.getBufferedWriter().write("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
+            client1Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client1Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().write("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
+            client2Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
             client2Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().write("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
+            client2Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client2Settings.getBufferedWriter().flush();
         }
-        catch (IOException ioException)
+        catch (Exception Exception)
         {
-            ioException.printStackTrace();
+            Exception.printStackTrace();
         }
     }
 
@@ -163,7 +162,7 @@ public class GameService implements Runnable
                 }
                 while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer1())) // the order of x/y is unknown atm
                 {
-                    client1Settings.getBufferedWriter().write("Illegal move");
+                    client1Settings.getBufferedWriter().println("Illegal move");
                     client1Settings.getBufferedWriter().flush();
                     line = client1Settings.getBufferedReader().readLine();
                     if (!line.equals("surrender") && !line.equals("pass"))
@@ -172,7 +171,7 @@ public class GameService implements Runnable
                         yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
                     }
                 }
-                client1Settings.getBufferedWriter().write("Legal move");
+                client1Settings.getBufferedWriter().println("Legal move");
                 client1Settings.getBufferedWriter().flush();
                 return line;
             }
@@ -187,7 +186,7 @@ public class GameService implements Runnable
                 }
                 while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer2())) // the order of x/y is unknown atm
                 {
-                    client2Settings.getBufferedWriter().write("Illegal move");
+                    client2Settings.getBufferedWriter().println("Illegal move");
                     client2Settings.getBufferedWriter().flush();
                     line = client2Settings.getBufferedReader().readLine();
                     if (!line.equals("surrender") && !line.equals("pass"))
@@ -196,14 +195,14 @@ public class GameService implements Runnable
                         yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
                     }
                 }
-                client2Settings.getBufferedWriter().write("Legal move");
+                client2Settings.getBufferedWriter().println("Legal move");
                 client2Settings.getBufferedWriter().flush();
                 return line;
             }
         }
-        catch (IOException ioException)
+        catch (Exception Exception)
         {
-            ioException.printStackTrace();
+            Exception.printStackTrace();
             return "surrender"; // if error occurred it will count like surrender
         }
     }
@@ -214,22 +213,22 @@ public class GameService implements Runnable
         {
             if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // if last move was black's send it to white
             {
-                client2Settings.getBufferedWriter().write(move);
+                client2Settings.getBufferedWriter().println(move);
                 client2Settings.getBufferedWriter().flush();
             }
             else
             {
-                client1Settings.getBufferedWriter().write(move);
+                client1Settings.getBufferedWriter().println(move);
                 client1Settings.getBufferedWriter().flush();
             }
         }
-        catch (IOException ioException)
+        catch (Exception Exception)
         {
-            ioException.printStackTrace();
+            Exception.printStackTrace();
         }
     }
 
-    private void communicateWithClients() throws IOException // according to the game phase this functions executes just one of the blocks
+    private void communicateWithClients() throws Exception // according to the game phase this functions executes just one of the blocks
     {
         if (game.getGameState().equals(GameState.RUNNING))
         {
@@ -246,9 +245,9 @@ public class GameService implements Runnable
                             if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                             {
                                 game.setResult(Result.PLAYER2_WON);
-                                client1Settings.getBufferedWriter().write("You surrendered");
+                                client1Settings.getBufferedWriter().println("You surrendered");
                                 client1Settings.getBufferedWriter().flush();
-                                client2Settings.getBufferedWriter().write("Opponent surrendered");
+                                client2Settings.getBufferedWriter().println("Opponent surrendered");
                                 client2Settings.getBufferedWriter().flush();
                             }
                             game.setGameState(GameState.FINISHED);
@@ -258,9 +257,9 @@ public class GameService implements Runnable
                             if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                             {
                                 game.setResult(Result.PLAYER1_WON);
-                                client2Settings.getBufferedWriter().write("You surrendered");
+                                client2Settings.getBufferedWriter().println("You surrendered");
                                 client2Settings.getBufferedWriter().flush();
-                                client1Settings.getBufferedWriter().write("Opponent surrendered");
+                                client1Settings.getBufferedWriter().println("Opponent surrendered");
                                 client1Settings.getBufferedWriter().flush();
                             }
                             game.setGameState(GameState.FINISHED);
@@ -275,13 +274,13 @@ public class GameService implements Runnable
                         if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // white passed just after black
                         {
                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null));
-                            client1Settings.getBufferedWriter().write("Opponent played: pass");
+                            client1Settings.getBufferedWriter().println("Opponent played: pass");
                             client1Settings.getBufferedWriter().flush();
                         }
                         else
                         {
                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null));
-                            client2Settings.getBufferedWriter().write("Opponent played: pass");
+                            client2Settings.getBufferedWriter().println("Opponent played: pass");
                             client2Settings.getBufferedWriter().flush();
                         }
                         game.setGameState(GameState.COUNTING_TERRITORIES);
@@ -293,14 +292,14 @@ public class GameService implements Runnable
                         {
                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null));
                             surrenderListener.setMode(1);
-                            client2Settings.getBufferedWriter().write("Opponent played: pass");
+                            client2Settings.getBufferedWriter().println("Opponent played: pass");
                             client2Settings.getBufferedWriter().flush();
                         }
                         else
                         {
                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null));
                             surrenderListener.setMode(2);
-                            client1Settings.getBufferedWriter().write("Opponent played: pass");
+                            client1Settings.getBufferedWriter().println("Opponent played: pass");
                             client1Settings.getBufferedWriter().flush();
                         }
                         move = getNextMove();
@@ -315,7 +314,7 @@ public class GameService implements Runnable
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer1());
                         surrenderListener.setMode(1);
-                        client2Settings.getBufferedWriter().write("Opponent played: " + move);
+                        client2Settings.getBufferedWriter().println("Opponent played: " + move);
                         client2Settings.getBufferedWriter().flush();
                     }
                     else
@@ -325,7 +324,7 @@ public class GameService implements Runnable
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer2());
                         surrenderListener.setMode(2);
-                        client1Settings.getBufferedWriter().write("Opponent played: " + move);
+                        client1Settings.getBufferedWriter().println("Opponent played: " + move);
                         client1Settings.getBufferedWriter().flush();
                     }
                     move = getNextMove();
@@ -336,13 +335,13 @@ public class GameService implements Runnable
         if (game.getGameState().equals(GameState.COUNTING_TERRITORIES)) // in fact it is counting territories and dead groups in the same time
         {
             surrenderListener.setMode(2);
-            client1Settings.getBufferedWriter().write("Pick opponents dead groups");
+            client1Settings.getBufferedWriter().println("Pick opponents dead groups");
             client1Settings.getBufferedWriter().flush();
-            client1Settings.getBufferedWriter().write("Suggested:");
+            client1Settings.getBufferedWriter().println("Suggested:");
             client1Settings.getBufferedWriter().flush();
             // check later if x and y are not switched
-            GameUtils.getDeadGroups(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().write(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-            client1Settings.getBufferedWriter().write("End suggested");
+            GameUtils.getDeadGroups(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+            client1Settings.getBufferedWriter().println("End suggested");
             client1Settings.getBufferedWriter().flush();
             String line = client1Settings.getBufferedReader().readLine();
             if (line.equals("surrender"))
@@ -351,9 +350,9 @@ public class GameService implements Runnable
                     if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                     {
                         game.setResult(Result.PLAYER2_WON);
-                        client1Settings.getBufferedWriter().write("You surrendered");
+                        client1Settings.getBufferedWriter().println("You surrendered");
                         client1Settings.getBufferedWriter().flush();
-                        client2Settings.getBufferedWriter().write("Opponent surrendered");
+                        client2Settings.getBufferedWriter().println("Opponent surrendered");
                         client2Settings.getBufferedWriter().flush();
                     }
                     game.setGameState(GameState.FINISHED);
@@ -368,10 +367,10 @@ public class GameService implements Runnable
                     line = client1Settings.getBufferedReader().readLine();
                 }
                 surrenderListener.setMode(1);
-                client2Settings.getBufferedWriter().write("Opponent suggested your dead groups:");
+                client2Settings.getBufferedWriter().println("Opponent suggested your dead groups:");
                 client2Settings.getBufferedWriter().flush();
-                whiteDeadGroupsList.forEach((String s) -> {try {client2Settings.getBufferedWriter().write(s); client2Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                client2Settings.getBufferedWriter().write("End dead groups");
+                whiteDeadGroupsList.forEach((String s) -> {try {client2Settings.getBufferedWriter().println(s); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                client2Settings.getBufferedWriter().println("End dead groups");
                 client2Settings.getBufferedWriter().flush();
                 line = client2Settings.getBufferedReader().readLine();
                 if (line.equals("surrender"))
@@ -380,9 +379,9 @@ public class GameService implements Runnable
                         if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                         {
                             game.setResult(Result.PLAYER1_WON);
-                            client2Settings.getBufferedWriter().write("You surrendered");
+                            client2Settings.getBufferedWriter().println("You surrendered");
                             client2Settings.getBufferedWriter().flush();
-                            client1Settings.getBufferedWriter().write("Opponent surrendered");
+                            client1Settings.getBufferedWriter().println("Opponent surrendered");
                             client1Settings.getBufferedWriter().flush();
                         }
                         game.setGameState(GameState.FINISHED);
@@ -390,14 +389,14 @@ public class GameService implements Runnable
                 else if (line.equals("false"))
                 {
                     game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null)); // so that white may start now
-                    client1Settings.getBufferedWriter().write("false");
+                    client1Settings.getBufferedWriter().println("false");
                     client1Settings.getBufferedWriter().flush();
                     game.setGameState(GameState.RUNNING);
                     surrenderListener.setMode(1);
                 }
                 else // white agreed on his white groups
                 {
-                    client1Settings.getBufferedWriter().write("true");
+                    client1Settings.getBufferedWriter().println("true");
                     client1Settings.getBufferedWriter().flush();
                     for (String s : whiteDeadGroupsList) // dead stones are removed and added as prisoners
                     {
@@ -410,12 +409,12 @@ public class GameService implements Runnable
                         }
                     }
                     surrenderListener.setMode(1);
-                    client2Settings.getBufferedWriter().write("Pick opponents dead groups");
+                    client2Settings.getBufferedWriter().println("Pick opponents dead groups");
                     client2Settings.getBufferedWriter().flush();
-                    client2Settings.getBufferedWriter().write("Suggested:");
+                    client2Settings.getBufferedWriter().println("Suggested:");
                     client2Settings.getBufferedWriter().flush();
-                    GameUtils.getDeadGroups(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().write(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                    client2Settings.getBufferedWriter().write("End suggested");
+                    GameUtils.getDeadGroups(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                    client2Settings.getBufferedWriter().println("End suggested");
                     client2Settings.getBufferedWriter().flush();
                     line = client2Settings.getBufferedReader().readLine();
                     if (line.equals("surrender"))
@@ -424,9 +423,9 @@ public class GameService implements Runnable
                             if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                             {
                                 game.setResult(Result.PLAYER1_WON);
-                                client2Settings.getBufferedWriter().write("You surrendered");
+                                client2Settings.getBufferedWriter().println("You surrendered");
                                 client1Settings.getBufferedWriter().flush();
-                                client2Settings.getBufferedWriter().write("Opponent surrendered");
+                                client2Settings.getBufferedWriter().println("Opponent surrendered");
                                 client1Settings.getBufferedWriter().flush();
                             }
                             game.setGameState(GameState.FINISHED);
@@ -441,10 +440,10 @@ public class GameService implements Runnable
                             line = client2Settings.getBufferedReader().readLine();
                         }
                         surrenderListener.setMode(2);
-                        client1Settings.getBufferedWriter().write("Opponent suggested your dead groups:");
+                        client1Settings.getBufferedWriter().println("Opponent suggested your dead groups:");
                         client1Settings.getBufferedWriter().flush();
-                        whiteDeadGroupsList.forEach((String s) -> {try {client1Settings.getBufferedWriter().write(s); client1Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                        client1Settings.getBufferedWriter().write("End dead groups");
+                        whiteDeadGroupsList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                        client1Settings.getBufferedWriter().println("End dead groups");
                         client1Settings.getBufferedWriter().flush();
                         line = client1Settings.getBufferedReader().readLine();
                         if (line.equals("surrender"))
@@ -453,9 +452,9 @@ public class GameService implements Runnable
                                 if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                                 {
                                     game.setResult(Result.PLAYER2_WON);
-                                    client1Settings.getBufferedWriter().write("You surrendered");
+                                    client1Settings.getBufferedWriter().println("You surrendered");
                                     client1Settings.getBufferedWriter().flush();
-                                    client2Settings.getBufferedWriter().write("Opponent surrendered");
+                                    client2Settings.getBufferedWriter().println("Opponent surrendered");
                                     client2Settings.getBufferedWriter().flush();
                                 }
                                 game.setGameState(GameState.FINISHED);
@@ -463,7 +462,7 @@ public class GameService implements Runnable
                         else if (line.equals("false"))
                         {
                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null)); // so that black may start now
-                            client2Settings.getBufferedWriter().write("false");
+                            client2Settings.getBufferedWriter().println("false");
                             client2Settings.getBufferedWriter().flush();
                             game.setGameState(GameState.RUNNING);
                             surrenderListener.setMode(2);
@@ -480,7 +479,7 @@ public class GameService implements Runnable
                         }
                         else // black agreed on dead groups
                         {
-                            client2Settings.getBufferedWriter().write("true");
+                            client2Settings.getBufferedWriter().println("true");
                             client2Settings.getBufferedWriter().flush();
                             for (String s : blackDeadGroupsList) // dead stones are removed and added as prisoners
                             {
@@ -493,13 +492,13 @@ public class GameService implements Runnable
                                 }
                             }
                             surrenderListener.setMode(2);
-                            client1Settings.getBufferedWriter().write("Pick opponents territories");
+                            client1Settings.getBufferedWriter().println("Pick opponents territories");
                             client1Settings.getBufferedWriter().flush();
-                            client1Settings.getBufferedWriter().write("Suggested:");
+                            client1Settings.getBufferedWriter().println("Suggested:");
                             client1Settings.getBufferedWriter().flush();
                             // check later if x and y are not switched
-                            GameUtils.getTerritories(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().write(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                            client1Settings.getBufferedWriter().write("End suggested");
+                            GameUtils.getTerritories(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                            client1Settings.getBufferedWriter().println("End suggested");
                             client1Settings.getBufferedWriter().flush();
                             line = client1Settings.getBufferedReader().readLine();
                             if (line.equals("surrender"))
@@ -508,9 +507,9 @@ public class GameService implements Runnable
                                     if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                                     {
                                         game.setResult(Result.PLAYER2_WON);
-                                        client1Settings.getBufferedWriter().write("You surrendered");
+                                        client1Settings.getBufferedWriter().println("You surrendered");
                                         client1Settings.getBufferedWriter().flush();
-                                        client2Settings.getBufferedWriter().write("Opponent surrendered");
+                                        client2Settings.getBufferedWriter().println("Opponent surrendered");
                                         client2Settings.getBufferedWriter().flush();
                                     }
                                     game.setGameState(GameState.FINISHED);
@@ -525,10 +524,10 @@ public class GameService implements Runnable
                                     line = client1Settings.getBufferedReader().readLine();
                                 }
                                 surrenderListener.setMode(1);
-                                client2Settings.getBufferedWriter().write("Opponent suggested your territories:");
+                                client2Settings.getBufferedWriter().println("Opponent suggested your territories:");
                                 client2Settings.getBufferedWriter().flush();
-                                whiteTerritoriesList.forEach((String s) -> {try {client2Settings.getBufferedWriter().write(s); client2Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                                client2Settings.getBufferedWriter().write("End territories");
+                                whiteTerritoriesList.forEach((String s) -> {try {client2Settings.getBufferedWriter().println(s); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                                client2Settings.getBufferedWriter().println("End territories");
                                 client2Settings.getBufferedWriter().flush();
                                 line = client2Settings.getBufferedReader().readLine();
                                 if (line.equals("surrender"))
@@ -537,9 +536,9 @@ public class GameService implements Runnable
                                         if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                                         {
                                             game.setResult(Result.PLAYER1_WON);
-                                            client2Settings.getBufferedWriter().write("You surrendered");
+                                            client2Settings.getBufferedWriter().println("You surrendered");
                                             client2Settings.getBufferedWriter().flush();
-                                            client1Settings.getBufferedWriter().write("Opponent surrendered");
+                                            client1Settings.getBufferedWriter().println("Opponent surrendered");
                                             client1Settings.getBufferedWriter().flush();
                                         }
                                         game.setGameState(GameState.FINISHED);
@@ -547,7 +546,7 @@ public class GameService implements Runnable
                                 else if (line.equals("false"))
                                 {
                                     game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null)); // so that white may start now
-                                    client1Settings.getBufferedWriter().write("false");
+                                    client1Settings.getBufferedWriter().println("false");
                                     client1Settings.getBufferedWriter().flush();
                                     game.setGameState(GameState.RUNNING);
                                     surrenderListener.setMode(1);
@@ -574,7 +573,7 @@ public class GameService implements Runnable
                                 }
                                 else // white agreed on his territories
                                 {
-                                    client1Settings.getBufferedWriter().write("true");
+                                    client1Settings.getBufferedWriter().println("true");
                                     client1Settings.getBufferedWriter().flush();
                                     for (String s : whiteTerritoriesList) // territories are
                                     {
@@ -584,13 +583,13 @@ public class GameService implements Runnable
                                             game.getPlayer2().setTerritoryAmount(game.getPlayer2().getTerritoryAmount() + 1);
                                     }
                                     surrenderListener.setMode(1);
-                                    client2Settings.getBufferedWriter().write("Pick opponents territories");
+                                    client2Settings.getBufferedWriter().println("Pick opponents territories");
                                     client2Settings.getBufferedWriter().flush();
-                                    client2Settings.getBufferedWriter().write("Suggested:");
+                                    client2Settings.getBufferedWriter().println("Suggested:");
                                     client2Settings.getBufferedWriter().flush();
                                     // check later if x and y are not switched
-                                    GameUtils.getTerritories(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().write(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (IOException ioException){ioException.printStackTrace();}});
-                                    client2Settings.getBufferedWriter().write("End suggested");
+                                    GameUtils.getTerritories(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                                    client2Settings.getBufferedWriter().println("End suggested");
                                     client2Settings.getBufferedWriter().flush();
                                     line = client2Settings.getBufferedReader().readLine();
                                     if (line.equals("surrender"))
@@ -599,9 +598,9 @@ public class GameService implements Runnable
                                             if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                                             {
                                                 game.setResult(Result.PLAYER1_WON);
-                                                client2Settings.getBufferedWriter().write("You surrendered");
+                                                client2Settings.getBufferedWriter().println("You surrendered");
                                                 client2Settings.getBufferedWriter().flush();
-                                                client1Settings.getBufferedWriter().write("Opponent surrendered");
+                                                client1Settings.getBufferedWriter().println("Opponent surrendered");
                                                 client1Settings.getBufferedWriter().flush();
                                             }
                                             game.setGameState(GameState.FINISHED);
@@ -616,10 +615,10 @@ public class GameService implements Runnable
                                             line = client2Settings.getBufferedReader().readLine();
                                         }
                                         surrenderListener.setMode(2);
-                                        client1Settings.getBufferedWriter().write("Opponent suggested your territories:");
+                                        client1Settings.getBufferedWriter().println("Opponent suggested your territories:");
                                         client1Settings.getBufferedWriter().flush();
-                                        whiteTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().write(s); client1Settings.getBufferedWriter().flush();} catch (IOException ioException) {ioException.printStackTrace();}});
-                                        client1Settings.getBufferedWriter().write("End territories");
+                                        whiteTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception) {Exception.printStackTrace();}});
+                                        client1Settings.getBufferedWriter().println("End territories");
                                         client1Settings.getBufferedWriter().flush();
                                         line = client1Settings.getBufferedReader().readLine();
                                         if (line.equals("surrender"))
@@ -628,9 +627,9 @@ public class GameService implements Runnable
                                                 if (!game.getGameState().equals(GameState.FINISHED)) // to avoid concurrency
                                                 {
                                                     game.setResult(Result.PLAYER2_WON);
-                                                    client1Settings.getBufferedWriter().write("You surrendered");
+                                                    client1Settings.getBufferedWriter().println("You surrendered");
                                                     client1Settings.getBufferedWriter().flush();
-                                                    client2Settings.getBufferedWriter().write("Opponent surrendered");
+                                                    client2Settings.getBufferedWriter().println("Opponent surrendered");
                                                     client2Settings.getBufferedWriter().flush();
                                                 }
                                                 game.setGameState(GameState.FINISHED);
@@ -638,7 +637,7 @@ public class GameService implements Runnable
                                         else if (line.equals("false"))
                                         {
                                             game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null)); // so that black may start now
-                                            client2Settings.getBufferedWriter().write("false");
+                                            client2Settings.getBufferedWriter().println("false");
                                             client2Settings.getBufferedWriter().flush();
                                             game.setGameState(GameState.RUNNING);
                                             surrenderListener.setMode(2);
@@ -672,7 +671,7 @@ public class GameService implements Runnable
                                         }
                                         else // black agreed on his territories
                                         {
-                                            client2Settings.getBufferedWriter().write("true");
+                                            client2Settings.getBufferedWriter().println("true");
                                             client2Settings.getBufferedWriter().flush();
                                             for (String s : blackTerritoriesList) // territories are
                                             {

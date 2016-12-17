@@ -2,6 +2,7 @@ package pl.golm.server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
@@ -11,9 +12,9 @@ public class ClientSettings
 {
     private Socket socket;
     private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
+    private PrintWriter bufferedWriter;
 
-    public ClientSettings(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter)
+    public ClientSettings(Socket socket, BufferedReader bufferedReader, PrintWriter bufferedWriter)
     {
         setSocket(socket);
         setBufferedReader(bufferedReader);
@@ -40,12 +41,12 @@ public class ClientSettings
         this.bufferedReader = bufferedReader;
     }
 
-    public BufferedWriter getBufferedWriter()
+    public PrintWriter getBufferedWriter()
     {
         return bufferedWriter;
     }
 
-    public void setBufferedWriter(BufferedWriter bufferedWriter)
+    public void setBufferedWriter(PrintWriter bufferedWriter)
     {
         this.bufferedWriter = bufferedWriter;
     }

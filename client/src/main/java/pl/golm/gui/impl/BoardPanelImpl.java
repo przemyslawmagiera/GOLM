@@ -1,10 +1,12 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.communication.dto.GameDto;
 import pl.golm.controller.GameController;
 import pl.golm.gui.BoardPanel;
 import pl.golm.gui.Circle;
 import pl.golm.gui.GUIComponent;
+import pl.golm.gui.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,12 +24,13 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
     private ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
     private GameController controller = GameController.getInstance();
+    private PlayerColor playerColor;
 
-    public BoardPanelImpl()
+    public BoardPanelImpl(GameDto gameDto)
     {
         circles = new ArrayList<ArrayList<Circle>>();
         grid = new ArrayList<Line2D.Double>();
-        option = 13;
+        option = gameDto.getSize();
         setBackground(UtilGUI.BOARD_BACKGROUND);
         setPreferredSize(new Dimension(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_WIDTH));
         addMouseListener(this);

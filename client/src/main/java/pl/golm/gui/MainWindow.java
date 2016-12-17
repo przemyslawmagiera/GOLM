@@ -23,9 +23,10 @@ public class MainWindow extends JFrame
         super(UtilGUI.APPLICATION_NAME);
         setLayout(new BorderLayout());
         setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
-        setBoard(new BoardPanelImpl());
+        setBoard(new BoardPanelImpl(gameDto));
+
         setPlayerPanel(new PlayerPanelImpl());
-        setPlayersInfo(new PlayerInfoPanelImpl(gameDto.getPlayerName(), PlayerColor.BLACK, gameDto.getOpponentName()));
+        setPlayersInfo(new PlayerInfoPanelImpl(gameDto.getPlayerName(), gameDto.getPlayerColor(), gameDto.getOpponentName()));
         add((JPanel) getPlayersInfo(), BorderLayout.NORTH);
         add((JPanel) getBoard(), BorderLayout.CENTER);
         add((JPanel) getPlayerPanel(), BorderLayout.SOUTH);
