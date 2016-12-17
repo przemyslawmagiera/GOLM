@@ -77,7 +77,14 @@ public class GameController
                     answer = client.readMessage();
                 }
                 setYourTurn(false);
-                waitForOpponent();
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        waitForOpponent();
+                    }
+                }).start();
             }
         }
     }
@@ -95,16 +102,16 @@ public class GameController
 
     public void waitForOpponent()
     {
+            client.readMessage(); //"fields" override
         clearCircles();
-        client.readMessage(); //"fields" override
-        String answer = client.readMessage();
-        while (!answer.equals("End fields"))
-        {
-            BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
-            answer = client.readMessage();
-        }
-        mainWindow.repaint();
-        setYourTurn(true);
+            String answer = client.readMessage();
+            while (!answer.equals("End fields"))
+            {
+                BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
+                answer = client.readMessage();
+            }
+            mainWindow.repaint();
+            setYourTurn(true);
     }
 
     public void requestGame(GameDto gameDto)
@@ -123,7 +130,15 @@ public class GameController
             gameDto.setPlayerColor(PlayerColor.WHITE);
             setYourTurn(false);
             startGame(gameDto);
-            waitForOpponent();
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+
         }
         else
         {
