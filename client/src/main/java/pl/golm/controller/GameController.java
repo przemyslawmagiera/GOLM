@@ -70,6 +70,7 @@ public class GameController
             {
                 client.readMessage();//"fields" override
                 answer = client.readMessage();
+                clearCircles();
                 while (!answer.equals("End fields"))
                 {
                     BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
@@ -81,8 +82,20 @@ public class GameController
         }
     }
 
+    private void clearCircles()
+    {
+        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
+        {
+            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
+            {//get y, get x
+                mainWindow.getBoard().getCircles().get(j).get(i).setOccupied(false);
+            }
+        }
+    }
+
     public void waitForOpponent()
     {
+        clearCircles();
         client.readMessage(); //"fields" override
         String answer = client.readMessage();
         while (!answer.equals("End fields"))

@@ -220,7 +220,7 @@ public class GameService implements Runnable
                     {
                         client2Settings.getBufferedWriter().println("b," + field.getColumn() + "," + field.getRow());
                         client2Settings.getBufferedWriter().flush();
-                    } else if (game.getPlayer1().equals(field.getPlayer()))
+                    } else if (game.getPlayer2().equals(field.getPlayer()))
                     {
                         client2Settings.getBufferedWriter().println("w," + field.getColumn() + "," + field.getRow());
                         client2Settings.getBufferedWriter().flush();
@@ -236,7 +236,7 @@ public class GameService implements Runnable
                     {
                         client1Settings.getBufferedWriter().println("b," + field.getColumn() + "," + field.getRow());
                         client1Settings.getBufferedWriter().flush();
-                    } else if (game.getPlayer1().equals(field.getPlayer()))
+                    } else if (game.getPlayer2().equals(field.getPlayer()))
                     {
                         client1Settings.getBufferedWriter().println("w," + field.getColumn() + "," + field.getRow());
                         client1Settings.getBufferedWriter().flush();

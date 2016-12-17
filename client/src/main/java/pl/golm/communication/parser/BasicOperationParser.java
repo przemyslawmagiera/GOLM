@@ -32,14 +32,16 @@ public class BasicOperationParser
     public static void parseMappingToCircles(String message, ArrayList<ArrayList<Circle>> circles)
     {
         String[] props = message.split(",");
-        Circle actual = circles.get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1]));
+        Circle actual = circles.get(Integer.parseInt(props[1])).get(Integer.parseInt(props[2]));
         if(props[0].equals("b"))
         {
             actual.setColor(Color.BLACK);
+            actual.setOccupied(true);
         }
         else
         {
             actual.setColor(Color.WHITE);
+            actual.setOccupied(true);
         }
     }
 

@@ -82,7 +82,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                 {
                     g2d.setColor(actual.getColor());
                     g2d.fill(actual);
-                    g2d.setColor(null);
+                    g2d.setColor(Color.BLACK);
                 } else
                 {
                     g2d.draw(actual);
