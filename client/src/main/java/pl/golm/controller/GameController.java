@@ -61,7 +61,7 @@ public class GameController
         if(isYourTurn())
         {
             String answer = null;
-            String message = x + "," + y;
+            String message = y + "," + x;
             List<String> messages = new ArrayList<>();
             messages.add(message);
             client.sendMessage(messages);
@@ -89,6 +89,26 @@ public class GameController
         }
     }
 
+    public void passRequest()
+    {
+        if(isYourTurn())
+        {
+            String message = "pass";
+            List<String> msg = new ArrayList<>();
+            msg.add(message);
+            client.sendMessage(msg);
+            setYourTurn(false);
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+        }
+    }
+
     private void clearCircles()
     {
         for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
@@ -102,8 +122,9 @@ public class GameController
 
     public void waitForOpponent()
     {
-            client.readMessage(); //"fields" override
-        clearCircles();
+        if (client.readMessage().contains("Fields"))
+        {
+            clearCircles();
             String answer = client.readMessage();
             while (!answer.equals("End fields"))
             {
@@ -111,7 +132,8 @@ public class GameController
                 answer = client.readMessage();
             }
             mainWindow.repaint();
-            setYourTurn(true);
+        }
+        setYourTurn(true);
     }
 
     public void requestGame(GameDto gameDto)

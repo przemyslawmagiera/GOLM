@@ -161,7 +161,7 @@ public class GameService implements Runnable
                     xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
                     yMove = Integer.parseInt(line.substring(line.indexOf(",") + 1));
                 }
-                while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer1())) // the order of x/y is unknown atm
+                while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(xMove).get(yMove), game.getPlayer1())) // the order of x/y is unknown atm
                 {
                     client1Settings.getBufferedWriter().println("Illegal move");
                     client1Settings.getBufferedWriter().flush();
@@ -185,7 +185,7 @@ public class GameService implements Runnable
                     xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
                     yMove = Integer.parseInt(line.substring(line.indexOf(",")+ 1));
                 }
-                while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer2())) // the order of x/y is unknown atm
+                while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(xMove).get(yMove), game.getPlayer2())) // the order of x/y is unknown atm
                 {
                     client2Settings.getBufferedWriter().println("Illegal move");
                     client2Settings.getBufferedWriter().flush();
@@ -347,8 +347,11 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",") + 1));
-                        game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
-                        game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer1());
+                        GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveX).get(moveY), game.getPlayer2()).forEach(f->{
+                            f.setPlayer(null);
+                        });
+                        game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveX).get(moveY), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
+                        game.getBoard().getBoard().get(moveX).get(moveY).setPlayer(game.getPlayer1());
                         surrenderListener.setMode(1);
                         sendLastMove();
                     }
@@ -356,8 +359,11 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",")+ 1));
-                        game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
-                        game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer2());
+                        GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveX).get(moveY), game.getPlayer2()).forEach(f->{
+                            f.setPlayer(null);
+                        });
+                        game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveX).get(moveY), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
+                        game.getBoard().getBoard().get(moveX).get(moveY).setPlayer(game.getPlayer2());
                         surrenderListener.setMode(2);
                         sendLastMove();
                     }

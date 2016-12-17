@@ -1,6 +1,7 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.controller.GameController;
 import pl.golm.gui.GUIComponent;
 import pl.golm.gui.PlayerPanel;
 
@@ -15,6 +16,7 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel, GUIComponent
 {
     private JButton pass;
     private JButton surrender;
+    private GameController controller = GameController.getInstance();
 
     public PlayerPanelImpl()
     {
@@ -24,7 +26,7 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel, GUIComponent
         {
             public void actionPerformed(ActionEvent actionEvent)
             {
-                //TODO send information to parser
+                controller.passRequest();
             }
         });
         surrender.addActionListener(new AbstractAction()
