@@ -47,7 +47,7 @@ public class GameService implements Runnable
             client2Settings.getBufferedWriter().println("Game started. You are player 2. White");
             client2Settings.getBufferedWriter().flush();
             // start listening if any of the players surrendered has already surrendered
-            getSurrenderListener().run();
+            //getSurrenderListener().run();
             // while game has not finished talk with the clients
             while (!game.getGameState().equals(GameState.FINISHED))
                 communicateWithClients();
@@ -159,7 +159,7 @@ public class GameService implements Runnable
                 if (!line.equals("surrender") && !line.equals("pass"))
                 {
                     xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
-                    yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
+                    yMove = Integer.parseInt(line.substring(line.indexOf(",") + 1));
                 }
                 while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer1())) // the order of x/y is unknown atm
                 {
@@ -169,7 +169,7 @@ public class GameService implements Runnable
                     if (!line.equals("surrender") && !line.equals("pass"))
                     {
                         xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
-                        yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
+                        yMove = Integer.parseInt(line.substring(line.indexOf(",")+ 1));
                     }
                 }
                 client1Settings.getBufferedWriter().println("Legal move");
@@ -183,7 +183,7 @@ public class GameService implements Runnable
                 if (!line.equals("surrender") && !line.equals("pass"))
                 {
                     xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
-                    yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
+                    yMove = Integer.parseInt(line.substring(line.indexOf(",")+ 1));
                 }
                 while (!line.equals("surrender") && !line.equals("pass") && !GameUtils.moveIsLegal(game.getBoard(), game.getBoard().getBoard().get(yMove).get(xMove), game.getPlayer2())) // the order of x/y is unknown atm
                 {
@@ -193,7 +193,7 @@ public class GameService implements Runnable
                     if (!line.equals("surrender") && !line.equals("pass"))
                     {
                         xMove = Integer.parseInt(line.substring(0, line.indexOf(",")));
-                        yMove = Integer.parseInt(line.substring(line.indexOf("," + 1)));
+                        yMove = Integer.parseInt(line.substring(line.indexOf(",")+ 1));
                     }
                 }
                 client2Settings.getBufferedWriter().println("Legal move");
@@ -244,15 +244,19 @@ public class GameService implements Runnable
             client1Settings.getBufferedWriter().println("End fields");
             client1Settings.getBufferedWriter().flush();
 
-            if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // if last move was black's send it to white
-            {
-                client2Settings.getBufferedWriter().println("Move: white");
-                client1Settings.getBufferedWriter().println("Move: black");
-            } else
-            {
-                client1Settings.getBufferedWriter().println("Move: white");
-                client2Settings.getBufferedWriter().println("Move: black");
-            }
+//            if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // if last move was black's send it to white
+//            {
+//                client2Settings.getBufferedWriter().println("Move: white");
+//                client2Settings.getBufferedWriter().flush();
+//                client1Settings.getBufferedWriter().println("Move: black");
+//                client1Settings.getBufferedWriter().flush();
+//            } else
+//            {
+//                client1Settings.getBufferedWriter().println("Move: white");
+//                client1Settings.getBufferedWriter().flush();
+//                client2Settings.getBufferedWriter().println("Move: black");
+//                client2Settings.getBufferedWriter().flush();
+//            }
         }
         catch (Exception Exception)
         {
@@ -342,7 +346,7 @@ public class GameService implements Runnable
                     if (game.getBoard().getHistory().size() == 0 || game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.WHITE)) // last was white or it is first move
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
-                        int moveY = Integer.parseInt(move.substring(move.indexOf("," + 1)));
+                        int moveY = Integer.parseInt(move.substring(move.indexOf(",") + 1));
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer1());
                         surrenderListener.setMode(1);
@@ -351,7 +355,7 @@ public class GameService implements Runnable
                     else
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
-                        int moveY = Integer.parseInt(move.substring(move.indexOf("," + 1)));
+                        int moveY = Integer.parseInt(move.substring(move.indexOf(",")+ 1));
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer2());
                         surrenderListener.setMode(2);

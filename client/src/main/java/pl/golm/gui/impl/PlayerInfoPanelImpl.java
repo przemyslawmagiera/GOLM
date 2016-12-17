@@ -16,19 +16,19 @@ public class PlayerInfoPanelImpl extends JPanel implements PlayerInfoPanel, GUIC
     private JLabel you;
     private JLabel opponent;
 
-    public PlayerInfoPanelImpl(String opponentName, PlayerColor opponentColor, String playerName)
+    public PlayerInfoPanelImpl(String opponentName, PlayerColor playerColor, String playerName)
     {
         setOpponent(new JLabel("Opponent: " + opponentName));
         setYou(new JLabel("You: " + playerName));
-        if(opponentColor.equals(PlayerColor.BLACK))
-        {
-            getOpponent().setForeground(Color.BLACK);
-            getYou().setForeground(Color.WHITE);
-        }
-        else
+        if(playerColor.equals(PlayerColor.BLACK))
         {
             getOpponent().setForeground(Color.WHITE);
             getYou().setForeground(Color.BLACK);
+        }
+        else
+        {
+            getOpponent().setForeground(Color.BLACK);
+            getYou().setForeground(Color.WHITE);
         }
         setBackground(UtilGUI.APPLICATION_BACKGROUND);
         setLayout(new GridLayout(1,2));

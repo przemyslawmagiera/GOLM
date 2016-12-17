@@ -8,16 +8,14 @@ import pl.golm.communication.Player;
 import pl.golm.gui.*;
 import pl.golm.gui.Circle;
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Przemek on 04.12.2016.
  */
 public class GameController
 {
-    private BoardPanel boardPanel;
-    private PlayerInfoPanel playerInfoPanel;
-    private PlayerPanel playerPanel;
     private MainWindow mainWindow;
     private Client client;
     private boolean yourTurn;
@@ -60,17 +58,40 @@ public class GameController
 
     public void moveRequest(int x, int y)
     {
-        Circle actual = mainWindow.getBoard().getCircles().get(y).get(x);
-        if (player.getColor().equals(PlayerColor.BLACK))
+        if(isYourTurn())
         {
-            actual.setColor(Color.BLACK);
-            actual.setOccupied(true);
-        } else
-        {
-            actual.setColor(Color.WHITE);
-            actual.setOccupied(true);
+            String answer = null;
+            String message = x + "," + y;
+            List<String> messages = new ArrayList<>();
+            messages.add(message);
+            client.sendMessage(messages);
+            answer = client.readMessage();
+            if (answer.equals("Legal move"))
+            {
+                client.readMessage();//"fields" override
+                answer = client.readMessage();
+                while (!answer.equals("End fields"))
+                {
+                    BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
+                    answer = client.readMessage();
+                }
+                setYourTurn(false);
+                waitForOpponent();
+            }
         }
-        //TODO send request
+    }
+
+    public void waitForOpponent()
+    {
+        client.readMessage(); //"fields" override
+        String answer = client.readMessage();
+        while (!answer.equals("End fields"))
+        {
+            BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
+            answer = client.readMessage();
+        }
+        mainWindow.repaint();
+        setYourTurn(true);
     }
 
     public void requestGame(GameDto gameDto)
@@ -87,12 +108,17 @@ public class GameController
         if(client.readMessage().contains("White"))
         {
             gameDto.setPlayerColor(PlayerColor.WHITE);
+            setYourTurn(false);
+            startGame(gameDto);
+            waitForOpponent();
         }
         else
         {
             gameDto.setPlayerColor(PlayerColor.BLACK);
+            setYourTurn(true);
+            startGame(gameDto);
         }
-        startGame(gameDto);
+
     }
 
     public void startGame(GameDto gameDto)

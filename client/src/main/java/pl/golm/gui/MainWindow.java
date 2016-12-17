@@ -26,12 +26,13 @@ public class MainWindow extends JFrame
         setBoard(new BoardPanelImpl(gameDto));
 
         setPlayerPanel(new PlayerPanelImpl());
-        setPlayersInfo(new PlayerInfoPanelImpl(gameDto.getPlayerName(), gameDto.getPlayerColor(), gameDto.getOpponentName()));
+        setPlayersInfo(new PlayerInfoPanelImpl("not supported yet", gameDto.getPlayerColor(), gameDto.getPlayerName()));
         add((JPanel) getPlayersInfo(), BorderLayout.NORTH);
         add((JPanel) getBoard(), BorderLayout.CENTER);
         add((JPanel) getPlayerPanel(), BorderLayout.SOUTH);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        repaint();
         setVisible(true);
     }
 
