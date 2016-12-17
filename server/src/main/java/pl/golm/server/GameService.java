@@ -6,6 +6,7 @@ import pl.golm.game.GameState;
 import pl.golm.game.Result;
 import pl.golm.game.mechanics.util.GameUtils;
 import pl.golm.game.model.Field;
+import pl.golm.game.model.Move;
 import pl.golm.game.model.PlayerColor;
 import pl.golm.game.model.impl.MoveImpl;
 
@@ -207,19 +208,50 @@ public class GameService implements Runnable
         }
     }
 
-    private void sendLastMove(String move)
+    private void sendLastMove()
     {
         try
         {
+            client2Settings.getBufferedWriter().println("Fields");
+            client2Settings.getBufferedWriter().flush();
+            for (List<Field> fields : game.getBoard().getBoard())
+                for (Field field : fields)
+                    if (game.getPlayer1().equals(field.getPlayer()))
+                    {
+                        client2Settings.getBufferedWriter().println("b," + field.getColumn() + "," + field.getRow());
+                        client2Settings.getBufferedWriter().flush();
+                    } else if (game.getPlayer1().equals(field.getPlayer()))
+                    {
+                        client2Settings.getBufferedWriter().println("w," + field.getColumn() + "," + field.getRow());
+                        client2Settings.getBufferedWriter().flush();
+                    }
+            client2Settings.getBufferedWriter().println("End fields");
+            client2Settings.getBufferedWriter().flush();
+
+            client1Settings.getBufferedWriter().println("Fields");
+            client1Settings.getBufferedWriter().flush();
+            for (List<Field> fields : game.getBoard().getBoard())
+                for (Field field : fields)
+                    if (game.getPlayer1().equals(field.getPlayer()))
+                    {
+                        client1Settings.getBufferedWriter().println("b," + field.getColumn() + "," + field.getRow());
+                        client1Settings.getBufferedWriter().flush();
+                    } else if (game.getPlayer1().equals(field.getPlayer()))
+                    {
+                        client1Settings.getBufferedWriter().println("w," + field.getColumn() + "," + field.getRow());
+                        client1Settings.getBufferedWriter().flush();
+                    }
+            client1Settings.getBufferedWriter().println("End fields");
+            client1Settings.getBufferedWriter().flush();
+
             if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // if last move was black's send it to white
             {
-                client2Settings.getBufferedWriter().println(move);
-                client2Settings.getBufferedWriter().flush();
-            }
-            else
+                client2Settings.getBufferedWriter().println("Move: white");
+                client1Settings.getBufferedWriter().println("Move: black");
+            } else
             {
-                client1Settings.getBufferedWriter().println(move);
-                client1Settings.getBufferedWriter().flush();
+                client1Settings.getBufferedWriter().println("Move: white");
+                client2Settings.getBufferedWriter().println("Move: black");
             }
         }
         catch (Exception Exception)
@@ -314,8 +346,7 @@ public class GameService implements Runnable
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer1());
                         surrenderListener.setMode(1);
-                        client2Settings.getBufferedWriter().println("Opponent played: " + move);
-                        client2Settings.getBufferedWriter().flush();
+                        sendLastMove();
                     }
                     else
                     {
@@ -324,8 +355,7 @@ public class GameService implements Runnable
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
                         game.getBoard().getBoard().get(moveY).get(moveX).setPlayer(game.getPlayer2());
                         surrenderListener.setMode(2);
-                        client1Settings.getBufferedWriter().println("Opponent played: " + move);
-                        client1Settings.getBufferedWriter().flush();
+                        sendLastMove();
                     }
                     move = getNextMove();
                 }
