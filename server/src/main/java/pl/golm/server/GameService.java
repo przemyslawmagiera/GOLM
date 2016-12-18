@@ -535,7 +535,7 @@ public class GameService implements Runnable
                             client1Settings.getBufferedWriter().println("Suggested:");
                             client1Settings.getBufferedWriter().flush();
                             // check later if x and y are not switched
-                            GameUtils.getTerritories(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                            GameUtils.getTerritories(game.getBoard(), game.getPlayer2()).forEach((Field field) -> {try {client1Settings.getBufferedWriter().println(Integer.toString(field.getRow()) + "," + Integer.toString(field.getColumn())); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
                             client1Settings.getBufferedWriter().println("End suggested");
                             client1Settings.getBufferedWriter().flush();
                             line = client1Settings.getBufferedReader().readLine();
@@ -626,7 +626,7 @@ public class GameService implements Runnable
                                     client2Settings.getBufferedWriter().println("Suggested:");
                                     client2Settings.getBufferedWriter().flush();
                                     // check later if x and y are not switched
-                                    GameUtils.getTerritories(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().println(Integer.toString(field.getColumn()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                                    GameUtils.getTerritories(game.getBoard(), game.getPlayer1()).forEach((Field field) -> {try {client2Settings.getBufferedWriter().println(Integer.toString(field.getRow()) + "," + Integer.toString(field.getColumn())); client2Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
                                     client2Settings.getBufferedWriter().println("End suggested");
                                     client2Settings.getBufferedWriter().flush();
                                     line = client2Settings.getBufferedReader().readLine();
