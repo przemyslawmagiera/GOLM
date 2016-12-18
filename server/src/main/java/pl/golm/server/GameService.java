@@ -426,7 +426,7 @@ public class GameService implements Runnable
                     }
                 else if (line.equals("false"))
                 {
-                    game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null)); // so that white may start now
+                    game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, new ArrayList<Field>())); // so that white may start now
                     client1Settings.getBufferedWriter().println("false");
                     client1Settings.getBufferedWriter().flush();
                     game.setGameState(GameState.RUNNING);
@@ -499,7 +499,7 @@ public class GameService implements Runnable
                             }
                         else if (line.equals("false"))
                         {
-                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null)); // so that black may start now
+                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, new ArrayList<Field>())); // so that black may start now
                             client2Settings.getBufferedWriter().println("false");
                             client2Settings.getBufferedWriter().flush();
                             game.setGameState(GameState.RUNNING);
@@ -587,7 +587,7 @@ public class GameService implements Runnable
                                     }
                                 else if (line.equals("false"))
                                 {
-                                    game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null)); // so that white may start now
+                                    game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, new ArrayList<Field>())); // so that white may start now
                                     client1Settings.getBufferedWriter().println("false");
                                     client1Settings.getBufferedWriter().flush();
                                     game.setGameState(GameState.RUNNING);
@@ -678,7 +678,7 @@ public class GameService implements Runnable
                                             }
                                         else if (line.equals("false"))
                                         {
-                                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null)); // so that black may start now
+                                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, new ArrayList<Field>())); // so that black may start now
                                             client2Settings.getBufferedWriter().println("false");
                                             client2Settings.getBufferedWriter().flush();
                                             game.setGameState(GameState.RUNNING);
