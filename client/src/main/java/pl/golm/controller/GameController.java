@@ -241,6 +241,7 @@ public class GameController
         message.add("false");
         client.sendMessage(message);
         mainWindow.setEnabled(true);
+        gameDto.setGameState(GameState.RUNNING);
         setYourTurn(true);
     }
     
@@ -256,6 +257,7 @@ public class GameController
         }
         if(message.equals(false))
         {
+            gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
         }
     }

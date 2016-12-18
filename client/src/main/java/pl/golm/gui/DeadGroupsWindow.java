@@ -20,17 +20,16 @@ public class DeadGroupsWindow extends JFrame
     private GameDto gameDto;
     private JButton ok;
     private GameController controller = GameController.getInstance();
-    private JPanel buttonPanel;
 
     public DeadGroupsWindow(GameDto gameDto)
     {
         super(UtilGUI.APPLICATION_NAME);
         this.gameDto = gameDto;
-        setLayout(new BorderLayout());
         setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
+        setLayout(new BorderLayout());
         this.board = new BoardPanelImpl(gameDto);
         this.ok = new JButton("OK");
-        buttonPanel = new JPanel(new BorderLayout(2,1));
+        add((JPanel) board, BorderLayout.NORTH);
         ok.addActionListener(new AbstractAction()
         {
             public void actionPerformed(ActionEvent actionEvent)
@@ -49,7 +48,7 @@ public class DeadGroupsWindow extends JFrame
         if(GameState.ACCEPTING_DEAD_GROUPS.equals(gameDto.getGameState()))
         {
             JButton decline = new JButton("Decline");
-            buttonPanel.add(decline, BorderLayout.EAST);
+            add(decline, BorderLayout.CENTER);
             decline.addActionListener(new ActionListener()
             {
                 @Override
@@ -60,8 +59,6 @@ public class DeadGroupsWindow extends JFrame
                 }
             });
         }
-        buttonPanel.add(ok, BorderLayout.WEST);
-        add((JPanel) board, BorderLayout.CENTER);
         add(ok, BorderLayout.SOUTH);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
