@@ -480,7 +480,7 @@ public class GameService implements Runnable
                         surrenderListener.setMode(2);
                         client1Settings.getBufferedWriter().println("Opponent suggested your dead groups:");
                         client1Settings.getBufferedWriter().flush();
-                        whiteDeadGroupsList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
+                        blackDeadGroupsList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception){Exception.printStackTrace();}});
                         client1Settings.getBufferedWriter().println("End dead groups");
                         client1Settings.getBufferedWriter().flush();
                         line = client1Settings.getBufferedReader().readLine();

@@ -387,6 +387,7 @@ public class Ticobot implements Bot
                         board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
                     }
                 }
+                line = reader.readLine();
             }
         }
         else
@@ -399,7 +400,7 @@ public class Ticobot implements Bot
     {
         Random random = new Random();
         int moveX = random.nextInt(board.getSize()), moveY = random.nextInt(board.getSize()), counter = 16;
-        while (GameUtils.moveIsLegal(board, board.getBoard().get(moveY).get(moveX), bot) && counter > 0)
+        while (!GameUtils.moveIsLegal(board, board.getBoard().get(moveY).get(moveX), bot) && counter > 0)
         {
             moveX = random.nextInt(board.getSize());
             moveY = random.nextInt(board.getSize());
@@ -423,7 +424,7 @@ public class Ticobot implements Bot
             writer.flush();
             if (reader.readLine().equals("Legal move"))
             {
-                board.getHistory().add(new MoveImpl(bot, null, null));
+                board.getHistory().add(new MoveImpl(bot, null, new ArrayList<Field>()));
                 if (board.getHistory().size() > 0 && board.getHistory().get(board.getHistory().size() - 1).getField() == null) // a second pass
                     setGameState(GameState.COUNTING_TERRITORIES);
             }

@@ -48,7 +48,7 @@ public class GameServer
                 if (!gameSettings.isMultiPlayer())
                 {
                     Bot bot = new Ticobot(gameSettings);
-                    bot.run();
+                    new Thread(bot).start();
                     Socket socket = botSocket.accept();
                     PrintWriter botWriter = new PrintWriter(socket.getOutputStream());
                     botWriter.println("Connected to server.");
