@@ -3,11 +3,13 @@ package pl.golm.controller;
 
 import pl.golm.communication.Client;
 import pl.golm.communication.dto.GameDto;
+import pl.golm.communication.dto.GameState;
 import pl.golm.communication.parser.BasicOperationParser;
 import pl.golm.communication.Player;
 import pl.golm.gui.*;
 import pl.golm.gui.Circle;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class GameController
     private boolean yourTurn;
     private Player player;
     private static volatile GameController instance;
+    private GameDto gameDto;
 
     public GameController()
     {
@@ -31,6 +34,7 @@ public class GameController
 
     public void initMainWindow(GameDto gameDto)
     {
+        this.gameDto = gameDto;
         this.mainWindow = new MainWindow(gameDto);
     }
 
@@ -97,15 +101,31 @@ public class GameController
             List<String> msg = new ArrayList<>();
             msg.add(message);
             client.sendMessage(msg);
+            message = client.readMessage();//legal move
             setYourTurn(false);
-            new Thread(new Runnable()
+            String answer = client.readMessage();
+            if(answer.contains("Fields"))
             {
-                @Override
-                public void run()
+                message = client.readMessage();
+                clearCircles();
+                while (!message.equals("End fields"))
                 {
-                    waitForOpponent();
+                    BasicOperationParser.parseMappingToCircles(message, mainWindow.getBoard().getCircles());
+                    message = client.readMessage();
                 }
-            }).start();
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        waitForOpponent();
+                    }
+                }).start();
+            }
+            else if(answer.contains("Second"))
+            {
+                handleCountTerritories();
+            }
         }
     }
 
@@ -122,7 +142,8 @@ public class GameController
 
     public void waitForOpponent()
     {
-        if (client.readMessage().contains("Fields"))
+        String message = client.readMessage();
+        if (message.contains("Fields"))
         {
             clearCircles();
             String answer = client.readMessage();
@@ -132,8 +153,53 @@ public class GameController
                 answer = client.readMessage();
             }
             mainWindow.repaint();
+            setYourTurn(true);
         }
-        setYourTurn(true);
+        else if(message.contains("Second"))
+        {
+            handleCountTerritories();
+        }
+    }
+
+    private void handleCountTerritories()
+    {
+        if(gameDto.getPlayerColor().equals(PlayerColor.BLACK))
+        {
+            mainWindow.setEnabled(false);
+            client.readMessage(); //pick opponents
+            client.readMessage();//suggested:
+            gameDto.setSuggestedDeadTerritories(new ArrayList<>());
+            gameDto.setGameState(GameState.COUNTING_TERRITORIES);
+            String answer = client.readMessage(); //first suggested or end
+            CountTerritoriesWindow countTerritoriesWindow = new CountTerritoriesWindow(gameDto);
+            ArrayList<ArrayList<Circle>> circlesToCount = countTerritoriesWindow.getBoard().getCircles();
+            copyBoard(circlesToCount);
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+                answer = client.readMessage();
+            }
+            countTerritoriesWindow.getBoard().setCircles(circlesToCount);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
+        }
+    }
+
+    private void copyBoard(ArrayList<ArrayList<Circle>> circlesToCount)
+    {
+        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
+        {
+            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
+            {//get y, get x
+                if(mainWindow.getBoard().getCircles().get(j).get(i).isOccupied())
+                {
+                    circlesToCount.get(j).get(i).setOccupied(true);
+                    circlesToCount.get(j).get(i).setColor(mainWindow.getBoard().getCircles().get(j).get(i).getColor());
+                }
+            }
+        }
     }
 
     public void requestGame(GameDto gameDto)
@@ -149,6 +215,7 @@ public class GameController
         }
         if(client.readMessage().contains("White"))
         {
+            gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.WHITE);
             setYourTurn(false);
             startGame(gameDto);
@@ -164,6 +231,7 @@ public class GameController
         }
         else
         {
+            gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.BLACK);
             setYourTurn(true);
             startGame(gameDto);

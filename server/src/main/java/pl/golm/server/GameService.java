@@ -309,16 +309,16 @@ public class GameService implements Runnable
                     {
                         if (game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.BLACK)) // white passed just after black
                         {
-                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null));
-                            client1Settings.getBufferedWriter().println("Opponent played: pass");
-                            client1Settings.getBufferedWriter().flush();
+                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, new ArrayList<Field>()));
                         }
                         else
                         {
-                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null));
-                            client2Settings.getBufferedWriter().println("Opponent played: pass");
-                            client2Settings.getBufferedWriter().flush();
+                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, new ArrayList<Field>()));
                         }
+                        client2Settings.getBufferedWriter().println("Second pass");
+                        client2Settings.getBufferedWriter().flush();
+                        client1Settings.getBufferedWriter().println("Second pass");
+                        client1Settings.getBufferedWriter().flush();
                         game.setGameState(GameState.COUNTING_TERRITORIES);
                         surrenderListener.setMode(2); // as black will now be counting whites territories it is white who will be listened to surrender.
                     }
@@ -326,17 +326,15 @@ public class GameService implements Runnable
                     {
                         if (game.getBoard().getHistory().size() == 0 || game.getBoard().getHistory().get(game.getBoard().getHistory().size() - 1).getPlayer().getColor().equals(PlayerColor.WHITE)) // last was white or no one was
                         {
-                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, null));
+                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), null, new ArrayList<Field>()));
                             surrenderListener.setMode(1);
-                            client2Settings.getBufferedWriter().println("Opponent played: pass");
-                            client2Settings.getBufferedWriter().flush();
+                            sendLastMove();
                         }
                         else
                         {
-                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, null));
+                            game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), null, new ArrayList<Field>()));
                             surrenderListener.setMode(2);
-                            client1Settings.getBufferedWriter().println("Opponent played: pass");
-                            client1Settings.getBufferedWriter().flush();
+                            sendLastMove();
                         }
                         move = getNextMove();
                     }

@@ -2,6 +2,7 @@ package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
 import pl.golm.communication.dto.GameDto;
+import pl.golm.communication.dto.GameState;
 import pl.golm.controller.GameController;
 import pl.golm.gui.BoardPanel;
 import pl.golm.gui.Circle;
@@ -25,9 +26,11 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
     private ArrayList<Line2D.Double> grid;
     private GameController controller = GameController.getInstance();
     private PlayerColor playerColor;
+    private GameDto gameDto;
 
     public BoardPanelImpl(GameDto gameDto)
     {
+        this.gameDto = gameDto;
         circles = new ArrayList<ArrayList<Circle>>();
         grid = new ArrayList<Line2D.Double>();
         option = gameDto.getSize();
@@ -77,6 +80,15 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
         {
             for (int j = 0; j < option; j++)
             {
+                g2d.draw(grid.get(2 * i));
+                g2d.draw(grid.get(2 * i + 1));
+            }
+        }
+
+        for (int i = 0; i < option; i++)
+        {
+            for (int j = 0; j < option; j++)
+            {
                 Circle actual = circles.get(j).get(i);
                 if (actual.isOccupied())
                 {
@@ -88,8 +100,6 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                     g2d.draw(actual);
                 }
             }
-            g2d.draw(grid.get(2 * i));
-            g2d.draw(grid.get(2 * i + 1));
         }
     }
 
@@ -101,7 +111,22 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
             {//get y, get x
                 if (circles.get(j).get(i).contains(mouseEvent.getPoint().getX(), mouseEvent.getPoint().getY()))
                 {
-                    controller.moveRequest(i, j);
+                    if(gameDto.getGameState().equals(GameState.RUNNING))
+                    {
+                        controller.moveRequest(i, j);
+                    }
+                    else
+                    {
+                        if(circles.get(j).get(i).isOccupied())
+                        {
+                            circles.get(j).get(i).setOccupied(false);
+                        }
+                        else
+                        {
+                            circles.get(j).get(i).setColor(Color.GREEN);
+                            circles.get(j).get(i).setOccupied(true);
+                        }
+                    }
                 }
             }
         }

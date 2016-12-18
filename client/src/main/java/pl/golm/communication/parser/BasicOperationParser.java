@@ -45,4 +45,12 @@ public class BasicOperationParser
         }
     }
 
+    public static void prepareMappingForCounting(String message, ArrayList<ArrayList<Circle>> circles)
+    {
+        String[] props = message.split(",");
+        Circle actual = circles.get(Integer.parseInt(props[0])).get(Integer.parseInt(props[1]));
+        actual.setColor(Color.GREEN);
+        actual.setOccupied(true);
+    }
+
 }
