@@ -24,6 +24,8 @@ public class SurrenderListener implements Runnable
         setGame(game);
         setPlayer1reader(player1reader);
         setPlayer2reader(player2reader);
+        setPlayer1writer(player1writer);
+        setPlayer2writer(player2writer);
         setMode(mode);
     }
 
