@@ -61,7 +61,7 @@ public class GameController
         if(isYourTurn())
         {
             String answer = null;
-            String message = y + "," + x;
+            String message = x + "," + y;
             List<String> messages = new ArrayList<>();
             messages.add(message);
             client.sendMessage(messages);
