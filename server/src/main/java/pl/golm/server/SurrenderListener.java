@@ -43,7 +43,9 @@ public class SurrenderListener implements Runnable
                             game.setResult(Result.PLAYER2_WON);
                             game.setGameState(GameState.FINISHED);
                             player1writer.println("You surrendered");
+                            player1writer.flush();
                             player2writer.println("Opponent surrendered");
+                            player2writer.flush();
                             setMode(0);
                         }
                     }
@@ -57,7 +59,9 @@ public class SurrenderListener implements Runnable
                             game.setResult(Result.PLAYER1_WON);
                             game.setGameState(GameState.FINISHED);
                             player2writer.println("You surrendered");
+                            player2writer.flush();
                             player1writer.println("Opponent surrendered");
+                            player1writer.flush();
                             setMode(0);
                         }
                     }
