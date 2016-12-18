@@ -240,6 +240,8 @@ public class GameController
         List<String> message = new ArrayList<>();
         message.add("false");
         client.sendMessage(message);
+        mainWindow.setEnabled(true);
+        setYourTurn(true);
     }
     
     public void requestDeadGroups()
@@ -251,6 +253,10 @@ public class GameController
         if(message.equals("true"))
         {
             waitForSelectingDeadGroups();
+        }
+        if(message.equals(false))
+        {
+            setYourTurn(false);
         }
     }
 

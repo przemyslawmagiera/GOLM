@@ -30,7 +30,7 @@ public class DeadGroupsWindow extends JFrame
         setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
         this.board = new BoardPanelImpl(gameDto);
         this.ok = new JButton("OK");
-        buttonPanel = new JPanel(new BorderLayout(1,2));
+        buttonPanel = new JPanel(new BorderLayout(2,1));
         ok.addActionListener(new AbstractAction()
         {
             public void actionPerformed(ActionEvent actionEvent)
