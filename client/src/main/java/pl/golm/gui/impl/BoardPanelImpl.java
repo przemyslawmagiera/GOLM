@@ -115,7 +115,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                     {
                         controller.moveRequest(i, j);
                     }
-                    else
+                    else if(GameState.COUNTING_DEAD_GROUPS.equals(gameDto.getGameState()))
                     {
                         if(circles.get(j).get(i).isOccupied())
                         {
@@ -127,6 +127,10 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                             circles.get(j).get(i).setColor(Color.GREEN);
                             circles.get(j).get(i).setOccupied(true);
                         }
+                    }
+                    else
+                    {
+                        //do nothing
                     }
                 }
             }

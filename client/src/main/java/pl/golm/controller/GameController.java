@@ -24,7 +24,7 @@ public class GameController
     private Player player;
     private static volatile GameController instance;
     private GameDto gameDto;
-    private CountTerritoriesWindow countTerritoriesWindow;
+    private DeadGroupsWindow deadGroupsWindow;
 
     public GameController()
     {
@@ -125,7 +125,7 @@ public class GameController
             }
             else if(answer.contains("Second"))
             {
-                handleCountTerritories();
+                handleCountDeadGroups();
             }
         }
     }
@@ -158,46 +158,80 @@ public class GameController
         }
         else if(message.contains("Second"))
         {
-            handleCountTerritories();
+            handleCountDeadGroups();
         }
     }
 
-    private void handleCountTerritories()
+    private void prepareDeadGroupsFrame()
+    {
+        mainWindow.setEnabled(false);
+        client.readMessage(); //pick opponents
+        client.readMessage();//suggested:
+        gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS);
+        String answer = client.readMessage(); //first suggested or end
+        deadGroupsWindow = new DeadGroupsWindow(gameDto);
+        ArrayList<ArrayList<Circle>> circlesToCount = deadGroupsWindow.getBoard().getCircles();
+        copyBoard(circlesToCount);
+        while (!answer.contains("End"))
+        {
+            BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+            answer = client.readMessage();
+        }
+        deadGroupsWindow.getBoard().setCircles(circlesToCount);
+    }
+
+    private void waitForSelectingDeadGroups()
+    {
+        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
+        gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
+        client.readMessage();//opponent suggested
+        String answer = client.readMessage();//first suggested
+        deadGroupsWindow = new DeadGroupsWindow(gameDto);
+        ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
+        while (!answer.contains("End"))
+        {
+            BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+            answer = client.readMessage();
+        }
+    }
+
+    private void handleCountDeadGroups()
     {
         if(gameDto.getPlayerColor().equals(PlayerColor.BLACK))
         {
-            mainWindow.setEnabled(false);
-            client.readMessage(); //pick opponents
-            client.readMessage();//suggested:
-            gameDto.setGameState(GameState.COUNTING_TERRITORIES);
-            String answer = client.readMessage(); //first suggested or end
-            countTerritoriesWindow = new CountTerritoriesWindow(gameDto);
-            ArrayList<ArrayList<Circle>> circlesToCount = countTerritoriesWindow.getBoard().getCircles();
-            copyBoard(circlesToCount);
-            while (!answer.contains("End"))
-            {
-                BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
-                answer = client.readMessage();
-            }
-            countTerritoriesWindow.getBoard().setCircles(circlesToCount);
+            prepareDeadGroupsFrame();
         }
         else
         {
-            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
-
-            while (!answer.contains("End"))
-            {
-                BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
-                answer = client.readMessage();
-            }
+            waitForSelectingDeadGroups();
         }
     }
-    
-    public void requestDeadTerritories()
+
+    public void acceptDeadGroups()
     {
-        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(countTerritoriesWindow.getBoard().getCircles(), gameDto.getSize());
+        List<String> message = new ArrayList<>();
+        message.add("true");
+        client.sendMessage(message);
+        prepareDeadGroupsFrame();
+    }
+
+    public void declineDeadGroups()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("false");
+        client.sendMessage(message);
+        System.out.print("das");
+    }
+    
+    public void requestDeadGroups()
+    {
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
-        //// TODO: 18.12.2016 false/true
+        String message = client.readMessage();
+        if(message.equals("true"))
+        {
+            waitForSelectingDeadGroups();
+        }
     }
 
     private void copyBoard(ArrayList<ArrayList<Circle>> circlesToCount)

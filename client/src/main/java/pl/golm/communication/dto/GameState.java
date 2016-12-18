@@ -5,5 +5,6 @@ package pl.golm.communication.dto;
  */
 public enum GameState
 {
-    RUNNING, COUNTING_TERRITORIES;
+    RUNNING, COUNTING_DEAD_GROUPS, ACCEPTING_DEAD_GROUPS;
+
 }
