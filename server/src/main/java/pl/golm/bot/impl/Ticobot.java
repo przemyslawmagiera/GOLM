@@ -134,6 +134,7 @@ public class Ticobot implements Bot
                             }
                             writer.println("true");
                             writer.flush();
+                            reader.readLine(); // agreed
                             // now territories
                             reader.readLine();//"Pick opponents territories"
                             List<String> territories = new ArrayList<>();
@@ -171,13 +172,13 @@ public class Ticobot implements Bot
                             }
                             else
                             {
-                                board.getHistory().add(new MoveImpl(getBot(),null, null));
+                                board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
                                 setGameState(GameState.RUNNING);
                             }
                         }
                         else // opponent discarded your proposal game resumed
                         {
-                            board.getHistory().add(new MoveImpl(getBot(),null, null));
+                            board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
                             setGameState(GameState.RUNNING);
                         }
                     }
@@ -255,13 +256,13 @@ public class Ticobot implements Bot
                         }
                         else
                         {
-                            board.getHistory().add(new MoveImpl(getBot(),null, null));
+                            board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
                             setGameState(GameState.RUNNING);
                         }
                     }
                     else
                     {
-                        board.getHistory().add(new MoveImpl(getBot(),null, null));
+                        board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
                         setGameState(GameState.RUNNING);
                     }
                 }
@@ -353,7 +354,7 @@ public class Ticobot implements Bot
         }
         else if (line.contains("Fields"))
         {
-            board.getHistory().add(new MoveImpl(getOpponent(),null, null));
+            board.getHistory().add(new MoveImpl(getOpponent(),null, new ArrayList<Field>()));
             for (List<Field> fields : board.getBoard())
             {
                 for (Field field : fields)
