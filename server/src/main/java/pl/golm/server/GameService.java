@@ -462,8 +462,8 @@ public class GameService implements Runnable
                             {
                                 game.setResult(Result.PLAYER1_WON);
                                 client2Settings.getBufferedWriter().println("You surrendered");
-                                client1Settings.getBufferedWriter().flush();
-                                client2Settings.getBufferedWriter().println("Opponent surrendered");
+                                client2Settings.getBufferedWriter().flush();
+                                client1Settings.getBufferedWriter().println("Opponent surrendered");
                                 client1Settings.getBufferedWriter().flush();
                             }
                             game.setGameState(GameState.FINISHED);
