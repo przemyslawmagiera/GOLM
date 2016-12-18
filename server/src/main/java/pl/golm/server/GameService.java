@@ -519,6 +519,10 @@ public class GameService implements Runnable
                         {
                             client2Settings.getBufferedWriter().println("true");
                             client2Settings.getBufferedWriter().flush();
+                            client1Settings.getBufferedWriter().println("agreed");
+                            client1Settings.getBufferedWriter().flush();
+                            client2Settings.getBufferedWriter().println("agreed");
+                            client2Settings.getBufferedWriter().flush();
                             for (String s : blackDeadGroupsList) // dead stones are removed and added as prisoners
                             {
                                 int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
@@ -711,6 +715,10 @@ public class GameService implements Runnable
                                         {
                                             client2Settings.getBufferedWriter().println("true");
                                             client2Settings.getBufferedWriter().flush();
+                                            client1Settings.getBufferedWriter().println("agreed");
+                                            client1Settings.getBufferedWriter().flush();
+                                            client2Settings.getBufferedWriter().println("agreed");
+                                            client2Settings.getBufferedWriter().flush();
                                             for (String s : blackTerritoriesList) // territories are
                                             {
                                                 int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
@@ -719,6 +727,12 @@ public class GameService implements Runnable
                                                     game.getPlayer1().setTerritoryAmount(game.getPlayer1().getTerritoryAmount() + 1);
                                             }
                                             game.setGameState(GameState.FINISHED);
+                                            if (GameUtils.countPoints(game.getPlayer1()) > GameUtils.countPoints(game.getPlayer2()))
+                                                game.setResult(Result.PLAYER1_WON);
+                                            else if (GameUtils.countPoints(game.getPlayer2()) > GameUtils.countPoints(game.getPlayer1()))
+                                                game.setResult(Result.PLAYER2_WON);
+                                            else
+                                                game.setResult(Result.DRAW);
                                         }
                                     }
                                 }
