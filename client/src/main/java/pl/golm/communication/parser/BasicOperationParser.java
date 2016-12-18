@@ -53,4 +53,22 @@ public class BasicOperationParser
         actual.setOccupied(true);
     }
 
+    public static List<String> prepareCountedTerritoriesMessage(ArrayList<ArrayList<Circle>> circles, int size)
+    {
+        List<String> messages = new ArrayList<>();
+        messages.add("Dead groups");
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {//get y, get x
+                if(Color.GREEN.equals(circles.get(j).get(i).getColor()))
+                {
+                    messages.add(j + "," + i);
+                }
+            }
+        }
+        messages.add("End dead groups");
+        return messages;
+    }
+
 }

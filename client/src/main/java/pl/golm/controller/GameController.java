@@ -24,6 +24,7 @@ public class GameController
     private Player player;
     private static volatile GameController instance;
     private GameDto gameDto;
+    private CountTerritoriesWindow countTerritoriesWindow;
 
     public GameController()
     {
@@ -168,10 +169,9 @@ public class GameController
             mainWindow.setEnabled(false);
             client.readMessage(); //pick opponents
             client.readMessage();//suggested:
-            gameDto.setSuggestedDeadTerritories(new ArrayList<>());
             gameDto.setGameState(GameState.COUNTING_TERRITORIES);
             String answer = client.readMessage(); //first suggested or end
-            CountTerritoriesWindow countTerritoriesWindow = new CountTerritoriesWindow(gameDto);
+            countTerritoriesWindow = new CountTerritoriesWindow(gameDto);
             ArrayList<ArrayList<Circle>> circlesToCount = countTerritoriesWindow.getBoard().getCircles();
             copyBoard(circlesToCount);
             while (!answer.contains("End"))
@@ -184,7 +184,20 @@ public class GameController
         else
         {
             JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
+
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+                answer = client.readMessage();
+            }
         }
+    }
+    
+    public void requestDeadTerritories()
+    {
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(countTerritoriesWindow.getBoard().getCircles(), gameDto.getSize());
+        client.sendMessage(messages);
+        //// TODO: 18.12.2016 false/true
     }
 
     private void copyBoard(ArrayList<ArrayList<Circle>> circlesToCount)

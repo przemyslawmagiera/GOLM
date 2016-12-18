@@ -119,6 +119,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                     {
                         if(circles.get(j).get(i).isOccupied())
                         {
+                            circles.get(j).get(i).setColor(Color.MAGENTA);//just not to be green
                             circles.get(j).get(i).setOccupied(false);
                         }
                         else
