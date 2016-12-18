@@ -110,12 +110,160 @@ public class Ticobot implements Bot
                             deadGroups.add(line);
                             line = reader.readLine();
                         }
+                        writer.println("Dead groups");
+                        writer.flush();
+                        deadGroups.forEach(message -> {try {
+                            writer.println(message);
+                            writer.flush();
+                        }
+                        catch(Exception exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                        });
+                        writer.println("End dead groups");
+                        writer.flush();
+                        line = reader.readLine();
+                        if (line.equals("true"))// opponent agreed on your dead groups
+                        {
+                            reader.readLine(); // "Opponent suggested ..."
+                            line = reader.readLine();
+                            while (!line.equals("End dead groups"))
+                            {
+                                reader.readLine();
+                            }
+                            writer.println("true");
+                            writer.flush();
+                            // now territories
+                            reader.readLine();//"Pick opponents territories"
+                            List<String> territories = new ArrayList<>();
+                            line = reader.readLine();
+                            while (!line.contains("End"))
+                            {
+                                territories.add(line);
+                                line = reader.readLine();
+                            }
+                            writer.println("Territories");
+                            writer.flush();
+                            territories.forEach(message ->{try {
+                                writer.println(message);
+                                writer.flush();
+                            }
+                            catch(Exception exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                            });
+                            writer.println("End territories");
+                            writer.flush();
+                            line = reader.readLine();
+                            if (line.equals("true"))
+                            {
+                                reader.readLine(); // "Opponent suggested ..."
+                                line = reader.readLine();
+                                while (!line.toLowerCase().equals("end territories"))
+                                {
+                                    reader.readLine();
+                                }
+                                writer.println("true");
+                                writer.flush();
+                                setGameState(GameState.FINISHED);
+                            }
+                            else
+                            {
+                                board.getHistory().add(new MoveImpl(getBot(),null, null));
+                                setGameState(GameState.RUNNING);
+                            }
+                        }
+                        else // opponent discarded your proposal game resumed
+                        {
+                            board.getHistory().add(new MoveImpl(getBot(),null, null));
+                            setGameState(GameState.RUNNING);
+                        }
                     }
                     else
                         throw new IOException("unexpected input from server");
                 } else //bot is white
                 {
-
+                    reader.readLine(); // "Opponent suggested ..."
+                    String line = reader.readLine();
+                    while (!line.equals("End dead groups"))
+                    {
+                        reader.readLine();
+                    }
+                    writer.println("true");
+                    writer.flush();
+                    line = reader.readLine();//"Pick..."
+                    reader.readLine(); // "suggested"
+                    List<String> deadGroups = new ArrayList<>();
+                    line = reader.readLine();
+                    while(!line.contains("End"))
+                    {
+                        deadGroups.add(line);
+                        line = reader.readLine();
+                    }
+                    writer.println("Dead groups");
+                    writer.flush();
+                    deadGroups.forEach(message -> {try {
+                        writer.println(message);
+                        writer.flush();
+                    }
+                    catch(Exception exception)
+                    {
+                           exception.printStackTrace();
+                    }
+                    });
+                    writer.println("End dead groups");
+                    writer.flush();
+                    line = reader.readLine();
+                    if (line.equals("true"))
+                    {
+                        reader.readLine(); // "Opponent suggested ..."
+                        line = reader.readLine();
+                        while (!line.contains("End"))
+                        {
+                            reader.readLine();
+                        }
+                        writer.println("true");
+                        writer.flush();
+                        line = reader.readLine();//"Pick..."
+                        reader.readLine(); // "suggested"
+                        List<String> territories = new ArrayList<>();
+                        line = reader.readLine();
+                        while(!line.contains("End"))
+                        {
+                            territories.add(line);
+                            line = reader.readLine();
+                        }
+                        writer.println("Territories");
+                        writer.flush();
+                        deadGroups.forEach(message -> {try {
+                            writer.println(message);
+                            writer.flush();
+                        }
+                        catch(Exception exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                        });
+                        writer.println("End territories");
+                        writer.flush();
+                        line = reader.readLine();
+                        if (line.equals("true"))
+                        {
+                            setGameState(GameState.FINISHED);
+                        }
+                        else
+                        {
+                            board.getHistory().add(new MoveImpl(getBot(),null, null));
+                            setGameState(GameState.RUNNING);
+                        }
+                    }
+                    else
+                    {
+                        board.getHistory().add(new MoveImpl(getBot(),null, null));
+                        setGameState(GameState.RUNNING);
+                    }
                 }
             }
             catch (Exception exception)
@@ -202,10 +350,10 @@ public class Ticobot implements Bot
         if(line.contains("Second")) //second pass
         {
             setGameState(GameState.COUNTING_TERRITORIES);
-            System.out.println("End of game for now,life and death,counting territories...");
         }
         else if (line.contains("Fields"))
         {
+            board.getHistory().add(new MoveImpl(getOpponent(),null, null));
             for (List<Field> fields : board.getBoard())
             {
                 for (Field field : fields)
