@@ -96,7 +96,32 @@ public class Ticobot implements Bot
         }
         else if (getGameState().equals(GameState.COUNTING_TERRITORIES))
         {
-            //counting territories
+            try {
+                if (getBot().getColor().equals(PlayerColor.BLACK)) // bot is black
+                {
+                    String line = reader.readLine();
+                    if (line.contains("Pick opponents dead groups"))
+                    {
+                        reader.readLine(); // "suggested"
+                        List<String> deadGroups = new ArrayList<>();
+                        line = reader.readLine();
+                        while(!line.contains("End"))
+                        {
+                            deadGroups.add(line);
+                            line = reader.readLine();
+                        }
+                    }
+                    else
+                        throw new IOException("unexpected input from server");
+                } else //bot is white
+                {
+
+                }
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
         }
     }
 

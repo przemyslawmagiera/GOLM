@@ -38,7 +38,7 @@ public class SurrenderListener implements Runnable
                 {
                     synchronized(this)
                     {
-                        if (player1reader.readLine().equals("surrender"))
+                        if (player1reader.read() == 's')
                         {
                             game.setResult(Result.PLAYER2_WON);
                             game.setGameState(GameState.FINISHED);
@@ -52,17 +52,17 @@ public class SurrenderListener implements Runnable
                 {
                     synchronized(this)
                     {
-                        if (player2reader.readLine().equals("surrender"))
+                        if (player2reader.read() == 's')
                         {
                             game.setResult(Result.PLAYER1_WON);
                             game.setGameState(GameState.FINISHED);
                             player2writer.println("You surrendered");
                             player1writer.println("Opponent surrendered");
                             setMode(0);
-
                         }
                     }
                 }
+                Thread.sleep(1000);
             }
             catch (Exception Exception)
             {
