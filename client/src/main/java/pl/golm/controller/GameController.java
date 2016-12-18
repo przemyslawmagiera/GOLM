@@ -163,6 +163,21 @@ public class GameController
         }
     }
 
+    public void surrender()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("surrender");
+        client.sendMessage(message);
+        JOptionPane.showMessageDialog(mainWindow, "You surrendered, you lost...");
+        mainWindow.setVisible(false);
+    }
+
+    public void opponentSurrendered(String message)
+    {
+        JOptionPane.showMessageDialog(mainWindow, message);
+        mainWindow.setVisible(false);
+    }
+
     private void prepareDeadGroupsFrame()
     {
         mainWindow.setEnabled(false);

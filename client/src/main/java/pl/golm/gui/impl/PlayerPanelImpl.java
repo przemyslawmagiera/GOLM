@@ -33,7 +33,7 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel, GUIComponent
         {
             public void actionPerformed(ActionEvent actionEvent)
             {
-                //TODO send information to parser
+                controller.surrender();
             }
         });
         setLayout(new FlowLayout());
