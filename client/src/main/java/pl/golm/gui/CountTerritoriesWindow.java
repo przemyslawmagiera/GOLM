@@ -33,7 +33,7 @@ public class CountTerritoriesWindow extends JFrame
         {
             public void actionPerformed(ActionEvent actionEvent)
             {
-               //TODO handle
+                controller.requestDeadTerritories();
                 setVisible(false);
             }
         });
