@@ -47,20 +47,20 @@ public class GameServer
                 ClientSettings clientSettings = new ClientSettings(playerSocket, playerReader, playerWritter);
                 if (!gameSettings.isMultiPlayer())
                 {
-//                    Bot bot = new Ticobot(gameSettings);
-//                    bot.run();
-//                    Socket socket = botSocket.accept();
-//                    BufferedWriter botWriter = new BufferedWriter(new BufferedWriter(new PrintWriter(socket.getOutputStream())));
-//                    botWriter.println("Connected to server.");
-//                    botWriter.flush();
-//                    BufferedReader botReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                    GameService gameService;
-//                    Random random = new Random();
-//                    if (random.nextBoolean())
-//                        gameService = new GameService( new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName), clientSettings, gameSettings);
-//                    else
-//                        gameService = new GameService(clientSettings, gameSettings, new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName));
-//                    gameService.run();
+                    Bot bot = new Ticobot(gameSettings);
+                    bot.run();
+                    Socket socket = botSocket.accept();
+                    PrintWriter botWriter = new PrintWriter(socket.getOutputStream());
+                    botWriter.println("Connected to server.");
+                    botWriter.flush();
+                    BufferedReader botReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    GameService gameService;
+                    Random random = new Random();
+                    if (random.nextBoolean())
+                        gameService = new GameService( new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName), clientSettings, gameSettings);
+                    else
+                        gameService = new GameService(clientSettings, gameSettings, new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName));
+                    gameService.run();
                 }
                 else
                 {
