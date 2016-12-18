@@ -169,7 +169,6 @@ public class GameController
             mainWindow.setEnabled(false);
             client.readMessage(); //pick opponents
             client.readMessage();//suggested:
-            gameDto.setSuggestedDeadTerritories(new ArrayList<>());
             gameDto.setGameState(GameState.COUNTING_TERRITORIES);
             String answer = client.readMessage(); //first suggested or end
             countTerritoriesWindow = new CountTerritoriesWindow(gameDto);
@@ -185,6 +184,12 @@ public class GameController
         else
         {
             JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
+
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+                answer = client.readMessage();
+            }
         }
     }
     
