@@ -12,6 +12,7 @@ import pl.golm.gui.Circle;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Pack200;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -182,16 +183,25 @@ public class GameController
 
     private void waitForSelectingDeadGroups()
     {
-        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups...");
-        gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
-        client.readMessage();//opponent suggested
-        String answer = client.readMessage();//first suggested
-        deadGroupsWindow = new DeadGroupsWindow(gameDto);
-        ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
-        while (!answer.contains("End"))
+        mainWindow.setEnabled(false);
+        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        String answer = client.readMessage();//opponent suggested or accepted
+        if(answer.equals("agreed"))
         {
-            BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+            JOptionPane.showMessageDialog(mainWindow, "Game finished");
+            //// TODO: 18.12.2016 count territories
+        }
+        else
+        {
+            gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
+            deadGroupsWindow = new DeadGroupsWindow(gameDto);
+            ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
             answer = client.readMessage();
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+                answer = client.readMessage();
+            }
         }
     }
 
@@ -212,7 +222,17 @@ public class GameController
         List<String> message = new ArrayList<>();
         message.add("true");
         client.sendMessage(message);
-        prepareDeadGroupsFrame();
+        if(gameDto.getPlayerColor().equals(PlayerColor.WHITE))
+        {
+            prepareDeadGroupsFrame();
+        }
+        else
+        {
+            if(client.readMessage().equals("agreed"))
+            {
+                JOptionPane.showMessageDialog(mainWindow, "Game finished");
+            }
+        }
     }
 
     public void declineDeadGroups()
@@ -220,7 +240,6 @@ public class GameController
         List<String> message = new ArrayList<>();
         message.add("false");
         client.sendMessage(message);
-        System.out.print("das");
     }
     
     public void requestDeadGroups()
@@ -228,6 +247,7 @@ public class GameController
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
         String message = client.readMessage();
+        deadGroupsWindow.setVisible(false);
         if(message.equals("true"))
         {
             waitForSelectingDeadGroups();
