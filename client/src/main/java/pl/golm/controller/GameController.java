@@ -270,10 +270,19 @@ public class GameController
         {
             waitForSelectingDeadGroups();
         }
-        if(message.equals(false))
+        else if(message.equals("false"))
         {
+            mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
         }
     }
 
