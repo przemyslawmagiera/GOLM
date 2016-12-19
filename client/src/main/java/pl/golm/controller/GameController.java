@@ -199,7 +199,10 @@ public class GameController
     private void waitForSelectingDeadGroups()
     {
         mainWindow.setEnabled(false);
-        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        if(deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
+        {
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        }
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
         {
@@ -298,7 +301,10 @@ public class GameController
     private void waitForSelectingTerritories()
     {
         mainWindow.setEnabled(false);
-        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        if(territoriesWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))
+        {
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        }
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
         {
