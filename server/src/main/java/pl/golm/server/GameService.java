@@ -402,7 +402,10 @@ public class GameService implements Runnable
                 line = client1Settings.getBufferedReader().readLine();
                 while (!line.equals("End dead groups"))
                 {
-                    whiteDeadGroupsList.add(line);
+                    int fieldX = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                    int fieldY = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer2())
+                        whiteDeadGroupsList.add(line);
                     line = client1Settings.getBufferedReader().readLine();
                 }
                 surrenderListener.setMode(1);
@@ -475,7 +478,10 @@ public class GameService implements Runnable
                         line = client2Settings.getBufferedReader().readLine();
                         while (!line.equals("End dead groups"))
                         {
-                            blackDeadGroupsList.add(line);
+                            int fieldX = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                            int fieldY = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer1())
+                                blackDeadGroupsList.add(line);
                             line = client2Settings.getBufferedReader().readLine();
                         }
                         surrenderListener.setMode(2);
@@ -563,7 +569,10 @@ public class GameService implements Runnable
                                 line = client1Settings.getBufferedReader().readLine();
                                 while (!line.toLowerCase().equals("end territories"))
                                 {
-                                    whiteTerritoriesList.add(line);
+                                    int fieldX = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                                    int fieldY = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer2())
+                                        whiteTerritoriesList.add(line);
                                     line = client1Settings.getBufferedReader().readLine();
                                 }
                                 surrenderListener.setMode(1);
@@ -654,7 +663,10 @@ public class GameService implements Runnable
                                         line = client2Settings.getBufferedReader().readLine();
                                         while (!line.toLowerCase().equals("end territories"))
                                         {
-                                            blackTerritoriesList.add(line);
+                                            int fieldX = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                                            int fieldY = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer1())
+                                                blackTerritoriesList.add(line);
                                             line = client2Settings.getBufferedReader().readLine();
                                         }
                                         surrenderListener.setMode(2);
