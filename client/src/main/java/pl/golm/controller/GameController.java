@@ -473,6 +473,7 @@ public class GameController
             gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.WHITE);
             setYourTurn(false);
+            gameDto.setOpponentName(client.readMessage());
             startGame(gameDto);
             new Thread(new Runnable()
             {
@@ -489,6 +490,7 @@ public class GameController
             gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.BLACK);
             setYourTurn(true);
+            gameDto.setOpponentName(client.readMessage());
             startGame(gameDto);
         }
 

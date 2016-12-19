@@ -26,7 +26,7 @@ public class MainWindow extends JFrame
         setBoard(new BoardPanelImpl(gameDto));
 
         setPlayerPanel(new PlayerPanelImpl());
-        setPlayersInfo(new PlayerInfoPanelImpl("not supported yet", gameDto.getPlayerColor(), gameDto.getPlayerName()));
+        setPlayersInfo(new PlayerInfoPanelImpl(gameDto.getOpponentName(), gameDto.getPlayerColor(), gameDto.getPlayerName()));
         add((JPanel) getPlayersInfo(), BorderLayout.NORTH);
         add((JPanel) getBoard(), BorderLayout.CENTER);
         add((JPanel) getPlayerPanel(), BorderLayout.SOUTH);
