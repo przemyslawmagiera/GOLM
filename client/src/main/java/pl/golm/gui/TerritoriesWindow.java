@@ -19,6 +19,8 @@ public class TerritoriesWindow extends JFrame
     private BoardPanel board;
     private GameDto gameDto;
     private JButton ok;
+    private JButton decline;
+    private JPanel buttonPanel;
     private GameController controller = GameController.getInstance();
 
     public TerritoriesWindow(GameDto gameDto)
@@ -29,6 +31,7 @@ public class TerritoriesWindow extends JFrame
         setLayout(new BorderLayout());
         this.board = new BoardPanelImpl(gameDto);
         this.ok = new JButton("OK");
+        this.buttonPanel = new JPanel(new FlowLayout());
         add((JPanel) board, BorderLayout.NORTH);
         ok.addActionListener(new AbstractAction()
         {
@@ -47,8 +50,8 @@ public class TerritoriesWindow extends JFrame
         });
         if(GameState.ACCEPTING_DEAD_GROUPS.equals(gameDto.getGameState()))
         {
-            JButton decline = new JButton("Decline");
-            add(decline, BorderLayout.CENTER);
+            decline = new JButton("Decline");
+            buttonPanel.add(decline);
             decline.addActionListener(new ActionListener()
             {
                 @Override
@@ -59,7 +62,10 @@ public class TerritoriesWindow extends JFrame
                 }
             });
         }
-        add(ok, BorderLayout.SOUTH);
+        buttonPanel.add(ok);
+        buttonPanel.setVisible(true);
+        buttonPanel.setBackground(UtilGUI.APPLICATION_BACKGROUND);
+        add(buttonPanel,BorderLayout.CENTER);
         setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         repaint();
