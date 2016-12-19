@@ -203,6 +203,7 @@ public class GameController
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
         {
+            gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
             handleCountTerritories();
         }
         else
@@ -251,6 +252,7 @@ public class GameController
         {
             if(client.readMessage().equals("agreed"))
             {
+                gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS);
                 handleCountTerritories();
             }
         }
@@ -391,7 +393,7 @@ public class GameController
 
     public void requestTerritories()
     {
-        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(territoriesWindow.getBoard().getCircles(), gameDto.getSize());
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessageWhichIsIndeedTerritories(territoriesWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
         territoriesWindow.setVisible(false);
         JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");

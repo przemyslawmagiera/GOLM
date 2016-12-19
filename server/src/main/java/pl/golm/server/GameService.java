@@ -567,7 +567,7 @@ public class GameService implements Runnable
                             {
                                 List<String> whiteTerritoriesList = new ArrayList<String>();
                                 line = client1Settings.getBufferedReader().readLine();
-                                while (!line.toLowerCase().equals("end territories"))
+                                while (!line.equals("end territories"))
                                 {
                                     int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
                                     int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
@@ -661,7 +661,7 @@ public class GameService implements Runnable
                                     {
                                         List<String> blackTerritoriesList = new ArrayList<String>();
                                         line = client2Settings.getBufferedReader().readLine();
-                                        while (!line.toLowerCase().equals("end territories"))
+                                        while (!line.equals("end territories"))
                                         {
                                             int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
                                             int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));

@@ -71,4 +71,22 @@ public class BasicOperationParser
         return messages;
     }
 
+    public static List<String> prepareCountedTerritoriesMessageWhichIsIndeedTerritories(ArrayList<ArrayList<Circle>> circles, int size)
+    {
+        List<String> messages = new ArrayList<>();
+        messages.add("territories");
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {//get y, get x
+                if(Color.GREEN.equals(circles.get(j).get(i).getColor()))
+                {
+                    messages.add(j + "," + i);
+                }
+            }
+        }
+        messages.add("end territories");
+        return messages;
+    }
+
 }
