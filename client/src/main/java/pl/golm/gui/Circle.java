@@ -11,6 +11,17 @@ public class Circle extends Ellipse2D.Double
     private Color color;
     private boolean occupied;
     private double r,x,y;
+    private Color signature;
+
+    public Color getSignature()
+    {
+        return signature;
+    }
+
+    public void setSignature(Color signature)
+    {
+        this.signature = signature;
+    }
 
     public Circle(double x, double y, double r)
     {

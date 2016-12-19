@@ -49,8 +49,8 @@ public class BasicOperationParser
     {
         String[] props = message.split(",");
         Circle actual = circles.get(Integer.parseInt(props[0])).get(Integer.parseInt(props[1]));
-        actual.setColor(Color.GREEN);
-        actual.setOccupied(true);
+        actual.setSignature(Color.GREEN);
+        //actual.setOccupied(true);
     }
 
     public static List<String> prepareCountedTerritoriesMessage(ArrayList<ArrayList<Circle>> circles, int size)
@@ -61,7 +61,7 @@ public class BasicOperationParser
         {
             for (int j = 0; j < size; j++)
             {//get y, get x
-                if(Color.GREEN.equals(circles.get(j).get(i).getColor()))
+                if(Color.GREEN.equals(circles.get(j).get(i).getSignature()))
                 {
                     messages.add(j + "," + i);
                 }
@@ -79,7 +79,7 @@ public class BasicOperationParser
         {
             for (int j = 0; j < size; j++)
             {//get y, get x
-                if(Color.GREEN.equals(circles.get(j).get(i).getColor()))
+                if(Color.GREEN.equals(circles.get(j).get(i).getSignature()))
                 {
                     messages.add(j + "," + i);
                 }
