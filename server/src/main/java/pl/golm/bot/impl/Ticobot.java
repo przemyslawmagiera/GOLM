@@ -130,7 +130,7 @@ public class Ticobot implements Bot
                             line = reader.readLine();
                             while (!line.equals("End dead groups"))
                             {
-                                reader.readLine();
+                                line = reader.readLine();
                             }
                             writer.println("true");
                             writer.flush();
@@ -164,7 +164,7 @@ public class Ticobot implements Bot
                                 line = reader.readLine();
                                 while (!line.toLowerCase().equals("end territories"))
                                 {
-                                    reader.readLine();
+                                    line = reader.readLine();
                                 }
                                 writer.println("true");
                                 writer.flush();
@@ -190,7 +190,7 @@ public class Ticobot implements Bot
                     String line = reader.readLine();
                     while (!line.equals("End dead groups"))
                     {
-                        reader.readLine();
+                        line = reader.readLine();
                     }
                     writer.println("true");
                     writer.flush();
@@ -223,7 +223,7 @@ public class Ticobot implements Bot
                         line = reader.readLine();
                         while (!line.contains("End"))
                         {
-                            reader.readLine();
+                            line = reader.readLine();
                         }
                         writer.println("true");
                         writer.flush();
@@ -354,7 +354,16 @@ public class Ticobot implements Bot
         }
         else if (line.contains("Fields"))
         {
-            board.getHistory().add(new MoveImpl(getOpponent(),null, new ArrayList<Field>()));
+            List<String> occupiedFields = new ArrayList<>();
+            line = reader.readLine();
+            while (!line.contains("End"))
+            {
+                occupiedFields.add(line);
+                String[] props = line.split(",");
+                if (board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).getPlayer() == null)
+                    board.getHistory().add(new MoveImpl(getOpponent(),board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])), new ArrayList<Field>(GameUtils.moveKills(board, board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])), opponent))));
+                line = reader.readLine();
+            }
             for (List<Field> fields : board.getBoard())
             {
                 for (Field field : fields)
@@ -362,10 +371,9 @@ public class Ticobot implements Bot
                     field.setPlayer(null);
                 }
             }
-            line = reader.readLine();
-            while (!line.contains("End"))
+            for (String field : occupiedFields)
             {
-                String[] props = line.split(",");
+                String[] props = field.split(",");
                 if (props[0].contains("b"))
                 {
                     if (getBot().getColor().equals(PlayerColor.WHITE))
@@ -388,7 +396,6 @@ public class Ticobot implements Bot
                         board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
                     }
                 }
-                line = reader.readLine();
             }
         }
         else
@@ -409,28 +416,76 @@ public class Ticobot implements Bot
         }
         if (counter > 0)
         {
-            writer.println(Integer.toString(moveX) + "," + Integer.toString(moveY));
+            writer.println(Integer.toString(moveY) + "," + Integer.toString(moveX));
             writer.flush();
-            if (reader.readLine().equals("Legal move"))
+            String line = reader.readLine();
+            if (line.equals("Legal move"))
             {
                 board.getBoard().get(moveY).get(moveX).setPlayer(bot);
                 board.getHistory().add(new MoveImpl(bot, board.getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(board, board.getBoard().get(moveY).get(moveX), bot))));
+                line = reader.readLine();
+                if (line.contains("Fields"))
+                {
+                    List<String> occupiedFields = new ArrayList<>();
+                    line = reader.readLine();
+                    while (!line.contains("End"))
+                    {
+                        occupiedFields.add(line);
+                        line = reader.readLine();
+                    }
+                    for (List<Field> fields : board.getBoard())
+                    {
+                        for (Field field : fields)
+                        {
+                            field.setPlayer(null);
+                        }
+                    }
+                    for (String field : occupiedFields)
+                    {
+                        String[] props = field.split(",");
+                        if (props[0].contains("b"))
+                        {
+                            if (getBot().getColor().equals(PlayerColor.WHITE))
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                            } else // bot is black
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                            }
+                        } else // white
+                        {
+                            if (getBot().getColor().equals(PlayerColor.WHITE))
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                            } else // bot is black
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                            }
+                        }
+                    }
+                }
+                else
+                    throw new IOException("BADBADNOTGOOD");
             }
             else
-                throw new Exception("Unexpected input from server");
+                makeMove();
+
         }
         else //pass
         {
             writer.println("pass");
             writer.flush();
-            if (reader.readLine().equals("Legal move"))
+            String line = reader.readLine();
+            if (line.equals("Legal move"))
             {
                 board.getHistory().add(new MoveImpl(bot, null, new ArrayList<Field>()));
                 if (board.getHistory().size() > 0 && board.getHistory().get(board.getHistory().size() - 1).getField() == null) // a second pass
                     setGameState(GameState.COUNTING_TERRITORIES);
             }
             else
+            {
                 throw new Exception("Unexpected input from server");
+            }
         }
 
     }

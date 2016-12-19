@@ -47,7 +47,8 @@ public class GameService implements Runnable
             client2Settings.getBufferedWriter().println("Game started. You are player 2. White");
             client2Settings.getBufferedWriter().flush();
             // start listening if any of the players surrendered has already surrendered
-            new Thread (getSurrenderListener()).start();
+            if (game1Settings.isMultiPlayer())
+                new Thread (getSurrenderListener()).start();
             // while game has not finished talk with the clients
             while (!game.getGameState().equals(GameState.FINISHED))
                 communicateWithClients();
