@@ -91,6 +91,10 @@ public class GameController
                     }
                 }).start();
             }
+            else
+            {
+                JOptionPane.showMessageDialog(mainWindow, "Your move is illegal");
+            }
         }
     }
 
@@ -174,6 +178,7 @@ public class GameController
 
     public void opponentSurrendered(String message)
     {
+        message = message + " " + client.readMessage() + "!";
         JOptionPane.showMessageDialog(mainWindow, message);
         mainWindow.setVisible(false);
     }
