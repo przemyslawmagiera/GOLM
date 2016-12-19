@@ -4,6 +4,7 @@ import pl.golm.game.GameSettings;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.PrintWriter;
 
 /**
  * Created by Dominik on 2016-12-12.
@@ -17,9 +18,9 @@ public interface Bot extends Runnable
 
     public void setReader(BufferedReader reader);
 
-    public BufferedWriter getWriter();
+    public PrintWriter getWriter();
 
-    public void setWriter(BufferedWriter writer);
+    public void setWriter(PrintWriter writer);
 
     public GameSettings getGameSettings();
 

@@ -5,11 +5,9 @@ import pl.golm.controller.GameController;
 import pl.golm.gui.ConfigurationWindow;
 import pl.golm.gui.impl.ConfigurationWindowImpl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -19,8 +17,9 @@ public class Client
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
+    private GameController controller = GameController.getInstance();
 
-    public void configure() throws IOException
+    public void configure() throws Exception
     {
         socket = new Socket("localhost", 5000);
         InputStreamReader readStream = new InputStreamReader(socket.getInputStream());
@@ -28,35 +27,31 @@ public class Client
         writer = new PrintWriter(socket.getOutputStream());
     }
 
-    public void sendMessage(String message)
+    public void sendMessage(List<String> message)
     {
+        message.forEach(m ->
+        {
+            writer.println(m);
+            writer.flush();
+        });
+    }
+
+    public String readMessage()
+    {
+        String message = null;
         try
         {
-            writer.println(message);
-            writer.flush();
+            message = reader.readLine();
         } catch (Exception e)
         {
             e.printStackTrace();
         }
-    }
-
-    public class MessageReciver implements Runnable
-    {
-        String message;
-
-        public void run()
+        if(message.equals("Opponent surrendered"))
         {
-            try
-            {
-                while ((message = reader.readLine()) != null)
-                {
-                    //TODO parse messages, interpretation
-                }
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
+            //todo collect info from server(nie wiem co mi wysylasz tu)
+            //message = you won, your points: client.readline() ..i tak dalej
+            controller.opponentSurrendered(message);
         }
+        return message;
     }
 }

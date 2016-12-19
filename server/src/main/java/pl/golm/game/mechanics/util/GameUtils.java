@@ -28,11 +28,11 @@ public class GameUtils
         List<List<Field>> currentBoard = board.getBoard();
         if ((history.size() == 0 && player.getColor().equals(PlayerColor.WHITE)) || (history.size() > 0 && player.equals(history.get(history.size() - 1).getPlayer())))
             return false; // returns false when it is not this players move
-        if (currentBoard.get(field.getRow()).get(field.getColumn()).getPlayer() != null)
+        if (currentBoard.get(field.getColumn()).get(field.getRow()).getPlayer() != null)
             return false; // returns false when a field is already occupied
         if(moveIsSuicide(board, field, player))
             return false; // returns false when a move is suicide, GO rules forbids suicide moves
-        if (history.size() > 0 && history.get(history.size() - 1).getKilled().size() == 1 && history.get(history.size() - 1).getKilled().get(0).equals(field) && moveKills(board, field, player).size() == 1 && moveKills(board, field, player).contains(history.get(history.size() - 1).getField()))
+        if (history != null && history.size() > 0 && history.get(history.size() - 1).getKilled().size() == 1 && history.get(history.size() - 1).getKilled().get(0).equals(field) && moveKills(board, field, player).size() == 1 && moveKills(board, field, player).contains(history.get(history.size() - 1).getField()))
             return false; //returns false when player wants to create a situation on the board that has already occurred a turn ago, KO rule forbids this to happen
         return true; // returns true only if none of above took place
     }

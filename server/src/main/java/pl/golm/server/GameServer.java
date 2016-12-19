@@ -36,9 +36,9 @@ public class GameServer
             while (true)
             {
                 Socket playerSocket = serverSocket.accept();
-                BufferedWriter playerWritter = new BufferedWriter(new PrintWriter(playerSocket.getOutputStream()));
-                playerWritter.write("Connected to server. Please specify game settings.");
-                playerWritter.flush();
+                PrintWriter playerWritter = new PrintWriter(playerSocket.getOutputStream());
+                //playerWritter.println("Connected to server. Please specify game settings.");
+                //playerWritter.flush();
                 BufferedReader playerReader = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 int boardSize = Integer.parseInt(playerReader.readLine());
                 boolean isMultiplayer = Boolean.parseBoolean(playerReader.readLine());
@@ -48,10 +48,10 @@ public class GameServer
                 if (!gameSettings.isMultiPlayer())
                 {
                     Bot bot = new Ticobot(gameSettings);
-                    bot.run();
+                    new Thread(bot).start();
                     Socket socket = botSocket.accept();
-                    BufferedWriter botWriter = new BufferedWriter(new BufferedWriter(new PrintWriter(socket.getOutputStream())));
-                    botWriter.write("Connected to server.");
+                    PrintWriter botWriter = new PrintWriter(socket.getOutputStream());
+                    botWriter.println("Connected to server.");
                     botWriter.flush();
                     BufferedReader botReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     GameService gameService;
@@ -82,7 +82,7 @@ public class GameServer
                 }
             }
         }
-        catch (IOException exception)
+        catch (Exception exception)
         {
             exception.printStackTrace();
         }

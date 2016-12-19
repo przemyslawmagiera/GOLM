@@ -5,8 +5,7 @@ import pl.golm.game.GameState;
 import pl.golm.game.Result;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Created by Dominik on 2016-12-10.
@@ -16,15 +15,17 @@ public class SurrenderListener implements Runnable
     private Game game;
     private BufferedReader player1reader;
     private BufferedReader player2reader;
-    private BufferedWriter player1writer;
-    private BufferedWriter player2writer;
+    private PrintWriter player1writer;
+    private PrintWriter player2writer;
     private int mode; // 1 or 2
 
-    public SurrenderListener(Game game, BufferedReader player1reader, BufferedWriter player1writer, BufferedReader player2reader, BufferedWriter player2writer, int mode)
+    public SurrenderListener(Game game, BufferedReader player1reader, PrintWriter player1writer, BufferedReader player2reader, PrintWriter player2writer, int mode)
     {
         setGame(game);
         setPlayer1reader(player1reader);
         setPlayer2reader(player2reader);
+        setPlayer1writer(player1writer);
+        setPlayer2writer(player2writer);
         setMode(mode);
     }
 
@@ -39,12 +40,14 @@ public class SurrenderListener implements Runnable
                 {
                     synchronized(this)
                     {
-                        if (player1reader.readLine().equals("surrender"))
+                        if (player1reader.read() == 's')
                         {
                             game.setResult(Result.PLAYER2_WON);
                             game.setGameState(GameState.FINISHED);
-                            player1writer.write("You surrendered");
-                            player2writer.write("Opponent surrendered");
+                            player1writer.println("You surrendered");
+                            player1writer.flush();
+                            player2writer.println("Opponent surrendered");
+                            player2writer.flush();
                             setMode(0);
                         }
                     }
@@ -53,21 +56,23 @@ public class SurrenderListener implements Runnable
                 {
                     synchronized(this)
                     {
-                        if (player2reader.readLine().equals("surrender"))
+                        if (player2reader.read() == 's')
                         {
                             game.setResult(Result.PLAYER1_WON);
                             game.setGameState(GameState.FINISHED);
-                            player2writer.write("You surrendered");
-                            player1writer.write("Opponent surrendered");
+                            player2writer.println("You surrendered");
+                            player2writer.flush();
+                            player1writer.println("Opponent surrendered");
+                            player1writer.flush();
                             setMode(0);
-
                         }
                     }
                 }
+                Thread.sleep(1000);
             }
-            catch (IOException ioException)
+            catch (Exception Exception)
             {
-                ioException.printStackTrace();
+                Exception.printStackTrace();
             }
         }
     }
@@ -112,22 +117,22 @@ public class SurrenderListener implements Runnable
         this.mode = mode;
     }
 
-    public BufferedWriter getPlayer1writer()
+    public PrintWriter getPlayer1writer()
     {
         return player1writer;
     }
 
-    public void setPlayer1writer(BufferedWriter player1writer)
+    public void setPlayer1writer(PrintWriter player1writer)
     {
         this.player1writer = player1writer;
     }
 
-    public BufferedWriter getPlayer2writer()
+    public PrintWriter getPlayer2writer()
     {
         return player2writer;
     }
 
-    public void setPlayer2writer(BufferedWriter player2writer)
+    public void setPlayer2writer(PrintWriter player2writer)
     {
         this.player2writer = player2writer;
     }

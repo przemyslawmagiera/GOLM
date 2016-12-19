@@ -1,5 +1,9 @@
 package pl.golm.communication.dto;
 
+import pl.golm.gui.PlayerColor;
+
+import java.util.List;
+
 /**
  * Created by Przemek on 30.11.2016.
  */
@@ -9,6 +13,19 @@ public class GameDto
     private String type;
     private String playerName;
     private String opponentName;
+    private PlayerColor playerColor;
+    private List<String> suggestedDeadTerritories;
+    private GameState gameState;
+
+    public PlayerColor getPlayerColor()
+    {
+        return playerColor;
+    }
+
+    public void setPlayerColor(PlayerColor playerColor)
+    {
+        this.playerColor = playerColor;
+    }
 
     public String getOpponentName()
     {
@@ -48,5 +65,25 @@ public class GameDto
     public void setPlayerName(String playerName)
     {
         this.playerName = playerName;
+    }
+
+    public List<String> getSuggestedDeadTerritories()
+    {
+        return suggestedDeadTerritories;
+    }
+
+    public void setSuggestedDeadTerritories(List<String> suggestedDeadTerritories)
+    {
+        this.suggestedDeadTerritories = suggestedDeadTerritories;
+    }
+
+    public GameState getGameState()
+    {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState)
+    {
+        this.gameState = gameState;
     }
 }

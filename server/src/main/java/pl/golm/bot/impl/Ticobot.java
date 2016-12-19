@@ -15,6 +15,7 @@ import pl.golm.game.model.impl.PlayerImpl;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -22,10 +23,11 @@ import java.util.Random;
  */
 public class Ticobot implements Bot
 {
+
     public static final String botName = "Ticobot";
 
     private BufferedReader reader;
-    private BufferedWriter writer;
+    private PrintWriter writer;
 
     private GameSettings gameSettings;
 
@@ -50,10 +52,10 @@ public class Ticobot implements Bot
         {
             Socket socket = new Socket("localhost", 5724);
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new BufferedWriter(new PrintWriter(socket.getOutputStream()));
+            writer = new PrintWriter(socket.getOutputStream());
             String line;
             if(!reader.readLine().startsWith("Connected to server"))
-                throw new IOException("Unexpected message from server");
+                throw new Exception("Unexpected message from server");
             setGameState(GameState.RUNNING);
             line = reader.readLine();
             if (line.equals("Game started. You are player 1. Black"))
@@ -67,20 +69,211 @@ public class Ticobot implements Bot
                 setOpponent(new PlayerImpl("???", PlayerColor.BLACK));
             }
             // all below should be in a while (!GameState.FINISHED)
-            if (getBot().getColor().equals(PlayerColor.WHITE))
-                getMove();
-            while(getGameState().equals(GameState.RUNNING))
-            {
-                makeMove();
-                getMove();
-            }
-            // counting territories and dead groups
+            while (!getGameSettings().equals(GameState.FINISHED))
+                communicateWithServer();
         }
-        catch (IOException ioException)
+        catch (Exception Exception)
         {
-            ioException.printStackTrace();
+            Exception.printStackTrace();
         }
     }
+
+    private void communicateWithServer()
+    {
+        if (getGameState().equals(GameState.RUNNING)) {
+            try {
+                if (getBot().getColor().equals(PlayerColor.WHITE) || (getBoard().getHistory().size() > 0 && getBoard().getHistory().get(getBoard().getHistory().size() - 1).getPlayer().equals(getBot())))
+                    getMove();
+                while (getGameState().equals(GameState.RUNNING)) {
+                    makeMove();
+                    getMove();
+                }
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+        else if (getGameState().equals(GameState.COUNTING_TERRITORIES))
+        {
+            try {
+                if (getBot().getColor().equals(PlayerColor.BLACK)) // bot is black
+                {
+                    String line = reader.readLine();
+                    if (line.contains("Pick opponents dead groups"))
+                    {
+                        reader.readLine(); // "suggested"
+                        List<String> deadGroups = new ArrayList<>();
+                        line = reader.readLine();
+                        while(!line.contains("End"))
+                        {
+                            deadGroups.add(line);
+                            line = reader.readLine();
+                        }
+                        writer.println("Dead groups");
+                        writer.flush();
+                        deadGroups.forEach(message -> {try {
+                            writer.println(message);
+                            writer.flush();
+                        }
+                        catch(Exception exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                        });
+                        writer.println("End dead groups");
+                        writer.flush();
+                        line = reader.readLine();
+                        if (line.equals("true"))// opponent agreed on your dead groups
+                        {
+                            reader.readLine(); // "Opponent suggested ..."
+                            line = reader.readLine();
+                            while (!line.equals("End dead groups"))
+                            {
+                                line = reader.readLine();
+                            }
+                            writer.println("true");
+                            writer.flush();
+                            reader.readLine(); // agreed
+                            // now territories
+                            reader.readLine();//"Pick opponents territories"
+                            List<String> territories = new ArrayList<>();
+                            line = reader.readLine();
+                            while (!line.contains("End"))
+                            {
+                                territories.add(line);
+                                line = reader.readLine();
+                            }
+                            writer.println("Territories");
+                            writer.flush();
+                            territories.forEach(message ->{try {
+                                writer.println(message);
+                                writer.flush();
+                            }
+                            catch(Exception exception)
+                            {
+                                exception.printStackTrace();
+                            }
+                            });
+                            writer.println("End territories");
+                            writer.flush();
+                            line = reader.readLine();
+                            if (line.equals("true"))
+                            {
+                                reader.readLine(); // "Opponent suggested ..."
+                                line = reader.readLine();
+                                while (!line.toLowerCase().equals("end territories"))
+                                {
+                                    line = reader.readLine();
+                                }
+                                writer.println("true");
+                                writer.flush();
+                                setGameState(GameState.FINISHED);
+                            }
+                            else
+                            {
+                                board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
+                                setGameState(GameState.RUNNING);
+                            }
+                        }
+                        else // opponent discarded your proposal game resumed
+                        {
+                            board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
+                            setGameState(GameState.RUNNING);
+                        }
+                    }
+                    else
+                        throw new IOException("unexpected input from server");
+                } else //bot is white
+                {
+                    reader.readLine(); // "Opponent suggested ..."
+                    String line = reader.readLine();
+                    while (!line.equals("End dead groups"))
+                    {
+                        line = reader.readLine();
+                    }
+                    writer.println("true");
+                    writer.flush();
+                    line = reader.readLine();//"Pick..."
+                    reader.readLine(); // "suggested"
+                    List<String> deadGroups = new ArrayList<>();
+                    line = reader.readLine();
+                    while(!line.contains("End"))
+                    {
+                        deadGroups.add(line);
+                        line = reader.readLine();
+                    }
+                    writer.println("Dead groups");
+                    writer.flush();
+                    deadGroups.forEach(message -> {try {
+                        writer.println(message);
+                        writer.flush();
+                    }
+                    catch(Exception exception)
+                    {
+                           exception.printStackTrace();
+                    }
+                    });
+                    writer.println("End dead groups");
+                    writer.flush();
+                    line = reader.readLine();
+                    if (line.equals("true"))
+                    {
+                        reader.readLine(); // "Opponent suggested ..."
+                        line = reader.readLine();
+                        while (!line.contains("End"))
+                        {
+                            line = reader.readLine();
+                        }
+                        writer.println("true");
+                        writer.flush();
+                        line = reader.readLine();//"Pick..."
+                        reader.readLine(); // "suggested"
+                        List<String> territories = new ArrayList<>();
+                        line = reader.readLine();
+                        while(!line.contains("End"))
+                        {
+                            territories.add(line);
+                            line = reader.readLine();
+                        }
+                        writer.println("Territories");
+                        writer.flush();
+                        deadGroups.forEach(message -> {try {
+                            writer.println(message);
+                            writer.flush();
+                        }
+                        catch(Exception exception)
+                        {
+                            exception.printStackTrace();
+                        }
+                        });
+                        writer.println("End territories");
+                        writer.flush();
+                        line = reader.readLine();
+                        if (line.equals("true"))
+                        {
+                            setGameState(GameState.FINISHED);
+                        }
+                        else
+                        {
+                            board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
+                            setGameState(GameState.RUNNING);
+                        }
+                    }
+                    else
+                    {
+                        board.getHistory().add(new MoveImpl(getBot(),null, new ArrayList<Field>()));
+                        setGameState(GameState.RUNNING);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public BufferedReader getReader()
     {
@@ -92,12 +285,12 @@ public class Ticobot implements Bot
         this.reader = reader;
     }
     @Override
-    public BufferedWriter getWriter()
+    public PrintWriter getWriter()
     {
         return writer;
     }
     @Override
-    public void setWriter(BufferedWriter writer)
+    public void setWriter(PrintWriter writer)
     {
         this.writer = writer;
     }
@@ -152,38 +345,70 @@ public class Ticobot implements Bot
         this.bot = bot;
     }
 
-    private void getMove() throws IOException
+    private void getMove() throws Exception
     {
         String line = reader.readLine();
-        line = line.substring("Opponent played: ".length());
-        if (line.equals("Opponent surrendered"))
-            setGameState(GameState.FINISHED);
-        else if (line.equals("pass"))
+        if(line.contains("Second")) //second pass
         {
-            if (board.getHistory().size() > 0 && board.getHistory().get(board.getHistory().size() - 1).getField() == null) // a second pass
+            setGameState(GameState.COUNTING_TERRITORIES);
+        }
+        else if (line.contains("Fields"))
+        {
+            List<String> occupiedFields = new ArrayList<>();
+            line = reader.readLine();
+            while (!line.contains("End"))
             {
-                board.getHistory().add(new MoveImpl(opponent, null, null));
-                setGameState(GameState.COUNTING_TERRITORIES);
+                occupiedFields.add(line);
+                String[] props = line.split(",");
+                if (board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).getPlayer() == null)
+                    board.getHistory().add(new MoveImpl(getOpponent(),board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])), new ArrayList<Field>(GameUtils.moveKills(board, board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])), opponent))));
+                line = reader.readLine();
             }
-            else // a first pass
+            for (List<Field> fields : board.getBoard())
             {
-                board.getHistory().add(new MoveImpl(opponent, null, null));
+                for (Field field : fields)
+                {
+                    field.setPlayer(null);
+                }
+            }
+            for (String field : occupiedFields)
+            {
+                String[] props = field.split(",");
+                if (props[0].contains("b"))
+                {
+                    if (getBot().getColor().equals(PlayerColor.WHITE))
+                    {
+                        board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                    }
+                    else // bot is black
+                    {
+                        board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                    }
+                }
+                else // white
+                {
+                    if (getBot().getColor().equals(PlayerColor.WHITE))
+                    {
+                        board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                    }
+                    else // bot is black
+                    {
+                        board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                    }
+                }
             }
         }
         else
         {
-            int moveX = Integer.parseInt(line.substring(0, line.indexOf(",")));
-            int moveY = Integer.parseInt(line.substring(line.indexOf(",") + 1));
-            board.getBoard().get(moveY).get(moveX).setPlayer(opponent);
-            board.getHistory().add(new MoveImpl(opponent, board.getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(board, board.getBoard().get(moveY).get(moveX), opponent))));
+            throw new IOException("Unexpected input from server");
         }
     }
 
-    private void makeMove() throws IOException
+    private void makeMove() throws Exception
     {
         Random random = new Random();
         int moveX = random.nextInt(board.getSize()), moveY = random.nextInt(board.getSize()), counter = 16;
-        while (GameUtils.moveIsLegal(board, board.getBoard().get(moveY).get(moveX), bot) && counter > 0)
+        while (!GameUtils.moveIsLegal(board, board.getBoard().get(moveY).get(moveX), bot) && counter > 0)
         {
             moveX = random.nextInt(board.getSize());
             moveY = random.nextInt(board.getSize());
@@ -191,28 +416,76 @@ public class Ticobot implements Bot
         }
         if (counter > 0)
         {
-            writer.write(Integer.toString(moveX) + "," + Integer.toString(moveY));
+            writer.println(Integer.toString(moveY) + "," + Integer.toString(moveX));
             writer.flush();
-            if (reader.readLine().equals("Legal move"))
+            String line = reader.readLine();
+            if (line.equals("Legal move"))
             {
                 board.getBoard().get(moveY).get(moveX).setPlayer(bot);
                 board.getHistory().add(new MoveImpl(bot, board.getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(board, board.getBoard().get(moveY).get(moveX), bot))));
+                line = reader.readLine();
+                if (line.contains("Fields"))
+                {
+                    List<String> occupiedFields = new ArrayList<>();
+                    line = reader.readLine();
+                    while (!line.contains("End"))
+                    {
+                        occupiedFields.add(line);
+                        line = reader.readLine();
+                    }
+                    for (List<Field> fields : board.getBoard())
+                    {
+                        for (Field field : fields)
+                        {
+                            field.setPlayer(null);
+                        }
+                    }
+                    for (String field : occupiedFields)
+                    {
+                        String[] props = field.split(",");
+                        if (props[0].contains("b"))
+                        {
+                            if (getBot().getColor().equals(PlayerColor.WHITE))
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                            } else // bot is black
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                            }
+                        } else // white
+                        {
+                            if (getBot().getColor().equals(PlayerColor.WHITE))
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getBot());
+                            } else // bot is black
+                            {
+                                board.getBoard().get(Integer.parseInt(props[2])).get(Integer.parseInt(props[1])).setPlayer(getOpponent());
+                            }
+                        }
+                    }
+                }
+                else
+                    throw new IOException("BADBADNOTGOOD");
             }
             else
-                throw new IOException("Unexpected input from server");
+                makeMove();
+
         }
         else //pass
         {
-            writer.write("pass");
+            writer.println("pass");
             writer.flush();
-            if (reader.readLine().equals("Legal move"))
+            String line = reader.readLine();
+            if (line.equals("Legal move"))
             {
-                board.getHistory().add(new MoveImpl(bot, null, null));
+                board.getHistory().add(new MoveImpl(bot, null, new ArrayList<Field>()));
                 if (board.getHistory().size() > 0 && board.getHistory().get(board.getHistory().size() - 1).getField() == null) // a second pass
                     setGameState(GameState.COUNTING_TERRITORIES);
             }
             else
-                throw new IOException("Unexpected input from server");
+            {
+                throw new Exception("Unexpected input from server");
+            }
         }
 
     }
