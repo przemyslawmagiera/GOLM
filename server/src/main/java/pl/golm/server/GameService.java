@@ -571,7 +571,7 @@ public class GameService implements Runnable
                                 {
                                     int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
                                     int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
-                                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer2())
+                                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                         whiteTerritoriesList.add(line);
                                     line = client1Settings.getBufferedReader().readLine();
                                 }
@@ -665,14 +665,14 @@ public class GameService implements Runnable
                                         {
                                             int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
                                             int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
-                                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer1())
+                                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                                 blackTerritoriesList.add(line);
                                             line = client2Settings.getBufferedReader().readLine();
                                         }
                                         surrenderListener.setMode(2);
                                         client1Settings.getBufferedWriter().println("Opponent suggested your territories:");
                                         client1Settings.getBufferedWriter().flush();
-                                        whiteTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception) {Exception.printStackTrace();}});
+                                        blackTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception) {Exception.printStackTrace();}});
                                         client1Settings.getBufferedWriter().println("End territories");
                                         client1Settings.getBufferedWriter().flush();
                                         line = client1Settings.getBufferedReader().readLine();

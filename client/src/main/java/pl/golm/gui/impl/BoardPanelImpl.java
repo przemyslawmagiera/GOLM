@@ -90,7 +90,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
             for (int j = 0; j < option; j++)
             {
                 Circle actual = circles.get(j).get(i);
-                if (actual.isOccupied())
+                if (actual.isOccupied() || Color.MAGENTA.equals(actual.getColor()) || Color.GREEN.equals(actual.getColor()))
                 {
                     g2d.setColor(actual.getColor());
                     g2d.fill(actual);

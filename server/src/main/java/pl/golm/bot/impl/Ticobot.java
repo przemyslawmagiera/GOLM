@@ -138,10 +138,12 @@ public class Ticobot implements Bot
                             // now territories
                             reader.readLine();//"Pick opponents territories"
                             List<String> territories = new ArrayList<>();
+                            reader.readLine();// suggested
                             line = reader.readLine();
                             while (!line.contains("End"))
                             {
-                                territories.add(line);
+                                if (line.indexOf(",") != -1)
+                                    territories.add(line);
                                 line = reader.readLine();
                             }
                             writer.println("Territories");
@@ -155,7 +157,7 @@ public class Ticobot implements Bot
                                 exception.printStackTrace();
                             }
                             });
-                            writer.println("End territories");
+                            writer.println("end territories");
                             writer.flush();
                             line = reader.readLine();
                             if (line.equals("true"))
@@ -233,7 +235,8 @@ public class Ticobot implements Bot
                         line = reader.readLine();
                         while(!line.contains("End"))
                         {
-                            territories.add(line);
+                            if (line.indexOf(",") != -1)
+                                territories.add(line);
                             line = reader.readLine();
                         }
                         writer.println("Territories");
@@ -247,7 +250,7 @@ public class Ticobot implements Bot
                             exception.printStackTrace();
                         }
                         });
-                        writer.println("End territories");
+                        writer.println("end territories");
                         writer.flush();
                         line = reader.readLine();
                         if (line.equals("true"))
