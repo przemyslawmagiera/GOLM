@@ -298,7 +298,7 @@ public class GameController
         {
             if(client.readMessage().equals("agreed"))
             {
-                System.out.println("Game ended");
+                endGame();
             }
         }
     }
@@ -313,7 +313,7 @@ public class GameController
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
         {
-            System.out.println("Game ended");
+            endGame();;
         }
         else
         {
@@ -327,6 +327,11 @@ public class GameController
                 answer = client.readMessage();
             }
         }
+    }
+
+    private void endGame()
+    {
+        //
     }
 
     private void prepareTerritoriesFrame()
