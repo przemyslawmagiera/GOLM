@@ -206,7 +206,7 @@ public class GameController
         mainWindow.setEnabled(false);
         if(deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
         {
-            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
         }
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
@@ -308,7 +308,7 @@ public class GameController
         mainWindow.setEnabled(false);
         if(territoriesWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))
         {
-            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to suggest territories.");
         }
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
