@@ -24,6 +24,7 @@ public class GameController
     private static volatile GameController instance;
     private GameDto gameDto;
     private DeadGroupsWindow deadGroupsWindow;
+    private TerritoriesWindow territoriesWindow;
 
     public GameController()
     {
@@ -200,10 +201,9 @@ public class GameController
         mainWindow.setEnabled(false);
         JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
         String answer = client.readMessage();//opponent suggested or accepted
-        if(answer.equals("agreed"))
+        if(answer.equals("agreed")) // you are probably white
         {
-            JOptionPane.showMessageDialog(mainWindow, "Game finished");
-            //// TODO: 18.12.2016 count territories
+            handleCountTerritories();
         }
         else
         {
@@ -247,13 +247,101 @@ public class GameController
         {
             prepareDeadGroupsFrame();
         }
-        else
+        else // you are black
         {
             if(client.readMessage().equals("agreed"))
             {
-                JOptionPane.showMessageDialog(mainWindow, "Game finished");
+                handleCountTerritories();
             }
         }
+    }
+
+    private void handleCountTerritories()
+    {
+        if(gameDto.getPlayerColor().equals(PlayerColor.BLACK))
+        {
+            prepareTerritoriesFrame();
+        }
+        else
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingTerritories();
+                }
+            }).start();
+        }
+    }
+
+    public void acceptTerritories()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("true");
+        client.sendMessage(message);
+        if(gameDto.getPlayerColor().equals(PlayerColor.WHITE))
+        {
+            prepareTerritoriesFrame();
+        }
+        else // you are black
+        {
+            if(client.readMessage().equals("agreed"))
+            {
+                System.out.println("Game ended");
+            }
+        }
+    }
+
+    private void waitForSelectingTerritories()
+    {
+        mainWindow.setEnabled(false);
+        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
+        String answer = client.readMessage();//opponent suggested or accepted
+        if(answer.equals("agreed")) // you are probably white
+        {
+            System.out.println("Game ended");
+        }
+        else
+        {
+            gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
+            territoriesWindow = new TerritoriesWindow(gameDto);
+            ArrayList<ArrayList<Circle>> circlesToAccept = territoriesWindow.getBoard().getCircles();
+            answer = client.readMessage();
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+                answer = client.readMessage();
+            }
+        }
+    }
+
+    private void prepareTerritoriesFrame()
+    {
+        mainWindow.setEnabled(false);
+        client.readMessage(); //pick opponents
+        client.readMessage();//suggested:
+        gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS); // i didnt change that becouse what for
+        String answer = client.readMessage(); //first suggested or end
+        territoriesWindow = new TerritoriesWindow(gameDto);
+        ArrayList<ArrayList<Circle>> circlesToCount = territoriesWindow.getBoard().getCircles();
+        copyBoard(circlesToCount);
+        while (!answer.contains("End"))
+        {
+            BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+            answer = client.readMessage();
+        }
+        territoriesWindow.getBoard().setCircles(circlesToCount);
+    }
+
+    public void declineTerritories()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("false");
+        client.sendMessage(message);
+        mainWindow.setEnabled(true);
+        gameDto.setGameState(GameState.RUNNING);
+        setYourTurn(true);
     }
 
     public void declineDeadGroups()
@@ -290,6 +378,41 @@ public class GameController
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
             JOptionPane.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+        }
+    }
+
+    public void requestTerritories()
+    {
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(territoriesWindow.getBoard().getCircles(), gameDto.getSize());
+        client.sendMessage(messages);
+        territoriesWindow.setVisible(false);
+        JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
+        String message = client.readMessage();
+        if(message.equals("true"))
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingTerritories();
+                }
+            }).start();
+        }
+        else if(message.equals("false"))
+        {
+            mainWindow.setEnabled(true);
+            gameDto.setGameState(GameState.RUNNING);
+            setYourTurn(false);
+            JOptionPane.showMessageDialog(mainWindow, "Opponent declined your territories request, his turn.");
             new Thread(new Runnable()
             {
                 @Override
