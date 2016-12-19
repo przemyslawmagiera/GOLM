@@ -2,17 +2,15 @@ package pl.golm.controller;
 
 
 import pl.golm.communication.Client;
+import pl.golm.communication.Player;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.dto.GameState;
 import pl.golm.communication.parser.BasicOperationParser;
-import pl.golm.communication.Player;
 import pl.golm.gui.*;
-import pl.golm.gui.Circle;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Pack200;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -156,6 +154,7 @@ public class GameController
             }
             mainWindow.repaint();
             setYourTurn(true);
+            JOptionPane.showMessageDialog(mainWindow, "Your turn");
         }
         else if(message.contains("Second"))
         {
@@ -228,7 +227,14 @@ public class GameController
         }
         else
         {
-            waitForSelectingDeadGroups();
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingDeadGroups();
+                }
+            }).start();
         }
     }
 
@@ -264,17 +270,26 @@ public class GameController
     {
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
-        String message = client.readMessage();
         deadGroupsWindow.setVisible(false);
+        JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
+        String message = client.readMessage();
         if(message.equals("true"))
         {
-            waitForSelectingDeadGroups();
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingDeadGroups();
+                }
+            }).start();
         }
         else if(message.equals("false"))
         {
             mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
+            JOptionPane.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
             new Thread(new Runnable()
             {
                 @Override
