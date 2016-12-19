@@ -82,9 +82,9 @@ public class GameService implements Runnable
             client1Settings.getBufferedWriter().flush();
             client1Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client1Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
+            client2Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client2Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
+            client2Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
             client2Settings.getBufferedWriter().flush();
         }
         catch (Exception Exception)
@@ -350,6 +350,7 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",") + 1));
+                        game.getPlayer1().setPrisonerAmount(game.getPlayer1().getPrisonerAmount() + GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()).size());
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
                         GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()).forEach(f->{
                             f.setPlayer(null);
@@ -362,6 +363,7 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",")+ 1));
+                        game.getPlayer2().setPrisonerAmount(game.getPlayer2().getPrisonerAmount() + GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()).size());
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
                         GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()).forEach(f->{
                             f.setPlayer(null);
