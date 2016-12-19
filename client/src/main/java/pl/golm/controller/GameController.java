@@ -331,7 +331,8 @@ public class GameController
 
     private void endGame()
     {
-        //
+        JOptionPane.showMessageDialog(mainWindow, client.readMessage() + '\n' + client.readMessage() + '\n' + client.readMessage());
+        //tu trzeba pozamykac okna, rozłaczyc sie kulturalnie itp
     }
 
     private void prepareTerritoriesFrame()
