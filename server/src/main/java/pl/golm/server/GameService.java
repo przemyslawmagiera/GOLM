@@ -46,6 +46,10 @@ public class GameService implements Runnable
             client1Settings.getBufferedWriter().flush();
             client2Settings.getBufferedWriter().println("Game started. You are player 2. White");
             client2Settings.getBufferedWriter().flush();
+            client1Settings.getBufferedWriter().println(game2Settings.getPlayerName());
+            client1Settings.getBufferedWriter().flush();
+            client2Settings.getBufferedWriter().println(game1Settings.getPlayerName());
+            client2Settings.getBufferedWriter().flush();
             // start listening if any of the players surrendered has already surrendered
             if (game1Settings.isMultiPlayer())
                 new Thread (getSurrenderListener()).start();
@@ -78,9 +82,9 @@ public class GameService implements Runnable
             client1Settings.getBufferedWriter().flush();
             client1Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client1Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
+            client2Settings.getBufferedWriter().println("Your points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
             client2Settings.getBufferedWriter().flush();
-            client2Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer2())));
+            client2Settings.getBufferedWriter().println("Opponents points: " + Double.toString(GameUtils.countPoints(game.getPlayer1())));
             client2Settings.getBufferedWriter().flush();
         }
         catch (Exception Exception)
@@ -346,6 +350,7 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",") + 1));
+                        game.getPlayer1().setPrisonerAmount(game.getPlayer1().getPrisonerAmount() + GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()).size());
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer1(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()))));
                         GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer1()).forEach(f->{
                             f.setPlayer(null);
@@ -358,6 +363,7 @@ public class GameService implements Runnable
                     {
                         int moveX = Integer.parseInt(move.substring(0, move.indexOf(",")));
                         int moveY = Integer.parseInt(move.substring(move.indexOf(",")+ 1));
+                        game.getPlayer2().setPrisonerAmount(game.getPlayer2().getPrisonerAmount() + GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()).size());
                         game.getBoard().getHistory().add(new MoveImpl(game.getPlayer2(), game.getBoard().getBoard().get(moveY).get(moveX), new ArrayList<Field>(GameUtils.moveKills(game.getBoard(),  game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()))));
                         GameUtils.moveKills(game.getBoard(), game.getBoard().getBoard().get(moveY).get(moveX), game.getPlayer2()).forEach(f->{
                             f.setPlayer(null);
@@ -402,7 +408,10 @@ public class GameService implements Runnable
                 line = client1Settings.getBufferedReader().readLine();
                 while (!line.equals("End dead groups"))
                 {
-                    whiteDeadGroupsList.add(line);
+                    int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                    int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer2())
+                        whiteDeadGroupsList.add(line);
                     line = client1Settings.getBufferedReader().readLine();
                 }
                 surrenderListener.setMode(1);
@@ -439,8 +448,8 @@ public class GameService implements Runnable
                     client1Settings.getBufferedWriter().flush();
                     for (String s : whiteDeadGroupsList) // dead stones are removed and added as prisoners
                     {
-                        int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                        int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                        int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                        int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                         if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() != null && game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer().equals(game.getPlayer2()))
                         {
                             game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(null);
@@ -475,7 +484,10 @@ public class GameService implements Runnable
                         line = client2Settings.getBufferedReader().readLine();
                         while (!line.equals("End dead groups"))
                         {
-                            blackDeadGroupsList.add(line);
+                            int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                            int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == game.getPlayer1())
+                                blackDeadGroupsList.add(line);
                             line = client2Settings.getBufferedReader().readLine();
                         }
                         surrenderListener.setMode(2);
@@ -507,8 +519,8 @@ public class GameService implements Runnable
                             surrenderListener.setMode(2);
                             for (String s : whiteDeadGroupsList) // dead stones are added back and prisoners are taken away
                             {
-                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                 {
                                     game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(game.getPlayer2());
@@ -526,8 +538,8 @@ public class GameService implements Runnable
                             client2Settings.getBufferedWriter().flush();
                             for (String s : blackDeadGroupsList) // dead stones are removed and added as prisoners
                             {
-                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() != null && game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer().equals(game.getPlayer1()))
                                 {
                                     game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(null);
@@ -561,9 +573,12 @@ public class GameService implements Runnable
                             {
                                 List<String> whiteTerritoriesList = new ArrayList<String>();
                                 line = client1Settings.getBufferedReader().readLine();
-                                while (!line.toLowerCase().equals("end territories"))
+                                while (!line.equals("end territories"))
                                 {
-                                    whiteTerritoriesList.add(line);
+                                    int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                                    int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                                    if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
+                                        whiteTerritoriesList.add(line);
                                     line = client1Settings.getBufferedReader().readLine();
                                 }
                                 surrenderListener.setMode(1);
@@ -595,8 +610,8 @@ public class GameService implements Runnable
                                     surrenderListener.setMode(1);
                                     for (String s : whiteDeadGroupsList) // dead stones are added back and prisoners are taken away
                                     {
-                                        int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                        int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                        int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                        int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                         if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                         {
                                             game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(game.getPlayer2());
@@ -605,8 +620,8 @@ public class GameService implements Runnable
                                     }
                                     for (String s : blackDeadGroupsList) // dead stones are added back and prisoners are taken away
                                     {
-                                        int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                        int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                        int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                        int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                         if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                         {
                                             game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(game.getPlayer1());
@@ -620,8 +635,8 @@ public class GameService implements Runnable
                                     client1Settings.getBufferedWriter().flush();
                                     for (String s : whiteTerritoriesList) // territories are
                                     {
-                                        int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                        int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                        int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                        int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                         if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                             game.getPlayer2().setTerritoryAmount(game.getPlayer2().getTerritoryAmount() + 1);
                                     }
@@ -652,15 +667,18 @@ public class GameService implements Runnable
                                     {
                                         List<String> blackTerritoriesList = new ArrayList<String>();
                                         line = client2Settings.getBufferedReader().readLine();
-                                        while (!line.toLowerCase().equals("end territories"))
+                                        while (!line.equals("end territories"))
                                         {
-                                            blackTerritoriesList.add(line);
+                                            int fieldY = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                                            int fieldX = Integer.parseInt(line.substring(line.indexOf(",") + 1));
+                                            if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
+                                                blackTerritoriesList.add(line);
                                             line = client2Settings.getBufferedReader().readLine();
                                         }
                                         surrenderListener.setMode(2);
                                         client1Settings.getBufferedWriter().println("Opponent suggested your territories:");
                                         client1Settings.getBufferedWriter().flush();
-                                        whiteTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception) {Exception.printStackTrace();}});
+                                        blackTerritoriesList.forEach((String s) -> {try {client1Settings.getBufferedWriter().println(s); client1Settings.getBufferedWriter().flush();} catch (Exception Exception) {Exception.printStackTrace();}});
                                         client1Settings.getBufferedWriter().println("End territories");
                                         client1Settings.getBufferedWriter().flush();
                                         line = client1Settings.getBufferedReader().readLine();
@@ -686,8 +704,8 @@ public class GameService implements Runnable
                                             surrenderListener.setMode(2);
                                             for (String s : whiteDeadGroupsList) // dead stones are added back and prisoners are taken away
                                             {
-                                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                                 {
                                                     game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(game.getPlayer2());
@@ -696,8 +714,8 @@ public class GameService implements Runnable
                                             }
                                             for (String s : blackDeadGroupsList) // dead stones are added back and prisoners are taken away
                                             {
-                                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                                 {
                                                     game.getBoard().getBoard().get(fieldY).get(fieldX).setPlayer(game.getPlayer1());
@@ -706,8 +724,8 @@ public class GameService implements Runnable
                                             }
                                             for (String s : whiteTerritoriesList) // territories that were added are now removed
                                             {
-                                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                                     game.getPlayer2().setTerritoryAmount(game.getPlayer2().getTerritoryAmount() - 1);
                                             }
@@ -722,8 +740,8 @@ public class GameService implements Runnable
                                             client2Settings.getBufferedWriter().flush();
                                             for (String s : blackTerritoriesList) // territories are
                                             {
-                                                int fieldX = Integer.parseInt(s.substring(0, s.indexOf(",")));
-                                                int fieldY = Integer.parseInt(s.substring(s.indexOf(",") + 1));
+                                                int fieldY = Integer.parseInt(s.substring(0, s.indexOf(",")));
+                                                int fieldX = Integer.parseInt(s.substring(s.indexOf(",") + 1));
                                                 if (game.getBoard().getBoard().get(fieldY).get(fieldX).getPlayer() == null)
                                                     game.getPlayer1().setTerritoryAmount(game.getPlayer1().getTerritoryAmount() + 1);
                                             }

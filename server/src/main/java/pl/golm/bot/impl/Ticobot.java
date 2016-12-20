@@ -61,12 +61,12 @@ public class Ticobot implements Bot
             if (line.equals("Game started. You are player 1. Black"))
             {
                 setBot(new PlayerImpl(Ticobot.botName, PlayerColor.BLACK));
-                setOpponent(new PlayerImpl("???", PlayerColor.WHITE));
+                setOpponent(new PlayerImpl(reader.readLine(), PlayerColor.WHITE));
             }
             else
             {
                 setBot(new PlayerImpl(Ticobot.botName, PlayerColor.WHITE));
-                setOpponent(new PlayerImpl("???", PlayerColor.BLACK));
+                setOpponent(new PlayerImpl(reader.readLine(), PlayerColor.BLACK));
             }
             // all below should be in a while (!GameState.FINISHED)
             while (!getGameSettings().equals(GameState.FINISHED))
@@ -86,7 +86,8 @@ public class Ticobot implements Bot
                     getMove();
                 while (getGameState().equals(GameState.RUNNING)) {
                     makeMove();
-                    getMove();
+                    if (getGameState().equals(GameState.RUNNING))
+                        getMove();
                 }
             }
             catch (Exception exception)
@@ -138,10 +139,12 @@ public class Ticobot implements Bot
                             // now territories
                             reader.readLine();//"Pick opponents territories"
                             List<String> territories = new ArrayList<>();
+                            reader.readLine();// suggested
                             line = reader.readLine();
                             while (!line.contains("End"))
                             {
-                                territories.add(line);
+                                if (line.indexOf(",") != -1)
+                                    territories.add(line);
                                 line = reader.readLine();
                             }
                             writer.println("Territories");
@@ -155,7 +158,7 @@ public class Ticobot implements Bot
                                 exception.printStackTrace();
                             }
                             });
-                            writer.println("End territories");
+                            writer.println("end territories");
                             writer.flush();
                             line = reader.readLine();
                             if (line.equals("true"))
@@ -183,7 +186,7 @@ public class Ticobot implements Bot
                         }
                     }
                     else
-                        throw new IOException("unexpected input from server");
+                        throw new IOException("unexpected input from server: " + line);
                 } else //bot is white
                 {
                     reader.readLine(); // "Opponent suggested ..."
@@ -233,12 +236,13 @@ public class Ticobot implements Bot
                         line = reader.readLine();
                         while(!line.contains("End"))
                         {
-                            territories.add(line);
+                            if (line.indexOf(",") != -1)
+                                territories.add(line);
                             line = reader.readLine();
                         }
                         writer.println("Territories");
                         writer.flush();
-                        deadGroups.forEach(message -> {try {
+                        territories.forEach(message -> {try {
                             writer.println(message);
                             writer.flush();
                         }
@@ -247,7 +251,7 @@ public class Ticobot implements Bot
                             exception.printStackTrace();
                         }
                         });
-                        writer.println("End territories");
+                        writer.println("end territories");
                         writer.flush();
                         line = reader.readLine();
                         if (line.equals("true"))
@@ -467,9 +471,10 @@ public class Ticobot implements Bot
                 else
                     throw new IOException("BADBADNOTGOOD");
             }
+            else if (line.contains("Second"))
+                setGameState(GameState.COUNTING_TERRITORIES);
             else
                 makeMove();
-
         }
         else //pass
         {
@@ -479,9 +484,9 @@ public class Ticobot implements Bot
             if (line.equals("Legal move"))
             {
                 board.getHistory().add(new MoveImpl(bot, null, new ArrayList<Field>()));
-                if (board.getHistory().size() > 0 && board.getHistory().get(board.getHistory().size() - 1).getField() == null) // a second pass
-                    setGameState(GameState.COUNTING_TERRITORIES);
             }
+            else if (line.contains("Second"))
+                setGameState(GameState.COUNTING_TERRITORIES);
             else
             {
                 throw new Exception("Unexpected input from server");

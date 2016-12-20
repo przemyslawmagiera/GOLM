@@ -101,6 +101,22 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                 }
             }
         }
+        for (int i = 0; i < option; i++)
+        {
+            for (int j = 0; j < option; j++)
+            {
+                Circle actual = circles.get(j).get(i);
+                if (actual.getSignature() != null)
+                {
+                    g2d.setColor(actual.getSignature());
+                    g2d.fill(actual);
+                    g2d.setColor(Color.BLACK);
+                } else
+                {
+                    g2d.draw(actual);
+                }
+            }
+        }
     }
 
     public void mouseClicked(MouseEvent mouseEvent)
@@ -117,16 +133,10 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                     }
                     else if(GameState.COUNTING_DEAD_GROUPS.equals(gameDto.getGameState()))
                     {
-                        if(circles.get(j).get(i).isOccupied())
-                        {
-                            circles.get(j).get(i).setColor(Color.MAGENTA);//just not to be green
-                            circles.get(j).get(i).setOccupied(false);
-                        }
+                        if (circles.get(j).get(i).getSignature() == null)
+                            circles.get(j).get(i).setSignature(Color.GREEN);
                         else
-                        {
-                            circles.get(j).get(i).setColor(Color.GREEN);
-                            circles.get(j).get(i).setOccupied(true);
-                        }
+                            circles.get(j).get(i).setSignature(null);
                     }
                     else
                     {
@@ -140,6 +150,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
 
     public void mousePressed(MouseEvent mouseEvent)
     {
+
     }
 
     public void mouseReleased(MouseEvent mouseEvent)

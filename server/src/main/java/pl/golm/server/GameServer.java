@@ -60,7 +60,7 @@ public class GameServer
                         gameService = new GameService( new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName), clientSettings, gameSettings);
                     else
                         gameService = new GameService(clientSettings, gameSettings, new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName));
-                    gameService.run();
+                    new Thread (gameService).start();
                 }
                 else
                 {
@@ -73,7 +73,7 @@ public class GameServer
                         {
                             foundOpponent = true;
                             GameService gameService = new GameService(entry.getValue(), entry.getKey(), clientSettings, gameSettings);
-                            gameService.run();
+                            new Thread (gameService).start();
                             entries.remove();
                         }
                     }

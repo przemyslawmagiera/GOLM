@@ -7,8 +7,10 @@ import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.dto.GameState;
 import pl.golm.communication.parser.BasicOperationParser;
 import pl.golm.gui.*;
+import pl.golm.gui.impl.ConfigurationWindowImpl;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
  */
 public class GameController
 {
+    private ConfigurationWindowImpl parentFrame;
     private MainWindow mainWindow;
     private Client client;
     private boolean yourTurn;
@@ -24,6 +27,13 @@ public class GameController
     private static volatile GameController instance;
     private GameDto gameDto;
     private DeadGroupsWindow deadGroupsWindow;
+    private TerritoriesWindow territoriesWindow;
+    private static ConfigurationWindow configurationWindow = null;
+
+    public static void main(String[] args)
+    {
+        configurationWindow = new ConfigurationWindowImpl();
+    }
 
     public GameController()
     {
@@ -62,7 +72,7 @@ public class GameController
 
     public void moveRequest(int x, int y)
     {
-        if(isYourTurn())
+        if (isYourTurn())
         {
             String answer = null;
             String message = x + "," + y;
@@ -89,13 +99,16 @@ public class GameController
                         waitForOpponent();
                     }
                 }).start();
+            } else
+            {
+                JOptionPane.showMessageDialog(mainWindow, "Your move is illegal");
             }
         }
     }
 
     public void passRequest()
     {
-        if(isYourTurn())
+        if (isYourTurn())
         {
             String message = "pass";
             List<String> msg = new ArrayList<>();
@@ -104,7 +117,7 @@ public class GameController
             message = client.readMessage();//legal move
             setYourTurn(false);
             String answer = client.readMessage();
-            if(answer.contains("Fields"))
+            if (answer.contains("Fields"))
             {
                 message = client.readMessage();
                 clearCircles();
@@ -121,8 +134,7 @@ public class GameController
                         waitForOpponent();
                     }
                 }).start();
-            }
-            else if(answer.contains("Second"))
+            } else if (answer.contains("Second"))
             {
                 handleCountDeadGroups();
             }
@@ -155,8 +167,7 @@ public class GameController
             mainWindow.repaint();
             setYourTurn(true);
             JOptionPane.showMessageDialog(mainWindow, "Your turn");
-        }
-        else if(message.contains("Second"))
+        } else if (message.contains("Second"))
         {
             handleCountDeadGroups();
         }
@@ -173,6 +184,7 @@ public class GameController
 
     public void opponentSurrendered(String message)
     {
+        message = message + " " + client.readMessage() + "!";
         JOptionPane.showMessageDialog(mainWindow, message);
         mainWindow.setVisible(false);
     }
@@ -189,7 +201,7 @@ public class GameController
         copyBoard(circlesToCount);
         while (!answer.contains("End"))
         {
-            BasicOperationParser.prepareMappingForCounting(answer,circlesToCount);
+            BasicOperationParser.prepareMappingForCounting(answer, circlesToCount);
             answer = client.readMessage();
         }
         deadGroupsWindow.getBoard().setCircles(circlesToCount);
@@ -198,19 +210,22 @@ public class GameController
     private void waitForSelectingDeadGroups()
     {
         mainWindow.setEnabled(false);
-        JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent..");
-        String answer = client.readMessage();//opponent suggested or accepted
-        if(answer.equals("agreed"))
+        if (deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
         {
-            JOptionPane.showMessageDialog(mainWindow, "Game finished");
-            //// TODO: 18.12.2016 count territories
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
         }
-        else
+        String answer = client.readMessage();//opponent suggested or accepted
+        if (answer.equals("agreed")) // you are probably white
+        {
+            gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
+            handleCountTerritories();
+        } else
         {
             gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
             deadGroupsWindow = new DeadGroupsWindow(gameDto);
             ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
             answer = client.readMessage();
+            copyBoard(circlesToAccept);
             while (!answer.contains("End"))
             {
                 BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
@@ -221,11 +236,10 @@ public class GameController
 
     private void handleCountDeadGroups()
     {
-        if(gameDto.getPlayerColor().equals(PlayerColor.BLACK))
+        if (gameDto.getPlayerColor().equals(PlayerColor.BLACK))
         {
             prepareDeadGroupsFrame();
-        }
-        else
+        } else
         {
             new Thread(new Runnable()
             {
@@ -243,17 +257,115 @@ public class GameController
         List<String> message = new ArrayList<>();
         message.add("true");
         client.sendMessage(message);
-        if(gameDto.getPlayerColor().equals(PlayerColor.WHITE))
+        if (gameDto.getPlayerColor().equals(PlayerColor.WHITE))
         {
             prepareDeadGroupsFrame();
-        }
-        else
+        } else // you are black
         {
-            if(client.readMessage().equals("agreed"))
+            if (client.readMessage().equals("agreed"))
             {
-                JOptionPane.showMessageDialog(mainWindow, "Game finished");
+                gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS);
+                handleCountTerritories();
             }
         }
+    }
+
+    private void handleCountTerritories()
+    {
+        if (gameDto.getPlayerColor().equals(PlayerColor.BLACK))
+        {
+            prepareTerritoriesFrame();
+        } else
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingTerritories();
+                }
+            }).start();
+        }
+    }
+
+    public void acceptTerritories()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("true");
+        client.sendMessage(message);
+        if (gameDto.getPlayerColor().equals(PlayerColor.WHITE))
+        {
+            prepareTerritoriesFrame();
+        } else // you are black
+        {
+            if (client.readMessage().equals("agreed"))
+            {
+                endGame();
+            }
+        }
+    }
+
+    private void waitForSelectingTerritories()
+    {
+        mainWindow.setEnabled(false);
+        if (territoriesWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))
+        {
+            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to suggest territories.");
+        }
+        String answer = client.readMessage();//opponent suggested or accepted
+        if (answer.equals("agreed")) // you are probably white
+        {
+            endGame();
+        } else
+        {
+            gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
+            territoriesWindow = new TerritoriesWindow(gameDto);
+            ArrayList<ArrayList<Circle>> circlesToAccept = territoriesWindow.getBoard().getCircles();
+            answer = client.readMessage();
+            copyBoard(circlesToAccept);
+            while (!answer.contains("End"))
+            {
+                BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+                answer = client.readMessage();
+            }
+        }
+    }
+
+    private void endGame()
+    {
+        JOptionPane.showMessageDialog(mainWindow, client.readMessage() + '\n' + client.readMessage() + '\n' + client.readMessage());
+        mainWindow.dispatchEvent(new WindowEvent(mainWindow, WindowEvent.WINDOW_CLOSING));
+        ((ConfigurationWindowImpl) configurationWindow).dispatchEvent(
+                new WindowEvent((ConfigurationWindowImpl) configurationWindow, WindowEvent.WINDOW_CLOSING));
+
+    }
+
+    private void prepareTerritoriesFrame()
+    {
+        mainWindow.setEnabled(false);
+        client.readMessage(); //pick opponents
+        client.readMessage();//suggested:
+        gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS); // i didnt change that becouse what for
+        String answer = client.readMessage(); //first suggested or end
+        territoriesWindow = new TerritoriesWindow(gameDto);
+        ArrayList<ArrayList<Circle>> circlesToCount = territoriesWindow.getBoard().getCircles();
+        copyBoard(circlesToCount);
+        while (!answer.contains("End"))
+        {
+            BasicOperationParser.prepareMappingForCounting(answer, circlesToCount);
+            answer = client.readMessage();
+        }
+        territoriesWindow.getBoard().setCircles(circlesToCount);
+    }
+
+    public void declineTerritories()
+    {
+        List<String> message = new ArrayList<>();
+        message.add("false");
+        client.sendMessage(message);
+        mainWindow.setEnabled(true);
+        gameDto.setGameState(GameState.RUNNING);
+        setYourTurn(true);
     }
 
     public void declineDeadGroups()
@@ -265,7 +377,7 @@ public class GameController
         gameDto.setGameState(GameState.RUNNING);
         setYourTurn(true);
     }
-    
+
     public void requestDeadGroups()
     {
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
@@ -273,7 +385,7 @@ public class GameController
         deadGroupsWindow.setVisible(false);
         JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
         String message = client.readMessage();
-        if(message.equals("true"))
+        if (message.equals("true"))
         {
             new Thread(new Runnable()
             {
@@ -283,13 +395,46 @@ public class GameController
                     waitForSelectingDeadGroups();
                 }
             }).start();
-        }
-        else if(message.equals("false"))
+        } else if (message.equals("false"))
         {
             mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
             JOptionPane.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+        }
+    }
+
+    public void requestTerritories()
+    {
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessageWhichIsIndeedTerritories(territoriesWindow.getBoard().getCircles(), gameDto.getSize());
+        client.sendMessage(messages);
+        territoriesWindow.setVisible(false);
+        JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
+        String message = client.readMessage();
+        if (message.equals("true"))
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForSelectingTerritories();
+                }
+            }).start();
+        } else if (message.equals("false"))
+        {
+            mainWindow.setEnabled(true);
+            gameDto.setGameState(GameState.RUNNING);
+            setYourTurn(false);
+            JOptionPane.showMessageDialog(mainWindow, "Opponent declined your territories request, his turn.");
             new Thread(new Runnable()
             {
                 @Override
@@ -307,7 +452,7 @@ public class GameController
         {
             for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
             {//get y, get x
-                if(mainWindow.getBoard().getCircles().get(j).get(i).isOccupied())
+                if (mainWindow.getBoard().getCircles().get(j).get(i).isOccupied())
                 {
                     circlesToCount.get(j).get(i).setOccupied(true);
                     circlesToCount.get(j).get(i).setColor(mainWindow.getBoard().getCircles().get(j).get(i).getColor());
@@ -327,11 +472,12 @@ public class GameController
         {
             ex.printStackTrace();
         }
-        if(client.readMessage().contains("White"))
+        if (client.readMessage().contains("White"))
         {
             gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.WHITE);
             setYourTurn(false);
+            gameDto.setOpponentName(client.readMessage());
             startGame(gameDto);
             new Thread(new Runnable()
             {
@@ -342,12 +488,12 @@ public class GameController
                 }
             }).start();
 
-        }
-        else
+        } else
         {
             gameDto.setGameState(GameState.RUNNING);
             gameDto.setPlayerColor(PlayerColor.BLACK);
             setYourTurn(true);
+            gameDto.setOpponentName(client.readMessage());
             startGame(gameDto);
         }
 
@@ -361,5 +507,10 @@ public class GameController
     public BoardPanel getBoardPanel()
     {
         return mainWindow.getBoard();
+    }
+
+    public void setParentFrame(ConfigurationWindowImpl parentFrame)
+    {
+        this.parentFrame = parentFrame;
     }
 }
