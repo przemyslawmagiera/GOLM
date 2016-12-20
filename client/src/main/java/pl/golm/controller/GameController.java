@@ -7,6 +7,7 @@ import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.dto.GameState;
 import pl.golm.communication.parser.BasicOperationParser;
 import pl.golm.gui.*;
+import pl.golm.gui.impl.ConfigurationWindowImpl;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public class GameController
 {
+    private ConfigurationWindowImpl parentFrame;
     private MainWindow mainWindow;
     private Client client;
     private boolean yourTurn;
@@ -220,6 +222,7 @@ public class GameController
             deadGroupsWindow = new DeadGroupsWindow(gameDto);
             ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
             answer = client.readMessage();
+            copyBoard(circlesToAccept);
             while (!answer.contains("End"))
             {
                 BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
@@ -313,7 +316,9 @@ public class GameController
         String answer = client.readMessage();//opponent suggested or accepted
         if(answer.equals("agreed")) // you are probably white
         {
-            endGame();;
+            endGame();
+            parentFrame.setVisible(true);
+            mainWindow.dispose();
         }
         else
         {
@@ -321,6 +326,7 @@ public class GameController
             territoriesWindow = new TerritoriesWindow(gameDto);
             ArrayList<ArrayList<Circle>> circlesToAccept = territoriesWindow.getBoard().getCircles();
             answer = client.readMessage();
+            copyBoard(circlesToAccept);
             while (!answer.contains("End"))
             {
                 BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
@@ -505,5 +511,10 @@ public class GameController
     public BoardPanel getBoardPanel()
     {
         return mainWindow.getBoard();
+    }
+
+    public void setParentFrame(ConfigurationWindowImpl parentFrame)
+    {
+        this.parentFrame = parentFrame;
     }
 }

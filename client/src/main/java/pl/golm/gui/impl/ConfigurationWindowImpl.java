@@ -40,6 +40,8 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
         JButton confirm = new JButton("CONFIRM");
         final JTextField nameField = new JTextField("name");
         nameField.setPreferredSize(new Dimension(80,30));
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        ConfigurationWindowImpl thisWindow = this;
         confirm.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent actionEvent)
@@ -52,11 +54,11 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
                     gameDto.setType(types.getSelectedValue());
                     JOptionPane.showMessageDialog(null,"Wait patiently for opponent!");
                     setVisible(false);
+                    controller.setParentFrame(thisWindow);
                     controller.requestGame(gameDto);
                 }
             }
         });
-
         add(sizes);
         add(types);
         add(nameField);
