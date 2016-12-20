@@ -25,7 +25,7 @@ public class DeadGroupsWindow extends JFrame
 
     public DeadGroupsWindow(GameDto gameDto)
     {
-        super(UtilGUI.APPLICATION_NAME);
+        super("DEAL WITH DEAD GROUPS!");
         this.gameDto = gameDto;
         setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
         setLayout(new BorderLayout());

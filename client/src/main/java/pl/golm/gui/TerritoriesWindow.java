@@ -25,7 +25,7 @@ public class TerritoriesWindow extends JFrame
 
     public TerritoriesWindow(GameDto gameDto)
     {
-        super(UtilGUI.APPLICATION_NAME);
+        super("DEAL WITH TERRITORIES!");
         this.gameDto = gameDto;
         setSize(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_HEIGHT);
         setLayout(new BorderLayout());

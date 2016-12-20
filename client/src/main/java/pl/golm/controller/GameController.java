@@ -6,6 +6,9 @@ import pl.golm.communication.Player;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.communication.dto.GameState;
 import pl.golm.communication.parser.BasicOperationParser;
+import pl.golm.controller.factory.DialogFactory;
+import pl.golm.controller.factory.impl.DialogFactoryImpl;
+import pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
 import pl.golm.gui.*;
 import pl.golm.gui.impl.ConfigurationWindowImpl;
 
@@ -29,6 +32,8 @@ public class GameController
     private DeadGroupsWindow deadGroupsWindow;
     private TerritoriesWindow territoriesWindow;
     private static ConfigurationWindow configurationWindow = null;
+    private DialogFactory dialogFactory;
+    private DialogFactory errorDialogFactory;
 
     public static void main(String[] args)
     {
@@ -37,6 +42,8 @@ public class GameController
 
     public GameController()
     {
+        dialogFactory = new DialogFactoryImpl();
+        errorDialogFactory = new ErrorDialogFactoryImpl();
         yourTurn = true;
         player = new Player();
         player.setColor(PlayerColor.BLACK);
@@ -80,6 +87,7 @@ public class GameController
             messages.add(message);
             client.sendMessage(messages);
             answer = client.readMessage();
+
             if (answer.equals("Legal move"))
             {
                 client.readMessage();//"fields" override
@@ -99,9 +107,9 @@ public class GameController
                         waitForOpponent();
                     }
                 }).start();
-            } else
+            } else if(!answer.equals("Opponent surrendered"))
             {
-                JOptionPane.showMessageDialog(mainWindow, "Your move is illegal");
+                errorDialogFactory.showMessageDialog(mainWindow, "Your move is illegal");
             }
         }
     }
@@ -166,7 +174,7 @@ public class GameController
             }
             mainWindow.repaint();
             setYourTurn(true);
-            JOptionPane.showMessageDialog(mainWindow, "Your turn");
+            dialogFactory.showMessageDialog(mainWindow, "Your turn");
         } else if (message.contains("Second"))
         {
             handleCountDeadGroups();
@@ -178,14 +186,13 @@ public class GameController
         List<String> message = new ArrayList<>();
         message.add("surrender");
         client.sendMessage(message);
-        JOptionPane.showMessageDialog(mainWindow, "You surrendered, you lost...");
+        dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
         mainWindow.setVisible(false);
     }
 
     public void opponentSurrendered(String message)
     {
-        message = message + " " + client.readMessage() + "!";
-        JOptionPane.showMessageDialog(mainWindow, message);
+        dialogFactory.showMessageDialog(mainWindow, message);
         mainWindow.setVisible(false);
     }
 
@@ -212,7 +219,7 @@ public class GameController
         mainWindow.setEnabled(false);
         if (deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
         {
-            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
+            dialogFactory.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
         }
         String answer = client.readMessage();//opponent suggested or accepted
         if (answer.equals("agreed")) // you are probably white
@@ -310,7 +317,7 @@ public class GameController
         mainWindow.setEnabled(false);
         if (territoriesWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))
         {
-            JOptionPane.showMessageDialog(mainWindow, "Please wait for opponent to suggest territories.");
+            dialogFactory.showMessageDialog(mainWindow, "Please wait for opponent to suggest territories.");
         }
         String answer = client.readMessage();//opponent suggested or accepted
         if (answer.equals("agreed")) // you are probably white
@@ -333,7 +340,7 @@ public class GameController
 
     private void endGame()
     {
-        JOptionPane.showMessageDialog(mainWindow, client.readMessage() + '\n' + client.readMessage() + '\n' + client.readMessage());
+        dialogFactory.showMessageDialog(mainWindow, client.readMessage() + '\n' + client.readMessage() + '\n' + client.readMessage());
         mainWindow.dispatchEvent(new WindowEvent(mainWindow, WindowEvent.WINDOW_CLOSING));
         ((ConfigurationWindowImpl) configurationWindow).dispatchEvent(
                 new WindowEvent((ConfigurationWindowImpl) configurationWindow, WindowEvent.WINDOW_CLOSING));
@@ -383,7 +390,7 @@ public class GameController
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
         deadGroupsWindow.setVisible(false);
-        JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
+        dialogFactory.showMessageDialog(mainWindow, "Wait for acceptance");
         String message = client.readMessage();
         if (message.equals("true"))
         {
@@ -400,7 +407,7 @@ public class GameController
             mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
-            JOptionPane.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
+            dialogFactory.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
             new Thread(new Runnable()
             {
                 @Override
@@ -417,7 +424,7 @@ public class GameController
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessageWhichIsIndeedTerritories(territoriesWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
         territoriesWindow.setVisible(false);
-        JOptionPane.showMessageDialog(mainWindow, "Wait for acceptance");
+        dialogFactory.showMessageDialog(mainWindow, "Wait for acceptance");
         String message = client.readMessage();
         if (message.equals("true"))
         {
@@ -434,7 +441,7 @@ public class GameController
             mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
-            JOptionPane.showMessageDialog(mainWindow, "Opponent declined your territories request, his turn.");
+            dialogFactory.showMessageDialog(mainWindow, "Opponent declined your territories request, his turn.");
             new Thread(new Runnable()
             {
                 @Override

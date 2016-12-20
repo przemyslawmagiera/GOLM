@@ -3,6 +3,8 @@ package pl.golm.gui.impl;
 import jdk.nashorn.internal.scripts.JO;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.controller.GameController;
+import pl.golm.controller.factory.DialogFactory;
+import pl.golm.controller.factory.impl.DialogFactoryImpl;
 import pl.golm.gui.ConfigurationWindow;
 
 import javax.swing.*;
@@ -15,11 +17,13 @@ import java.awt.event.ActionListener;
  */
 public class ConfigurationWindowImpl extends JFrame implements ConfigurationWindow
 {
-    GameController controller = GameController.getInstance();
+    private GameController controller = GameController.getInstance();
+    private DialogFactory dialogFactory;
 
     public ConfigurationWindowImpl()
     {
         super("GOLM 1.0 Launcher");
+        dialogFactory = new DialogFactoryImpl();
         setSize(350, 150);
         setResizable(false);
         setLayout(new FlowLayout());
@@ -47,7 +51,7 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
                     gameDto.setPlayerName(nameField.getText());
                     gameDto.setSize(sizes.getSelectedValue());
                     gameDto.setType(types.getSelectedValue());
-                    JOptionPane.showMessageDialog(null,"Wait patiently for opponent!");
+                    dialogFactory.showMessageDialog(null,"Wait patiently for opponent!");
                     setVisible(false);
                     controller.setParentFrame(thisWindow);
                     controller.requestGame(gameDto);
