@@ -17,11 +17,6 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
 {
     GameController controller = GameController.getInstance();
 
-    public static void main(String[] args)
-    {
-        ConfigurationWindow cf = new ConfigurationWindowImpl();
-    }
-
     public ConfigurationWindowImpl()
     {
         super("GOLM 1.0 Launcher");
@@ -64,5 +59,10 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
         add(nameField);
         add(confirm);
         setVisible(true);
+    }
+
+    public ConfigurationWindow getInstance()
+    {
+        return this;
     }
 }
