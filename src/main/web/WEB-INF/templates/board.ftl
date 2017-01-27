@@ -17,6 +17,8 @@ height: 50px;
 
 <script>
 function generateGrid( rows, cols ) {
+    rows = ${size}
+    cols = ${size}
 var grid = "<table>";
     for ( row = 1; row <= rows; row++ ) {
     grid += "<tr>";

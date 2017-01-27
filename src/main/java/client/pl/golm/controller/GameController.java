@@ -89,6 +89,8 @@ public class GameController implements Runnable
         gameDto.setPlayerName(name);
         requestGame(gameDto);
 
+        model.addAttribute("size", Integer.parseInt(size));
+
         return "/board";
     }
 
