@@ -15,21 +15,21 @@ import java.util.Random;
 /**
  * Created by Przemek on 04.12.2016.
  */
-public class GameServer
+public class GameServer implements Runnable
 {
     private Map<GameSettings, ClientSettings> gameClientSettingsMap;
 
     public static void main(String[] args)
     {
-        new GameServer().start();
+        new GameServer().run();
     }
 
-    private GameServer()
+    public GameServer()
     {
         gameClientSettingsMap = new HashMap<GameSettings, ClientSettings>();
     }
 
-    private void start()
+    public void run()
     {
         try (ServerSocket serverSocket = new ServerSocket(5000); ServerSocket botSocket = new ServerSocket(5724))
         {

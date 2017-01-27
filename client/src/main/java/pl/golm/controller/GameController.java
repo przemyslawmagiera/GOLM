@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by Przemek on 04.12.2016.
  */
-public class GameController
+public class GameController implements Runnable
 {
     private ConfigurationWindowImpl parentFrame;
     private MainWindow mainWindow;
@@ -47,6 +47,11 @@ public class GameController
         yourTurn = true;
         player = new Player();
         player.setColor(PlayerColor.BLACK);
+    }
+
+    public void run()
+    {
+        configurationWindow = new ConfigurationWindowImpl();
     }
 
     public void initMainWindow(GameDto gameDto)
