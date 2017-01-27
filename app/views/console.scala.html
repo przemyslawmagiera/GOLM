@@ -1,0 +1,63 @@
+@(url: String)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        div#messages {
+            width: 600px;
+            height: 600px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        div.msg {
+            max-width: 600px;
+            text-wrap: normal;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="messages" >
+
+    </div>
+    <input type="text" id="message"></input>
+    <input type="button" value="send" id="send">
+
+    <script type='text/javascript' src='assets/javascripts/jquery-3.1.1.min.js'></script>
+    <script language="javascript">
+        var $messages = $("#messages"),
+                $send = $("#send"),
+                $message = $("#message"),
+                connection = new WebSocket("@url");
+        $send.prop("disabled", true);
+
+        var send = function () {
+            var text = $message.val();
+            $message.val("");
+            connection.send(text);
+        };
+
+        connection.onopen = function () {
+            $send.prop("disabled", false);
+            $messages.prepend($("Connected"));
+            $send.on('click', send);
+            $message.keypress(function(event){
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if(keycode == '13'){
+                    send();
+                }
+            });
+        };
+        connection.onerror = function (error) {
+            console.log('WebSocket Error ', error);
+        };
+        connection.onmessage = function (event) {
+            $messages.append($("<div class=\"msg\">" + event.data + "</div>"))
+        }
+
+    </script>
+</body>
+</html>

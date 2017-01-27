@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--suppress CssUnknownTarget, CssUnknownTarget -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            * {
+                margin: 0 0 0 0;
+                padding: 0 0 0 0;
+            }
+
+            div#board-img {
+                display: block;
+                width: 960px;
+                height: 960px;
+                background-image: url('/assets/images/9x9.png');
+                overflow: hidden;
+            }
+
+            div#board {
+                display: block;
+                width: 936px;
+                height: 936px;
+
+                margin-top: 12px;
+                margin-left: 12px;
+            }
+
+            div.row {
+                display: block;
+                height: 104px;
+                width: 936px;
+            }
+
+            a.field {
+                /*box-sizing: border-box;*/
+                /*-webkit-box-sizing: border-box;*/
+                /*border: 5px solid green;*/
+                /*background: rgba(0,0,0,0.5);*/
+                display: inline-block;
+                height: 104px;
+                width: 104px;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div id="board-img">
+            <div id="board">
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+                <div class="row">
+                    <a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a><a class="field"></a>
+                </div>
+            </div>
+            <!--<table>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>--->
+        </div>
+    </body>
+</html>
