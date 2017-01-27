@@ -15,6 +15,7 @@ height: 50px;
 }
 </style>
 
+
 <script>
 function generateGrid( rows, cols ) {
     rows = ${size}
@@ -36,6 +37,25 @@ var grid = "<table>";
     var index = $( "td" ).index( this );
     var row = Math.floor( ( index ) / 5) + 1;
     var col = ( index % 5 ) + 1;
+
+    var form = document.createElement("form");
+    var x = document.createElement("input");
+    var y = document.createElement("input");
+    form.method = "POST";
+    form.action = "/game/moveRequest";
+
+    x.value=row;
+    x.name="x";
+    form.appendChild(x);
+
+    y.value=row;
+    y.name="y";
+    form.appendChild(y);
+
+    document.body.appendChild(form);
+    form.submit();
+
+
     $( "span" ).text( "That was row " + row + " and col " + col );
     $( this ).css( 'background-color', 'red' );
     });
@@ -43,4 +63,4 @@ var grid = "<table>";
 </script>
 
 </body>
-</html></html>
+</html>

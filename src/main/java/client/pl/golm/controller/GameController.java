@@ -127,21 +127,7 @@ public class GameController implements Runnable
             gameDto.setPlayerColor(PlayerColor.BLACK);
             setYourTurn(true);
             gameDto.setOpponentName(client.readMessage());
-            startGame(gameDto);
         }
-
-    }
-
-    public void startGame(GameDto gameDto)
-    {
-        //initMainWindow(gameDto);
-    }
-
-
-    public void initMainWindow(GameDto gameDto)
-    {
-        this.gameDto = gameDto;
-        this.mainWindow = new MainWindow(gameDto);
     }
 
     public boolean isYourTurn()
@@ -166,8 +152,12 @@ public class GameController implements Runnable
         return instance;
     }
 
-    public void moveRequest(int x, int y)
+    @RequestMapping(value = "/moveRequest", method = RequestMethod.POST)
+    public void moveRequest(@RequestParam Map<String,String> params)
     {
+        int x = Integer.parseInt(params.get("x"));
+        int y = Integer.parseInt(params.get("y"));
+
         if (isYourTurn())
         {
             String answer = null;
@@ -181,7 +171,6 @@ public class GameController implements Runnable
             {
                 client.readMessage();//"fields" override
                 answer = client.readMessage();
-                clearCircles();
                 while (!answer.equals("End fields"))
                 {
                     BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
@@ -202,6 +191,7 @@ public class GameController implements Runnable
             }
         }
     }
+    
 
     public void passRequest()
     {
@@ -217,7 +207,6 @@ public class GameController implements Runnable
             if (answer.contains("Fields"))
             {
                 message = client.readMessage();
-                clearCircles();
                 while (!message.equals("End fields"))
                 {
                     BasicOperationParser.parseMappingToCircles(message, mainWindow.getBoard().getCircles());
@@ -238,23 +227,11 @@ public class GameController implements Runnable
         }
     }
 
-    private void clearCircles()
-    {
-        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
-        {
-            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
-            {//get y, get x
-                mainWindow.getBoard().getCircles().get(j).get(i).setOccupied(false);
-            }
-        }
-    }
-
     public void waitForOpponent()
     {
         String message = client.readMessage();
         if (message.contains("Fields"))
         {
-            clearCircles();
             String answer = client.readMessage();
             while (!answer.equals("End fields"))
             {
