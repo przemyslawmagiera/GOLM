@@ -1,12 +1,15 @@
 package client.pl.golm.communication.dto;
 
 import client.pl.golm.gui.PlayerColor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by Przemek on 30.11.2016.
  */
+@Component
 public class GameDto
 {
     private Integer size;

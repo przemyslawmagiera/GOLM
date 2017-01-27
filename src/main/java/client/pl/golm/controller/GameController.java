@@ -11,6 +11,7 @@ import client.pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
 import client.pl.golm.gui.*;
 import client.pl.golm.gui.impl.ConfigurationWindowImpl;
 import client.pl.golm.communication.dto.GameState;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,7 @@ public class GameController implements Runnable
     private boolean yourTurn;
     private Player player;
     private static volatile GameController instance;
+    @Autowired
     private GameDto gameDto;
     private DeadGroupsWindow deadGroupsWindow;
     private TerritoriesWindow territoriesWindow;
@@ -73,8 +75,64 @@ public class GameController implements Runnable
         String multi = params.get("multi");
         String size  = params.get("size");
         String name = params.get("name");
-        model.addAttribute()
+
+        if(multi.equals("multiplayer"))
+        {
+            gameDto.setType("Multi player");
+        }
+        else
+        {
+            gameDto.setType("Single player");
+        }
+        size.replace(" ","");
+        gameDto.setSize(Integer.parseInt(size));
+        gameDto.setPlayerName(name);
+        requestGame(gameDto);
+
         return "/board";
+    }
+
+    public void requestGame(GameDto gameDto)
+    {
+        client = new Client();
+        try
+        {
+            client.configure();
+            client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        if (client.readMessage().contains("White"))
+        {
+            gameDto.setGameState(GameState.RUNNING);
+            gameDto.setPlayerColor(PlayerColor.WHITE);
+            setYourTurn(false);
+            gameDto.setOpponentName(client.readMessage());
+            startGame(gameDto);
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+
+        } else
+        {
+            gameDto.setGameState(GameState.RUNNING);
+            gameDto.setPlayerColor(PlayerColor.BLACK);
+            setYourTurn(true);
+            gameDto.setOpponentName(client.readMessage());
+            startGame(gameDto);
+        }
+
+    }
+
+    public void startGame(GameDto gameDto)
+    {
+        //initMainWindow(gameDto);
     }
 
 
@@ -497,48 +555,6 @@ public class GameController implements Runnable
         }
     }
 
-    public void requestGame(GameDto gameDto)
-    {
-        client = new Client();
-        try
-        {
-            client.configure();
-            client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        if (client.readMessage().contains("White"))
-        {
-            gameDto.setGameState(GameState.RUNNING);
-            gameDto.setPlayerColor(PlayerColor.WHITE);
-            setYourTurn(false);
-            gameDto.setOpponentName(client.readMessage());
-            startGame(gameDto);
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    waitForOpponent();
-                }
-            }).start();
-
-        } else
-        {
-            gameDto.setGameState(GameState.RUNNING);
-            gameDto.setPlayerColor(PlayerColor.BLACK);
-            setYourTurn(true);
-            gameDto.setOpponentName(client.readMessage());
-            startGame(gameDto);
-        }
-
-    }
-
-    public void startGame(GameDto gameDto)
-    {
-        initMainWindow(gameDto);
-    }
 
     public BoardPanel getBoardPanel()
     {
