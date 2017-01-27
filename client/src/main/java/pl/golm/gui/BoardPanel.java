@@ -1,7 +1,5 @@
 package pl.golm.gui;
 
-import pl.golm.gui.impl.CircleImpl;
-
 import java.util.ArrayList;
 
 /**

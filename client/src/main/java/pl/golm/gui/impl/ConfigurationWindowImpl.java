@@ -1,7 +1,10 @@
 package pl.golm.gui.impl;
 
+import jdk.nashorn.internal.scripts.JO;
 import pl.golm.communication.dto.GameDto;
 import pl.golm.controller.GameController;
+import pl.golm.controller.factory.DialogFactory;
+import pl.golm.controller.factory.impl.DialogFactoryImpl;
 import pl.golm.gui.ConfigurationWindow;
 
 import javax.swing.*;
@@ -14,16 +17,15 @@ import java.awt.event.ActionListener;
  */
 public class ConfigurationWindowImpl extends JFrame implements ConfigurationWindow
 {
-    GameController controller = GameController.getInstance();
-
-    public static void main(String[] args)
-    {
-        ConfigurationWindow cf = new ConfigurationWindowImpl();
-    }
+    private GameController controller = GameController.getInstance();
+    private DialogFactory dialogFactory;
 
     public ConfigurationWindowImpl()
     {
-        setSize(100, 200);
+        super("GOLM 1.0 Launcher");
+        dialogFactory = new DialogFactoryImpl();
+        setSize(350, 150);
+        setResizable(false);
         setLayout(new FlowLayout());
         DefaultListModel<Integer> sizeList = new DefaultListModel<Integer>();
         sizeList.addElement(9);
@@ -37,6 +39,8 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
         JButton confirm = new JButton("CONFIRM");
         final JTextField nameField = new JTextField("name");
         nameField.setPreferredSize(new Dimension(80,30));
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        ConfigurationWindowImpl thisWindow = this;
         confirm.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent actionEvent)
@@ -47,15 +51,22 @@ public class ConfigurationWindowImpl extends JFrame implements ConfigurationWind
                     gameDto.setPlayerName(nameField.getText());
                     gameDto.setSize(sizes.getSelectedValue());
                     gameDto.setType(types.getSelectedValue());
+                    dialogFactory.showMessageDialog(null,"Wait patiently for opponent!");
+                    setVisible(false);
+                    controller.setParentFrame(thisWindow);
                     controller.requestGame(gameDto);
                 }
             }
         });
-
         add(sizes);
         add(types);
         add(nameField);
         add(confirm);
         setVisible(true);
+    }
+
+    public ConfigurationWindow getInstance()
+    {
+        return this;
     }
 }

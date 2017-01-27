@@ -1,5 +1,7 @@
 package pl.golm.server;
 
+import pl.golm.bot.Bot;
+import pl.golm.bot.impl.Ticobot;
 import pl.golm.game.GameSettings;
 
 import java.io.*;
@@ -8,6 +10,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Przemek on 04.12.2016.
@@ -28,14 +31,14 @@ public class GameServer
 
     private void start()
     {
-        try (ServerSocket serverSocket = new ServerSocket(5000))
+        try (ServerSocket serverSocket = new ServerSocket(5000); ServerSocket botSocket = new ServerSocket(5724))
         {
             while (true)
             {
                 Socket playerSocket = serverSocket.accept();
-                BufferedWriter playerWritter = new BufferedWriter(new PrintWriter(playerSocket.getOutputStream()));
-                playerWritter.write("Connected to server. Please specify game settings.");
-                playerWritter.flush();
+                PrintWriter playerWritter = new PrintWriter(playerSocket.getOutputStream());
+                //playerWritter.println("Connected to server. Please specify game settings.");
+                //playerWritter.flush();
                 BufferedReader playerReader = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 int boardSize = Integer.parseInt(playerReader.readLine());
                 boolean isMultiplayer = Boolean.parseBoolean(playerReader.readLine());
@@ -44,7 +47,20 @@ public class GameServer
                 ClientSettings clientSettings = new ClientSettings(playerSocket, playerReader, playerWritter);
                 if (!gameSettings.isMultiPlayer())
                 {
-                    //TODO implement running a single player game
+                    Bot bot = new Ticobot(gameSettings);
+                    new Thread(bot).start();
+                    Socket socket = botSocket.accept();
+                    PrintWriter botWriter = new PrintWriter(socket.getOutputStream());
+                    botWriter.println("Connected to server.");
+                    botWriter.flush();
+                    BufferedReader botReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    GameService gameService;
+                    Random random = new Random();
+                    if (random.nextBoolean())
+                        gameService = new GameService( new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName), clientSettings, gameSettings);
+                    else
+                        gameService = new GameService(clientSettings, gameSettings, new ClientSettings(socket, botReader, botWriter), new GameSettings(gameSettings.getBoardSize(), false, Ticobot.botName));
+                    new Thread (gameService).start();
                 }
                 else
                 {
@@ -57,7 +73,7 @@ public class GameServer
                         {
                             foundOpponent = true;
                             GameService gameService = new GameService(entry.getValue(), entry.getKey(), clientSettings, gameSettings);
-                            gameService.run();
+                            new Thread (gameService).start();
                             entries.remove();
                         }
                     }
@@ -66,7 +82,7 @@ public class GameServer
                 }
             }
         }
-        catch (IOException exception)
+        catch (Exception exception)
         {
             exception.printStackTrace();
         }

@@ -1,9 +1,13 @@
 package pl.golm.gui.impl;
 
 import pl.golm.UtilGUI;
+import pl.golm.communication.dto.GameDto;
+import pl.golm.communication.dto.GameState;
 import pl.golm.controller.GameController;
 import pl.golm.gui.BoardPanel;
+import pl.golm.gui.Circle;
 import pl.golm.gui.GUIComponent;
+import pl.golm.gui.PlayerColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,15 +22,18 @@ import java.util.*;
 public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener, GUIComponent
 {
     private int option;
-    private ArrayList<ArrayList<CircleImpl>> circles;
+    private ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
     private GameController controller = GameController.getInstance();
+    private PlayerColor playerColor;
+    private GameDto gameDto;
 
-    public BoardPanelImpl()
+    public BoardPanelImpl(GameDto gameDto)
     {
-        circles = new ArrayList<ArrayList<CircleImpl>>();
+        this.gameDto = gameDto;
+        circles = new ArrayList<ArrayList<Circle>>();
         grid = new ArrayList<Line2D.Double>();
-        option = 13;
+        option = gameDto.getSize();
         setBackground(UtilGUI.BOARD_BACKGROUND);
         setPreferredSize(new Dimension(UtilGUI.APPLICATION_WIDTH, UtilGUI.APPLICATION_WIDTH));
         addMouseListener(this);
@@ -35,7 +42,8 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g)
+    {
         super.paintComponent(g);
         drawGrid(g);
     }
@@ -49,57 +57,90 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
 
     private void initBoard()
     {
-        double x1 = UtilGUI.APPLICATION_WIDTH/(option+1);
-        double x2 = x1*(option);
+        double x1 = UtilGUI.APPLICATION_WIDTH / (option + 1);
+        double x2 = x1 * (option);
         double y1 = x1;
-        double y2 = y1*(option);
-        for(int i = 1; i <= option; i++)
+        double y2 = y1 * (option);
+        for (int i = 1; i <= option; i++)
         {
-            ArrayList<CircleImpl> buffer = new ArrayList<CircleImpl>();
+            ArrayList<Circle> buffer = new ArrayList<Circle>();
             for (int j = 1; j <= option; j++)
             {
-                buffer.add(new CircleImpl(x1*j,y1*i,UtilGUI.DEFAULT_CIRCLE_SIZE));
+                buffer.add(new Circle(x1 * j, y1 * i, UtilGUI.DEFAULT_CIRCLE_SIZE));
             }
             circles.add(buffer);
-            grid.add(new Line2D.Double(x1, y1*i, x2, y1*i));
-            grid.add(new Line2D.Double(x1*i, y1, x1*i, y2));
+            grid.add(new Line2D.Double(x1, y1 * i, x2, y1 * i));
+            grid.add(new Line2D.Double(x1 * i, y1, x1 * i, y2));
         }
     }
 
     private void drawComps(Graphics2D g2d)
     {
-        for(int i = 0; i < option; i++)
+        for (int i = 0; i < option; i++)
         {
             for (int j = 0; j < option; j++)
             {
-                CircleImpl actual = circles.get(j).get(i);
-                if(actual.isOccupied())
+                g2d.draw(grid.get(2 * i));
+                g2d.draw(grid.get(2 * i + 1));
+            }
+        }
+
+        for (int i = 0; i < option; i++)
+        {
+            for (int j = 0; j < option; j++)
+            {
+                Circle actual = circles.get(j).get(i);
+                if (actual.isOccupied())
                 {
                     g2d.setColor(actual.getColor());
                     g2d.fill(actual);
-                    g2d.setColor(null);
-                }
-                else
+                    g2d.setColor(Color.BLACK);
+                } else
                 {
                     g2d.draw(actual);
                 }
             }
-            g2d.draw(grid.get(2*i));
-            g2d.draw(grid.get(2*i+1));
+        }
+        for (int i = 0; i < option; i++)
+        {
+            for (int j = 0; j < option; j++)
+            {
+                Circle actual = circles.get(j).get(i);
+                if (actual.getSignature() != null)
+                {
+                    g2d.setColor(actual.getSignature());
+                    g2d.fill(actual);
+                    g2d.setColor(Color.BLACK);
+                } else
+                {
+                    g2d.draw(actual);
+                }
+            }
         }
     }
 
     public void mouseClicked(MouseEvent mouseEvent)
     {
-        if(controller.isYourTurn())
+        for (int i = 0; i < option; i++)
         {
-            for (int i = 0; i < option; i++)
-            {
-                for (int j = 0; j < option; j++)
-                {//get y, get x
-                    if (circles.get(j).get(i).contains(mouseEvent.getPoint().getX(), mouseEvent.getPoint().getY()))
+            for (int j = 0; j < option; j++)
+            {//get y, get x
+                if (circles.get(j).get(i).contains(mouseEvent.getPoint().getX(), mouseEvent.getPoint().getY()))
+                {
+                    if(gameDto.getGameState().equals(GameState.RUNNING))
                     {
                         controller.moveRequest(i, j);
+                    }
+                    else if(GameState.COUNTING_DEAD_GROUPS.equals(gameDto.getGameState()))
+                    {
+                        if (circles.get(j).get(i).getSignature() == null)
+                            circles.get(j).get(i).setSignature(Color.GREEN);
+                        else
+                            circles.get(j).get(i).setSignature(null);
+                    }
+                    else
+                    {
+                        //do nothing
                     }
                 }
             }
@@ -109,6 +150,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
 
     public void mousePressed(MouseEvent mouseEvent)
     {
+
     }
 
     public void mouseReleased(MouseEvent mouseEvent)
@@ -136,12 +178,12 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
         this.option = option;
     }
 
-    public ArrayList<ArrayList<CircleImpl>> getCircles()
+    public ArrayList<ArrayList<Circle>> getCircles()
     {
         return circles;
     }
 
-    public void setCircles(ArrayList<ArrayList<CircleImpl>> circles)
+    public void setCircles(ArrayList<ArrayList<Circle>> circles)
     {
         this.circles = circles;
     }
