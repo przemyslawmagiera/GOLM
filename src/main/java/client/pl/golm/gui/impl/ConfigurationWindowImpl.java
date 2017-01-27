@@ -1,11 +1,10 @@
-package pl.golm.gui.impl;
+package client.pl.golm.gui.impl;
 
-import jdk.nashorn.internal.scripts.JO;
-import pl.golm.communication.dto.GameDto;
-import pl.golm.controller.GameController;
-import pl.golm.controller.factory.DialogFactory;
-import pl.golm.controller.factory.impl.DialogFactoryImpl;
-import pl.golm.gui.ConfigurationWindow;
+import client.pl.golm.communication.dto.GameDto;
+import client.pl.golm.controller.GameController;
+import client.pl.golm.controller.factory.DialogFactory;
+import client.pl.golm.controller.factory.impl.DialogFactoryImpl;
+import client.pl.golm.gui.ConfigurationWindow;
 
 import javax.swing.*;
 import java.awt.*;

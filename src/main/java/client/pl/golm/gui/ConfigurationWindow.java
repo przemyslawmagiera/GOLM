@@ -1,4 +1,4 @@
-package pl.golm.gui;
+package client.pl.golm.gui;
 
 /**
  * Created by Przemek on 04.12.2016.

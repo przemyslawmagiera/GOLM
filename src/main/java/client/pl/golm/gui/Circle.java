@@ -1,4 +1,4 @@
-package pl.golm.gui;
+package client.pl.golm.gui;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

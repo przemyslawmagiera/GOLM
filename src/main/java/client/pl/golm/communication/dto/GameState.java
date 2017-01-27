@@ -1,4 +1,4 @@
-package pl.golm.communication.dto;
+package client.pl.golm.communication.dto;
 
 /**
  * Created by Przemek on 18.12.2016.

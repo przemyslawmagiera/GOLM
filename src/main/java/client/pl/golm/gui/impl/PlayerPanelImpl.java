@@ -1,9 +1,9 @@
-package pl.golm.gui.impl;
+package client.pl.golm.gui.impl;
 
-import pl.golm.UtilGUI;
-import pl.golm.controller.GameController;
-import pl.golm.gui.GUIComponent;
-import pl.golm.gui.PlayerPanel;
+import client.pl.golm.UtilGUI;
+import client.pl.golm.controller.GameController;
+import client.pl.golm.gui.GUIComponent;
+import client.pl.golm.gui.PlayerPanel;
 
 import javax.swing.*;
 import java.awt.*;

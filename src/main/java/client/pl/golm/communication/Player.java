@@ -1,6 +1,6 @@
-package pl.golm.communication;
+package client.pl.golm.communication;
 
-import pl.golm.gui.PlayerColor;
+import client.pl.golm.gui.PlayerColor;
 
 /**
  * Created by Przemek on 04.12.2016.

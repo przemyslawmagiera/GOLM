@@ -1,4 +1,4 @@
-package pl.golm.game.exception;
+package server.pl.golm.game.exception;
 
 /**
  * exception thrown when intended to use illegal board sizes

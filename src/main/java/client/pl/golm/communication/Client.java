@@ -1,9 +1,6 @@
-package pl.golm.communication;
+package client.pl.golm.communication;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import pl.golm.controller.GameController;
-import pl.golm.gui.ConfigurationWindow;
-import pl.golm.gui.impl.ConfigurationWindowImpl;
+import client.pl.golm.controller.GameController;
 
 import java.io.*;
 import java.net.Socket;

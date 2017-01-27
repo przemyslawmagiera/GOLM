@@ -1,7 +1,7 @@
-package pl.golm.communication.parser;
+package client.pl.golm.communication.parser;
 
-import pl.golm.communication.dto.GameDto;
-import pl.golm.gui.Circle;
+import client.pl.golm.communication.dto.GameDto;
+import client.pl.golm.gui.Circle;
 
 import java.awt.*;
 import java.util.ArrayList;

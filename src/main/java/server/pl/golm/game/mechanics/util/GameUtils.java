@@ -1,6 +1,7 @@
-package pl.golm.game.mechanics.util;
+package server.pl.golm.game.mechanics.util;
 
-import pl.golm.game.model.*;
+import server.pl.golm.game.model.*;
+
 import java.util.*;
 
 /**

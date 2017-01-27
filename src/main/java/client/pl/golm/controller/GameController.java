@@ -1,25 +1,32 @@
-package pl.golm.controller;
+package client.pl.golm.controller;
 
 
-import pl.golm.communication.Client;
-import pl.golm.communication.Player;
-import pl.golm.communication.dto.GameDto;
-import pl.golm.communication.dto.GameState;
-import pl.golm.communication.parser.BasicOperationParser;
-import pl.golm.controller.factory.DialogFactory;
-import pl.golm.controller.factory.impl.DialogFactoryImpl;
-import pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
-import pl.golm.gui.*;
-import pl.golm.gui.impl.ConfigurationWindowImpl;
+import client.pl.golm.communication.Client;
+import client.pl.golm.communication.Player;
+import client.pl.golm.communication.dto.GameDto;
+import client.pl.golm.communication.parser.BasicOperationParser;
+import client.pl.golm.controller.factory.DialogFactory;
+import client.pl.golm.controller.factory.impl.DialogFactoryImpl;
+import client.pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
+import client.pl.golm.gui.*;
+import client.pl.golm.gui.impl.ConfigurationWindowImpl;
+import client.pl.golm.communication.dto.GameState;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Przemek on 04.12.2016.
  */
+@Controller
+@RequestMapping("/game")
 public class GameController implements Runnable
 {
     private ConfigurationWindowImpl parentFrame;
@@ -51,8 +58,25 @@ public class GameController implements Runnable
 
     public void run()
     {
-        configurationWindow = new ConfigurationWindowImpl();
+        //configurationWindow = new ConfigurationWindowImpl();
     }
+
+    @RequestMapping(value = "/startGame", method = RequestMethod.POST)
+    public String gameRequest(@RequestParam Map<String, String> params, Model model)
+    {
+        dialogFactory = new DialogFactoryImpl();
+        errorDialogFactory = new ErrorDialogFactoryImpl();
+        yourTurn = true;
+        player = new Player();
+        player.setColor(PlayerColor.BLACK);
+
+        String multi = params.get("multi");
+        String size  = params.get("size");
+        String name = params.get("name");
+        model.addAttribute()
+        return "/board";
+    }
+
 
     public void initMainWindow(GameDto gameDto)
     {

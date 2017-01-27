@@ -1,9 +1,9 @@
-package pl.golm.game.model.impl;
+package server.pl.golm.game.model.impl;
 
-import pl.golm.game.mechanics.util.GameUtils;
-import pl.golm.game.model.Field;
-import pl.golm.game.model.Move;
-import pl.golm.game.model.Player;
+import server.pl.golm.game.model.Field;
+import server.pl.golm.game.model.Move;
+import server.pl.golm.game.model.Player;
+
 import java.util.List;
 
 /**

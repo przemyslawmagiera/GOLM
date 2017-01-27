@@ -1,9 +1,10 @@
-package pl.golm.game.model.impl;
+package server.pl.golm.game.model.impl;
 
-import pl.golm.game.exception.WrongBoardSizeException;
-import pl.golm.game.model.Board;
-import pl.golm.game.model.Field;
-import pl.golm.game.model.Move;
+import server.pl.golm.game.exception.WrongBoardSizeException;
+import server.pl.golm.game.model.Board;
+import server.pl.golm.game.model.Field;
+import server.pl.golm.game.model.Move;
+
 import java.util.ArrayList;
 import java.util.List;
 

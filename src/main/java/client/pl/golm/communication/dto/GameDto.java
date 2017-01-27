@@ -1,6 +1,6 @@
-package pl.golm.communication.dto;
+package client.pl.golm.communication.dto;
 
-import pl.golm.gui.PlayerColor;
+import client.pl.golm.gui.PlayerColor;
 
 import java.util.List;
 

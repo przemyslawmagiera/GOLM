@@ -1,10 +1,10 @@
-package pl.golm.gui;
+package client.pl.golm.gui;
 
-import pl.golm.UtilGUI;
-import pl.golm.communication.dto.GameDto;
-import pl.golm.communication.dto.GameState;
-import pl.golm.controller.GameController;
-import pl.golm.gui.impl.BoardPanelImpl;
+import client.pl.golm.UtilGUI;
+import client.pl.golm.communication.dto.GameDto;
+import client.pl.golm.communication.dto.GameState;
+import client.pl.golm.controller.GameController;
+import client.pl.golm.gui.impl.BoardPanelImpl;
 
 import javax.swing.*;
 import java.awt.*;

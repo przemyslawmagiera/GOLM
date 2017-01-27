@@ -1,4 +1,4 @@
-package pl.golm.controller.factory;
+package client.pl.golm.controller.factory;
 
 import javax.swing.*;
 

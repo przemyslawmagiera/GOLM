@@ -1,4 +1,4 @@
-package pl.golm.gui;
+package client.pl.golm.gui;
 
 import java.util.ArrayList;
 

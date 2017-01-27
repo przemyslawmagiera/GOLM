@@ -1,4 +1,4 @@
-package pl.golm.game.model;
+package server.pl.golm.game.model;
 
 import java.util.List;
 

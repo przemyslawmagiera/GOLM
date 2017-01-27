@@ -1,4 +1,4 @@
-package pl.golm.game.model;
+package server.pl.golm.game.model;
 
 /**
  * interface of functions that every Player implementation must have

@@ -1,11 +1,11 @@
-package pl.golm.server.akka;
+package server.pl.golm.server.akka;
 
 import akka.actor.AbstractLoggingActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.japi.pf.ReceiveBuilder;
-import pl.golm.server.GameServer;
+import server.pl.golm.server.GameServer;
 
 public class MainServer
 {

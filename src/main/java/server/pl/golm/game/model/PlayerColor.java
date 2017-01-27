@@ -1,4 +1,4 @@
-package pl.golm.game.model;
+package server.pl.golm.game.model;
 
 /**
  * enum containing possible colours for players, black always moves first, white gets komi bonus

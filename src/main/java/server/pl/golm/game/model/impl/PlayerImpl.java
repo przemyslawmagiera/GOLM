@@ -1,7 +1,7 @@
-package pl.golm.game.model.impl;
+package server.pl.golm.game.model.impl;
 
-import pl.golm.game.model.Player;
-import pl.golm.game.model.PlayerColor;
+import server.pl.golm.game.model.Player;
+import server.pl.golm.game.model.PlayerColor;
 
 /**
  * Class implementation of Player interface

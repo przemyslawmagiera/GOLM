@@ -1,7 +1,6 @@
-package pl.golm.controller.factory.impl;
+package client.pl.golm.controller.factory.impl;
 
-import pl.golm.controller.GameController;
-import pl.golm.controller.factory.DialogFactory;
+import client.pl.golm.controller.factory.DialogFactory;
 
 import javax.swing.*;
 
