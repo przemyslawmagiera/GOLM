@@ -31,12 +31,12 @@ var grid = "<table>";
     return grid;
     }
 
-    $( "#tableContainer" ).append( generateGrid( 5, 5) );
+    $( "#tableContainer" ).append( generateGrid( ${size}, ${size}) );
 
     $( "td" ).click(function() {
     var index = $( "td" ).index( this );
-    var row = Math.floor( ( index ) / 5) + 1;
-    var col = ( index % 5 ) + 1;
+    var row = Math.floor( ( index ) / ${size});
+    var col = ( index % ${size} );
 
     var form = document.createElement("form");
     var x = document.createElement("input");
