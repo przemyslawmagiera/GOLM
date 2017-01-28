@@ -46,7 +46,7 @@ public class GameController implements Runnable
 
     public void run()
     {
-        configurationWindow = new ConfigurationWindowImpl();
+        requestGame(gameDto);
     }
 
     public void initMainWindow(GameDto gameDto)
@@ -485,15 +485,7 @@ public class GameController implements Runnable
             gameDto.setPlayerColor(PlayerColor.WHITE);
             setYourTurn(false);
             gameDto.setOpponentName(client.readMessage());
-            startGame(gameDto);
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    waitForOpponent();
-                }
-            }).start();
+            waitForOpponent();
 
         } else
         {
@@ -501,14 +493,8 @@ public class GameController implements Runnable
             gameDto.setPlayerColor(PlayerColor.BLACK);
             setYourTurn(true);
             gameDto.setOpponentName(client.readMessage());
-            startGame(gameDto);
         }
 
-    }
-
-    public void startGame(GameDto gameDto)
-    {
-        initMainWindow(gameDto);
     }
 
     public BoardPanel getBoardPanel()

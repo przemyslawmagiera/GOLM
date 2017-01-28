@@ -5,7 +5,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-<span>Select a cell!</span>
+<span>Select a cell! you re ${player}</span>
 <div id="tableContainer"></div>
 <style>
 td {

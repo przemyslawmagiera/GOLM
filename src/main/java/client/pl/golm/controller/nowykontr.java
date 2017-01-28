@@ -63,10 +63,10 @@ public class nowykontr
         size.replace(" ", "");
         newGameDto.setSize(Integer.parseInt(size));
         newGameDto.setPlayerName(name);
-        newContorller.requestGame(newGameDto);
+        newContorller.gameDto = newGameDto;
+        new Thread(newContorller).start();
         model.addAttribute("size", Integer.parseInt(size));
-
-
+        model.addAttribute("player", newGameDto.getPlayerName());
         return "/board";
     }
 
@@ -76,7 +76,6 @@ public class nowykontr
 
         return "/mainPage";
     }
-
 }
 
 
