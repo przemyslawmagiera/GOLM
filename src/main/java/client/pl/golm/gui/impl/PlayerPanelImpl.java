@@ -1,7 +1,7 @@
 package client.pl.golm.gui.impl;
 
 import client.pl.golm.UtilGUI;
-import client.pl.golm.controller.GameController;
+import client.pl.golm.controller.WebController;
 import client.pl.golm.gui.GUIComponent;
 import client.pl.golm.gui.PlayerPanel;
 
@@ -16,7 +16,7 @@ public class PlayerPanelImpl extends JPanel implements PlayerPanel, GUIComponent
 {
     private JButton pass;
     private JButton surrender;
-    private GameController controller = GameController.getInstance();
+    private WebController controller = WebController.getInstance();
 
     public PlayerPanelImpl()
     {

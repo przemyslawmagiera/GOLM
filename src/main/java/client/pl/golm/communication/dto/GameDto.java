@@ -2,7 +2,6 @@ package client.pl.golm.communication.dto;
 
 import client.pl.golm.gui.PlayerColor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -17,8 +16,8 @@ public class GameDto
     private String playerName;
     private String opponentName;
     private PlayerColor playerColor;
-    private List<String> suggestedDeadTerritories;
     private GameState gameState;
+
 
     public PlayerColor getPlayerColor()
     {
@@ -68,16 +67,6 @@ public class GameDto
     public void setPlayerName(String playerName)
     {
         this.playerName = playerName;
-    }
-
-    public List<String> getSuggestedDeadTerritories()
-    {
-        return suggestedDeadTerritories;
-    }
-
-    public void setSuggestedDeadTerritories(List<String> suggestedDeadTerritories)
-    {
-        this.suggestedDeadTerritories = suggestedDeadTerritories;
     }
 
     public GameState getGameState()

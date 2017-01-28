@@ -5,7 +5,7 @@ import client.pl.golm.gui.Circle;
 import client.pl.golm.gui.GUIComponent;
 import client.pl.golm.communication.dto.GameDto;
 import client.pl.golm.communication.dto.GameState;
-import client.pl.golm.controller.GameController;
+import client.pl.golm.controller.WebController;
 import client.pl.golm.gui.BoardPanel;
 import client.pl.golm.gui.PlayerColor;
 
@@ -24,7 +24,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
     private int option;
     private ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
-    private GameController controller = GameController.getInstance();
+    private WebController controller = WebController.getInstance();
     private PlayerColor playerColor;
     private GameDto gameDto;
 
@@ -129,7 +129,7 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
                 {
                     if(gameDto.getGameState().equals(GameState.RUNNING))
                     {
-                        controller.moveRequest(i, j);
+                        //controller.moveRequest(i, j);
                     }
                     else if(GameState.COUNTING_DEAD_GROUPS.equals(gameDto.getGameState()))
                     {

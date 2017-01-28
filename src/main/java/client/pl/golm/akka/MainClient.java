@@ -8,7 +8,7 @@ import akka.japi.pf.ReceiveBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import client.pl.golm.controller.GameController;
+import client.pl.golm.controller.WebController;
 
 @Controller
 @RequestMapping("/")
@@ -31,11 +31,11 @@ public class MainClient
             receive(ReceiveBuilder.match(StartClientMessage.class, this::onStartClientMessage).build());
         }
 
-        private GameController gameController;
+        private WebController gameController;
 
         private void onStartClientMessage(StartClientMessage message)
         {
-            gameController = new GameController();
+            gameController = new WebController();
             new Thread(gameController).start();
             log().info("Client application started");
         }
