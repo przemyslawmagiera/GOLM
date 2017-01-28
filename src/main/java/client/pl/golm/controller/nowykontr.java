@@ -67,9 +67,7 @@ public class nowykontr
         new Thread(newContorller).start();
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", newGameDto.getPlayerName());
-        if (!newContorller.isYourTurn())
-            newContorller.waitForOpponent();
-        //model.addAtribute(list of white,black)
+        //TODO model.addAtribute(list of white,black)
         clientControllers.put(name, newContorller);
         return "/board";
     }
@@ -77,16 +75,20 @@ public class nowykontr
     @RequestMapping(value = "/game/moveRequest", method = RequestMethod.POST)
     public String moveRequest(@RequestParam Map<String, String> params, Model model)
     {
-        //String x = params.get("x");
-        //String y = params.get("y");
-        //String name = params.get("name");
-        //GameController gameController = clientControllers.get(name);
-        //make request and read the list set model
         String size = params.get("size");
-        String name = params.get("name");
+        String player = params.get("player");
+        String x = params.get("x");
+        String y = params.get("y");
+
+        GameController gameController = clientControllers.get(player);
+
+        gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
+        gameController.waitForOpponent();
+
+        //TODO read the list and set model
 
         model.addAttribute("size", Integer.parseInt(size));
-        model.addAttribute("player", name);
+        model.addAttribute("player", player);
         return "/board";
     }
 

@@ -41,14 +41,14 @@ var grid = "<table>";
     var form = document.createElement("form");
     var x = document.createElement("input");
     var y = document.createElement("input");
-    var playername = document.createElement("input");
+    var player = document.createElement("input");
     var size = document.createElement("input");
     form.method = "POST";
     form.action = "/game/moveRequest";
 
-    playername.value="qwerty";
-    playername.name="name";
-    form.appendChild(playername);
+    player.value="qwerty";
+    player.name="player";
+    form.appendChild(player);
 
     size.value=${size};
     size.name="size";

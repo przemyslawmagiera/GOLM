@@ -10,6 +10,7 @@ import client.pl.golm.controller.factory.DialogFactory;
 import client.pl.golm.controller.factory.impl.DialogFactoryImpl;
 import client.pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
 import client.pl.golm.gui.*;
+import client.pl.golm.gui.impl.BoardPanelImpl;
 import client.pl.golm.gui.impl.ConfigurationWindowImpl;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ public class GameController implements Runnable
     public static ConfigurationWindow configurationWindow = null;
     public DialogFactory dialogFactory;
     public DialogFactory errorDialogFactory;
+    public BoardPanel board;
 
     public GameController()
     {
@@ -46,6 +48,7 @@ public class GameController implements Runnable
 
     public void run()
     {
+        board = new BoardPanelImpl(gameDto);
         requestGame(gameDto);
     }
 
@@ -95,7 +98,7 @@ public class GameController implements Runnable
                 clearCircles();
                 while (!answer.equals("End fields"))
                 {
-                    BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
+                    BasicOperationParser.parseMappingToCircles(answer, board.getCircles());
                     answer = client.readMessage();
                 }
                 setYourTurn(false);
@@ -131,7 +134,7 @@ public class GameController implements Runnable
                 clearCircles();
                 while (!message.equals("End fields"))
                 {
-                    BasicOperationParser.parseMappingToCircles(message, mainWindow.getBoard().getCircles());
+                    BasicOperationParser.parseMappingToCircles(message, board.getCircles());
                     message = client.readMessage();
                 }
                 new Thread(new Runnable()
@@ -151,11 +154,11 @@ public class GameController implements Runnable
 
     private void clearCircles()
     {
-        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
+        for (int i = 0; i < board.getOption(); i++)
         {
-            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
+            for (int j = 0; j < board.getOption(); j++)
             {//get y, get x
-                mainWindow.getBoard().getCircles().get(j).get(i).setOccupied(false);
+               board.getCircles().get(j).get(i).setOccupied(false);
             }
         }
     }
@@ -169,7 +172,7 @@ public class GameController implements Runnable
             String answer = client.readMessage();
             while (!answer.equals("End fields"))
             {
-                BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
+                BasicOperationParser.parseMappingToCircles(answer, board.getCircles());
                 answer = client.readMessage();
             }
             mainWindow.repaint();
@@ -455,14 +458,14 @@ public class GameController implements Runnable
 
     private void copyBoard(ArrayList<ArrayList<Circle>> circlesToCount)
     {
-        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
+        for (int i = 0; i < board.getOption(); i++)
         {
-            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
+            for (int j = 0; j < board.getOption(); j++)
             {//get y, get x
-                if (mainWindow.getBoard().getCircles().get(j).get(i).isOccupied())
+                if (board.getCircles().get(j).get(i).isOccupied())
                 {
                     circlesToCount.get(j).get(i).setOccupied(true);
-                    circlesToCount.get(j).get(i).setColor(mainWindow.getBoard().getCircles().get(j).get(i).getColor());
+                    circlesToCount.get(j).get(i).setColor(board.getCircles().get(j).get(i).getColor());
                 }
             }
         }
@@ -499,7 +502,7 @@ public class GameController implements Runnable
 
     public BoardPanel getBoardPanel()
     {
-        return mainWindow.getBoard();
+        return board;
     }
 
     public void setParentFrame(ConfigurationWindowImpl parentFrame)
