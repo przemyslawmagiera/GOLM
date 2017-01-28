@@ -3,7 +3,7 @@ package client.pl.golm.gui;
 import client.pl.golm.UtilGUI;
 import client.pl.golm.communication.dto.GameDto;
 import client.pl.golm.communication.dto.GameState;
-import client.pl.golm.controller.WebController;
+import client.pl.golm.controller.GameController;
 import client.pl.golm.gui.impl.BoardPanelImpl;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class DeadGroupsWindow extends JFrame
     private JButton ok;
     private JButton decline;
     private JPanel buttonPanel;
-    private WebController controller = WebController.getInstance();
+    private GameController controller = GameController.getInstance();
 
     public DeadGroupsWindow(GameDto gameDto)
     {

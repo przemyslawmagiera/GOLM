@@ -4,7 +4,7 @@ import client.pl.golm.UtilGUI;
 import client.pl.golm.communication.dto.GameDto;
 import client.pl.golm.gui.impl.BoardPanelImpl;
 import client.pl.golm.communication.dto.GameState;
-import client.pl.golm.controller.WebController;
+import client.pl.golm.controller.GameController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class TerritoriesWindow extends JFrame
     private JButton ok;
     private JButton decline;
     private JPanel buttonPanel;
-    private WebController controller = WebController.getInstance();
+    private GameController controller = GameController.getInstance();
 
     public TerritoriesWindow(GameDto gameDto)
     {

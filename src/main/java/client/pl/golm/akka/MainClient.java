@@ -8,12 +8,18 @@ import akka.japi.pf.ReceiveBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import client.pl.golm.controller.WebController;
+import client.pl.golm.controller.GameController;
 
-@Controller
-@RequestMapping("/")
+//@Controller
+//@RequestMapping("/")
 public class MainClient
 {
+    public MainClient()
+    {
+        ActorSystem actorSystem = ActorSystem.create("MainClientSystem");
+        final ActorRef server = actorSystem.actorOf(ClientActor.props(), "client");
+        server.tell(new ClientActor.StartClientMessage("start"), ActorRef.noSender());
+    }
     static class ClientActor extends AbstractLoggingActor
     {
         // Protocol (all messages that a main server can receive)
@@ -31,11 +37,11 @@ public class MainClient
             receive(ReceiveBuilder.match(StartClientMessage.class, this::onStartClientMessage).build());
         }
 
-        private WebController gameController;
+        public GameController gameController;
 
         private void onStartClientMessage(StartClientMessage message)
         {
-            gameController = new WebController();
+            gameController = new GameController();
             new Thread(gameController).start();
             log().info("Client application started");
         }
@@ -46,12 +52,12 @@ public class MainClient
         }
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public static String main(String[] args)
+    //@RequestMapping(value = "", method = RequestMethod.GET)
+    public static void main(String[] args)
     {
         ActorSystem actorSystem = ActorSystem.create("MainClientSystem");
         final ActorRef server = actorSystem.actorOf(ClientActor.props(), "client");
         server.tell(new ClientActor.StartClientMessage("start"), ActorRef.noSender());
-        return "/mainPage";
+        //return "/mainPage";
     }
 }

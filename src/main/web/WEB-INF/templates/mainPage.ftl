@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<form action="/game/startGame" method="post">
+<form action="/startGame" method="post">
     <input type="radio" name="multi" value="multiplayer"> true<br>
     <input type="radio" name="multi" value="singleplayer"> false<br>
     <input type="text" name="name"><br>

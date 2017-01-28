@@ -1,7 +1,7 @@
 package client.pl.golm.gui.impl;
 
 import client.pl.golm.communication.dto.GameDto;
-import client.pl.golm.controller.WebController;
+import client.pl.golm.controller.GameController;
 import client.pl.golm.controller.factory.DialogFactory;
 import client.pl.golm.controller.factory.impl.DialogFactoryImpl;
 import client.pl.golm.gui.ConfigurationWindow;
@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
  */
 public class ConfigurationWindowImpl extends JFrame implements ConfigurationWindow
 {
-    private WebController controller = WebController.getInstance();
+    private GameController controller = GameController.getInstance();
     private DialogFactory dialogFactory;
 
     public ConfigurationWindowImpl()

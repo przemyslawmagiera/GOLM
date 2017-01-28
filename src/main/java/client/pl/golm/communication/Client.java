@@ -1,6 +1,6 @@
 package client.pl.golm.communication;
 
-import client.pl.golm.controller.WebController;
+import client.pl.golm.controller.GameController;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,7 +14,7 @@ public class Client
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
-    private WebController controller = WebController.getInstance();
+    private GameController controller = GameController.getInstance();
 
     public void configure() throws Exception
     {
