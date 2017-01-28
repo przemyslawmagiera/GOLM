@@ -4,52 +4,38 @@ package client.pl.golm.controller;
 import client.pl.golm.communication.Client;
 import client.pl.golm.communication.Player;
 import client.pl.golm.communication.dto.GameDto;
+import client.pl.golm.communication.dto.GameState;
 import client.pl.golm.communication.parser.BasicOperationParser;
 import client.pl.golm.controller.factory.DialogFactory;
 import client.pl.golm.controller.factory.impl.DialogFactoryImpl;
 import client.pl.golm.controller.factory.impl.ErrorDialogFactoryImpl;
 import client.pl.golm.gui.*;
 import client.pl.golm.gui.impl.ConfigurationWindowImpl;
-import client.pl.golm.communication.dto.GameState;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Przemek on 04.12.2016.
  */
-@Controller
-@RequestMapping("/game")
-public class WebController implements Runnable
+public class GameController implements Runnable
 {
-    private ConfigurationWindowImpl parentFrame;
-    private MainWindow mainWindow;
-    private Client client;
-    private boolean yourTurn;
-    private Player player;
-    private static volatile WebController instance;
-    private GameDto gameDto;
-    private DeadGroupsWindow deadGroupsWindow;
-    private TerritoriesWindow territoriesWindow;
-    private static ConfigurationWindow configurationWindow = null;
-    private DialogFactory dialogFactory;
-    private DialogFactory errorDialogFactory;
+    public ConfigurationWindowImpl parentFrame;
+    public MainWindow mainWindow;
+    public Client client;
+    public boolean yourTurn;
+    public Player player;
+    public static volatile GameController instance;
+    public GameDto gameDto;
+    public DeadGroupsWindow deadGroupsWindow;
+    public TerritoriesWindow territoriesWindow;
+    public static ConfigurationWindow configurationWindow = null;
+    public DialogFactory dialogFactory;
+    public DialogFactory errorDialogFactory;
 
-    public static void main(String[] args)
-    {
-        configurationWindow = new ConfigurationWindowImpl();
-    }
-
-    public WebController()
+    public GameController()
     {
         dialogFactory = new DialogFactoryImpl();
         errorDialogFactory = new ErrorDialogFactoryImpl();
@@ -60,76 +46,13 @@ public class WebController implements Runnable
 
     public void run()
     {
-        //configurationWindow = new ConfigurationWindowImpl();
+        configurationWindow = new ConfigurationWindowImpl();
     }
 
-    @MessageMapping("/golm")
-    @SendTo("/topic/greetings")
-    public GreeterService greeting(GameInfo message) throws Exception {
-        Thread.sleep(3000); // simulated delay
-
-        //tutaj dostaniemy wiadomość
-        return new GreeterService(message.getInfo());
-    }
-
-    @RequestMapping(value = "/startGame", method = RequestMethod.POST)
-    public String gameRequest(@RequestParam Map<String, String> params, Model model)
+    public void initMainWindow(GameDto gameDto)
     {
-        dialogFactory = new DialogFactoryImpl();
-        errorDialogFactory = new ErrorDialogFactoryImpl();
-        yourTurn = true;
-        player = new Player();
-        player.setColor(PlayerColor.BLACK);
-
-        String multi = params.get("multi");
-        String size  = params.get("size");
-        String name = params.get("name");
-
-        if(multi.equals("multiplayer"))
-        {
-            gameDto.setType("Multi player");
-        }
-        else
-        {
-            gameDto.setType("Single player");
-        }
-        size.replace(" ","");
-        gameDto.setSize(Integer.parseInt(size));
-        gameDto.setPlayerName(name);
-
-
-        model.addAttribute("size", Integer.parseInt(size));
-        return requestGame(gameDto);
-    }
-
-    public String requestGame(GameDto gameDto)
-    {
-        client = new Client();
-        try
-        {
-            client.configure();
-            client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
-        } catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        if (client.readMessage().contains("White"))
-        {
-            gameDto.setGameState(GameState.RUNNING);
-            gameDto.setPlayerColor(PlayerColor.WHITE);
-            setYourTurn(false);
-            gameDto.setOpponentName(client.readMessage());
-            waitForOpponent();
-            return "/board";
-
-        } else
-        {
-            gameDto.setGameState(GameState.RUNNING);
-            gameDto.setPlayerColor(PlayerColor.BLACK);
-            setYourTurn(true);
-            gameDto.setOpponentName(client.readMessage());
-            return "/board";
-        }
+        this.gameDto = gameDto;
+        this.mainWindow = new MainWindow(gameDto);
     }
 
     public boolean isYourTurn()
@@ -142,13 +65,13 @@ public class WebController implements Runnable
         this.yourTurn = yourTurn;
     }
 
-    public static WebController getInstance()
+    public static GameController getInstance()
     {
         if (instance == null)
         {
             if (instance == null)
             {
-                instance = new WebController();
+                instance = new GameController();
             }
         }
         return instance;
@@ -169,6 +92,7 @@ public class WebController implements Runnable
             {
                 client.readMessage();//"fields" override
                 answer = client.readMessage();
+                clearCircles();
                 while (!answer.equals("End fields"))
                 {
                     BasicOperationParser.parseMappingToCircles(answer, mainWindow.getBoard().getCircles());
@@ -190,7 +114,6 @@ public class WebController implements Runnable
         }
     }
 
-
     public void passRequest()
     {
         if (isYourTurn())
@@ -205,6 +128,7 @@ public class WebController implements Runnable
             if (answer.contains("Fields"))
             {
                 message = client.readMessage();
+                clearCircles();
                 while (!message.equals("End fields"))
                 {
                     BasicOperationParser.parseMappingToCircles(message, mainWindow.getBoard().getCircles());
@@ -225,11 +149,23 @@ public class WebController implements Runnable
         }
     }
 
+    private void clearCircles()
+    {
+        for (int i = 0; i < mainWindow.getBoard().getOption(); i++)
+        {
+            for (int j = 0; j < mainWindow.getBoard().getOption(); j++)
+            {//get y, get x
+                mainWindow.getBoard().getCircles().get(j).get(i).setOccupied(false);
+            }
+        }
+    }
+
     public void waitForOpponent()
     {
         String message = client.readMessage();
         if (message.contains("Fields"))
         {
+            clearCircles();
             String answer = client.readMessage();
             while (!answer.equals("End fields"))
             {
@@ -532,10 +468,47 @@ public class WebController implements Runnable
         }
     }
 
+    public void requestGame(GameDto gameDto)
+    {
+        client = new Client();
+        try
+        {
+            client.configure();
+            client.sendMessage(BasicOperationParser.parseRequestGame(gameDto));
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        if (client.readMessage().contains("White"))
+        {
+            gameDto.setGameState(GameState.RUNNING);
+            gameDto.setPlayerColor(PlayerColor.WHITE);
+            setYourTurn(false);
+            gameDto.setOpponentName(client.readMessage());
+            startGame(gameDto);
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    waitForOpponent();
+                }
+            }).start();
+
+        } else
+        {
+            gameDto.setGameState(GameState.RUNNING);
+            gameDto.setPlayerColor(PlayerColor.BLACK);
+            setYourTurn(true);
+            gameDto.setOpponentName(client.readMessage());
+            startGame(gameDto);
+        }
+
+    }
 
     public void startGame(GameDto gameDto)
     {
-        //initMainWindow(gameDto);
+        initMainWindow(gameDto);
     }
 
     public BoardPanel getBoardPanel()
