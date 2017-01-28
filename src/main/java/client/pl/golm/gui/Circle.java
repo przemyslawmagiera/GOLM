@@ -57,4 +57,5 @@ public class Circle extends Ellipse2D.Double
     {
         this.color = color;
     }
+
 }

@@ -67,7 +67,7 @@ public class nowykontr
         new Thread(newContorller).start();
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", newGameDto.getPlayerName());
-        //TODO model.addAtribute(list of white,black)
+        model.addAttribute("occupied", "");
         clientControllers.put(name, newContorller);
         return "/board";
     }
@@ -84,9 +84,8 @@ public class nowykontr
 
         gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
         gameController.waitForOpponent();
-
-        //TODO read the list and set model
-
+        model.addAttribute("occupied", gameController.board.toString());
+        // "1,2,W,4,3,W,6,5,B,3,8,W,7,5,B," - that is how the string looks like
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", player);
         return "/board";

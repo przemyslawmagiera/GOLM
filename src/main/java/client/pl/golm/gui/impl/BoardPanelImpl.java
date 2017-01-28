@@ -22,7 +22,7 @@ import java.util.*;
 public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener, GUIComponent
 {
     private int option;
-    private ArrayList<ArrayList<Circle>> circles;
+    public ArrayList<ArrayList<Circle>> circles;
     private ArrayList<Line2D.Double> grid;
     private GameController controller = GameController.getInstance();
     private PlayerColor playerColor;
@@ -186,5 +186,30 @@ public class BoardPanelImpl extends JPanel implements BoardPanel, MouseListener,
     public void setCircles(ArrayList<ArrayList<Circle>> circles)
     {
         this.circles = circles;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder list = new StringBuilder();
+        for (int i = 0; i < circles.size(); i++)
+        {
+            for(int j = 0; j < circles.get(i).size(); j++)
+            {
+                if (circles.get(i).get(j).isOccupied())
+                {
+                    list.append(i);
+                    list.append(",");
+                    list.append(j);
+                    list.append(",");
+                    if (circles.get(i).get(j).getColor() == Color.BLACK)
+                        list.append("B");
+                    else
+                        list.append("W");
+                    list.append(",");
+                }
+            }
+        }
+        return list.toString();
     }
 }

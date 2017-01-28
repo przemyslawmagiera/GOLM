@@ -39,8 +39,8 @@ public class GameController implements Runnable
 
     public GameController()
     {
-        dialogFactory = new DialogFactoryImpl();
-        errorDialogFactory = new ErrorDialogFactoryImpl();
+        //dialogFactory = new DialogFactoryImpl();
+        //errorDialogFactory = new ErrorDialogFactoryImpl();
         yourTurn = true;
         player = new Player();
         player.setColor(PlayerColor.BLACK);
@@ -112,7 +112,7 @@ public class GameController implements Runnable
                 }).start();
             } else if(!answer.equals("Opponent surrendered"))
             {
-                errorDialogFactory.showMessageDialog(mainWindow, "Your move is illegal");
+                //errorDialogFactory.showMessageDialog(mainWindow, "Your move is illegal");
             }
         }
     }
@@ -175,9 +175,9 @@ public class GameController implements Runnable
                 BasicOperationParser.parseMappingToCircles(answer, board.getCircles());
                 answer = client.readMessage();
             }
-            mainWindow.repaint();
+            //mainWindow.repaint();
             setYourTurn(true);
-            dialogFactory.showMessageDialog(mainWindow, "Your turn");
+            //dialogFactory.showMessageDialog(mainWindow, "Your turn");
         } else if (message.contains("Second"))
         {
             handleCountDeadGroups();
@@ -189,24 +189,24 @@ public class GameController implements Runnable
         List<String> message = new ArrayList<>();
         message.add("surrender");
         client.sendMessage(message);
-        dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
+        //dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
         mainWindow.setVisible(false);
     }
 
     public void opponentSurrendered(String message)
     {
-        dialogFactory.showMessageDialog(mainWindow, message);
+        //dialogFactory.showMessageDialog(mainWindow, message);
         mainWindow.setVisible(false);
     }
 
     private void prepareDeadGroupsFrame()
     {
-        mainWindow.setEnabled(false);
+        //mainWindow.setEnabled(false);
         client.readMessage(); //pick opponents
         client.readMessage();//suggested:
         gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS);
         String answer = client.readMessage(); //first suggested or end
-        deadGroupsWindow = new DeadGroupsWindow(gameDto);
+        //deadGroupsWindow = new DeadGroupsWindow(gameDto);
         ArrayList<ArrayList<Circle>> circlesToCount = deadGroupsWindow.getBoard().getCircles();
         copyBoard(circlesToCount);
         while (!answer.contains("End"))
@@ -222,7 +222,7 @@ public class GameController implements Runnable
         mainWindow.setEnabled(false);
         if (deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
         {
-            dialogFactory.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
+            //dialogFactory.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
         }
         String answer = client.readMessage();//opponent suggested or accepted
         if (answer.equals("agreed")) // you are probably white
@@ -464,8 +464,8 @@ public class GameController implements Runnable
             {//get y, get x
                 if (board.getCircles().get(j).get(i).isOccupied())
                 {
-                    circlesToCount.get(j).get(i).setOccupied(true);
-                    circlesToCount.get(j).get(i).setColor(board.getCircles().get(j).get(i).getColor());
+                    //circlesToCount.get(j).get(i).setOccupied(true);
+                    //circlesToCount.get(j).get(i).setColor(board.getCircles().get(j).get(i).getColor());
                 }
             }
         }
