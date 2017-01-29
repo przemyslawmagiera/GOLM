@@ -1,62 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Hello WebSocket</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script type="text/javascript">
-        var stompClient = null;
-        function setConnected(connected) {
-            document.getElementById('connect').disabled = connected;
-            document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
-        }
-        function connect() {
-            var socket = new SockJS('/golm');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
-                setConnected(true);
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/greetings', function(greeting){
-                    console.log(greeting);
-                    showGreeting(JSON.parse(greeting.body).content);
-                });
-            });
-        }
-        function disconnect() {
-            if (stompClient != null) {
-                stompClient.disconnect();
-            }
-            setConnected(false);
-            console.log("Disconnected");
-        }
-        function sendName() {
-            var name = document.getElementById('name').value;
-            stompClient.send("/app/golm", {}, JSON.stringify({ 'info': name }));
-        }
-        function showGreeting(message) {
-            var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(message));
-            response.appendChild(p);
-        }
-    </script>
-</head>
-<body onload="disconnect()">
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
-<div>
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
-    </div>
-    <div id="conversationDiv">
-        <label>What is your name?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
-        <p id="response"></p>
-    </div>
-</div>
+
+<#--<style>-->
+    <#--canvas, img { display:block; margin:1em auto; border:1px solid black; }-->
+    <#--canvas { background:url(http://html.bleaudev.dk/canvas/apartments.jpg) }-->
+<#--</style>-->
+<body>
+<canvas id="myCanvas" width="200" height="200"></canvas>
 </body>
 </html>
+<script>
+
+    var canvas = document.getElementById('myCanvas');
+    var context = canvas.getContext('2d');
+    var circles = [];
+
+    var draw = function (context, x, y, fillcolor, radius, linewidth, strokestyle) {
+        context.beginPath();
+        context.arc(x, y, radius, 0, 2 * Math.PI, false);
+        context.fillStyle = fillcolor;
+        context.fill();
+        context.lineWidth = linewidth;
+        context.strokeStyle = strokestyle;
+        context.stroke();
+    };
+
+    var Circle = function(x, y, radius) {
+        this.left = x - radius;
+        this.top = y - radius;
+        this.right = x + radius;
+        this.bottom = y + radius;
+    };
+
+    var drawCircle = function (context, x, y, fillcolor, radius, linewidth, strokestyle, fontcolor, textalign, fonttype, filltext, circles) {
+        draw(context, x, y, fillcolor, radius, linewidth, strokestyle, fontcolor, textalign, fonttype, filltext);
+        var circle = new Circle(x, y, radius);
+        circles.push(circle);
+    };
+    var i,j;
+    for (i=1;i<10;i++)
+    {
+        for(j=1;j<10;j++)
+            drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+    }
+
+    canvas.onmousedown=handleMousedown;
+
+    function handleMousedown(e){
+        var clickedX = e.pageX - this.offsetLeft;
+        var clickedY = e.pageY - this.offsetTop;
+        for (var i = 0; i < circles.length; i++) {
+            if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
+                alert ('clicked number '+ (Math.floor(clickedX)/20) + "  " + (Math.floor(clickedY))/20) ;
+            }
+        }
+    }
+</script>

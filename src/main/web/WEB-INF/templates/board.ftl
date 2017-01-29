@@ -67,6 +67,11 @@ height: 50px;
 
 <script>
 
+</script>
+
+
+<script>
+
 function generateGrid( rows, cols ) {
     rows = ${size}
     cols = ${size}
