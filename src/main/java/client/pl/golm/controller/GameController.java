@@ -102,14 +102,7 @@ public class GameController implements Runnable
                     answer = client.readMessage();
                 }
                 setYourTurn(false);
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        waitForOpponent();
-                    }
-                }).start();
+                waitForOpponent();
             } else if(!answer.equals("Opponent surrendered"))
             {
                 //errorDialogFactory.showMessageDialog(mainWindow, "Your move is illegal");

@@ -16,7 +16,6 @@
 <form action="/startGame" method="post">
     <input type="radio" name="multi" value="multiplayer"> true<br>
     <input type="radio" name="multi" value="singleplayer"> false<br>
-    <input type="text" name="name"><br>
     <input type="radio" name="size" value="9"> 9<br>
     <input type="radio" name="size" value="13"> 13<br>
     <input type="radio" name="size" value="19"> 19<br>

@@ -38,9 +38,6 @@ public class nowykontr
     @SendTo("/topic/greetings")
     public GreeterService greeting(GameInfo message) throws Exception
     {
-        Thread.sleep(3000); // simulated delay
-
-        //tutaj dostaniemy wiadomość
         return new GreeterService(message.getInfo());
     }
 
@@ -51,7 +48,7 @@ public class nowykontr
         GameDto newGameDto = new GameDto();
         String multi = params.get("multi");
         String size = params.get("size");
-        String name = params.get("name");
+        String name = String.valueOf(Math.random()*100000);
 
         if (multi.equals("multiplayer"))
         {
@@ -83,8 +80,17 @@ public class nowykontr
         GameController gameController = clientControllers.get(player);
 
         gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
-        gameController.waitForOpponent();
+        //gameController.waitForOpponent();
         model.addAttribute("occupied", gameController.board.toString());
+        //zamiast occupied tu je alternetywa:
+//        try
+//        {
+//            greeting(new GameInfo(gameController.board.toString()));
+//        }
+//        catch (Exception e)
+//        {
+//
+//        }
         // "1,2,W,4,3,W,6,5,B,3,8,W,7,5,B," - that is how the string looks like
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", player);
@@ -96,6 +102,13 @@ public class nowykontr
     {
 
         return "/mainPage";
+    }
+
+    @RequestMapping(value = "/websoc", method = RequestMethod.GET)
+    public String cation(@RequestParam Map<String, String> params, Model model)
+    {
+
+        return "/websocket";
     }
 }
 
