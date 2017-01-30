@@ -1,77 +1,18 @@
 <#import "/spring.ftl" as spring/>
 <!DOCTYPE html>
 <html>
-<body onload="drawGrid()">
-<canvas id="myCanvas" width="200" height="200"></canvas>
+<body onload="drawCircles(${occupied})">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.3/sockjs.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script type="text/javascript">
-    var stompClient = null;
-    function setConnected(connected) {
-        document.getElementById('connect').disabled = connected;
-        document.getElementById('disconnect').disabled = !connected;
-        document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-        document.getElementById('response').innerHTML = '';
-    }
-    function connect() {
-        var socket = new SockJS('/golm');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function(frame) {
-            setConnected(true);
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/greetings', function(greeting){
-                console.log(greeting);
-                showGreeting(JSON.parse(greeting.body).content);
-            });
-        });
-    }
-    function disconnect() {
-        if (stompClient != null) {
-            stompClient.disconnect();
-        }
-        setConnected(false);
-        console.log("Disconnected");
-    }
-    function sendName() {
-        var name = document.getElementById('name').value;
-        stompClient.send("/app/golm", {}, JSON.stringify({ 'info': name }));
-    }
-    function showGreeting(message) {
-        var response = document.getElementById('response');
-        var p = document.createElement('p');
-        p.style.wordWrap = 'break-word';
-        p.appendChild(document.createTextNode(message));
-        response.appendChild(p);
-    }
-</script>
-<div>
-    <button id="connect" onclick="connect();">Connect</button>
-    <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
-</div>
-<div id="conversationDiv">
-    <label>What is your name?</label><input type="text" id="name" />
-    <button id="sendName" onclick="sendName();">Send</button>
-    <p id="response"></p>
-</div>
-<span>Select a cell! you re ${player}, ${occupied}</span>
-<div id="tableContainer"></div>
-<style>
-td {
-border: 1px solid;
-width: 50px;
-height: 50px;
-}
-</style>
+<span>Select a cell! you re ${player}</span>
+<br>
+<#assign x = ((size+1)*20)> <#-- replace variable x -->
 
+<canvas id="myCanvas" width="${x}" height="${x}"></canvas>
 
 <script>
-
-</script>
-
-
-<script>
-
 function generateGrid( rows, cols ) {
     rows = ${size}
     cols = ${size}
@@ -157,27 +98,38 @@ function generateGrid( rows, cols ) {
         circles.push(circle);
     };
     var i,j;
-    var table = new Array(10);
-    for (i = 0; i < 10; i++)
+    var newSize = ${size}+1
+    var table = new Array(newSize);
+    for (i = 0; i < newSize; i++)
     {
-        table[i] = new Array(10);
+        table[i] = new Array(newSize);
     }
-    for (i=0;i<10;i++)
-        for(j=0;j<10;j++)
-            table[i][j] = 0; // table of occupied and not circles
+    for (i=0;i<newSize;i++)
+        for(j=0;j<newSize;j++)
+            table[i][j] = 'F'; // table of occupied and not circles
     //here to extract from occupied but not working
-
-    for (i=1;i<10;i++)
+    var occupied = "${occupied}";
+    var parts = occupied.split(",");
+    var length = parts.length;
+    for(i=0; i<length-1;i=i+3)
     {
-        for(j=1;j<10;j++)
+        table[parts[i+1]][parts[i]] = parts[i+2];
+    }
+
+        for (i=1;i<newSize;i++)
         {
-            if (j == 2)// check if table[i][j]..
-                drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
-            else
-                drawCircle(context, i*20, j*20, "green", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+            for(j=1;j<newSize;j++)
+            {
+                if (table[i-1][j-1]=="F")// check if table[i][j]..
+                    drawCircle(context, i*20, j*20, "yellow", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+                else if(table[i-1][j-1]=="W")
+                    drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+                else
+                    drawCircle(context, i*20, j*20, "black", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+            }
+
         }
 
-    }
 
     canvas.onmousedown=handleMousedown;
 
