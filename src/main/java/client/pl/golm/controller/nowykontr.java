@@ -78,11 +78,11 @@ public class nowykontr
         String y = params.get("y");
 
         GameController gameController = clientControllers.get(player);
-
-        if(gameController.opponentSurrender)
-        {
-            return opponentSurr(model);
-        }
+        if(clientControllers.get(gameController.gameDto.getOpponentName()) != null)
+            if(clientControllers.get(gameController.gameDto.getOpponentName()).surrendered)
+            {
+                return opponentSurr(model);
+            }
 
         gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
         //gameController.waitForOpponent();

@@ -48,7 +48,6 @@ public class Client
             //todo collect info from server(nie wiem co mi wysylasz tu)
             //message = you won, your points: client.readline() ..i tak dalej
             //controller.opponentSurrendered(message);
-            controller.opponentSurrender = true;
         }
         return message;
     }

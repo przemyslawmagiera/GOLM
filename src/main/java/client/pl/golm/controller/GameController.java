@@ -36,7 +36,7 @@ public class GameController implements Runnable
     public DialogFactory dialogFactory;
     public DialogFactory errorDialogFactory;
     public BoardPanel board;
-    public boolean opponentSurrender = false;
+    public boolean surrendered = false;
 
     public GameController()
     {
@@ -183,6 +183,7 @@ public class GameController implements Runnable
         List<String> message = new ArrayList<>();
         message.add("surrender");
         client.sendMessage(message);
+        surrendered = false;
         //dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
        // mainWindow.setVisible(false);
     }
