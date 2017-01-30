@@ -36,6 +36,7 @@ public class GameController implements Runnable
     public DialogFactory dialogFactory;
     public DialogFactory errorDialogFactory;
     public BoardPanel board;
+    public boolean opponentSurrender = false;
 
     public GameController()
     {
@@ -183,13 +184,13 @@ public class GameController implements Runnable
         message.add("surrender");
         client.sendMessage(message);
         //dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
-        mainWindow.setVisible(false);
+       // mainWindow.setVisible(false);
     }
 
     public void opponentSurrendered(String message)
     {
         //dialogFactory.showMessageDialog(mainWindow, message);
-        mainWindow.setVisible(false);
+        //mainWindow.setVisible(false);
     }
 
     private void prepareDeadGroupsFrame()

@@ -79,6 +79,11 @@ public class nowykontr
 
         GameController gameController = clientControllers.get(player);
 
+        if(gameController.opponentSurrender)
+        {
+            return opponentSurr(model);
+        }
+
         gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
         //gameController.waitForOpponent();
         model.addAttribute("occupied", gameController.board.toString());
@@ -100,15 +105,24 @@ public class nowykontr
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String configuration(@RequestParam Map<String, String> params, Model model)
     {
-
+        model.addAttribute("msg","");
         return "/mainPage";
     }
 
-    @RequestMapping(value = "/websoc", method = RequestMethod.GET)
-    public String cation(@RequestParam Map<String, String> params, Model model)
+    @RequestMapping(value = "/surrender", method = RequestMethod.POST)
+    public String surrender(@RequestParam Map<String, String> params, Model model)
     {
+        String player = params.get("player");
+        GameController gameController = clientControllers.get(player);
+        gameController.surrender();
+        model.addAttribute("msg","you surrendered");
+        return "/mainPage";
+    }
 
-        return "/websocket";
+    public String opponentSurr(Model model)
+    {
+        model.addAttribute("msg","you surrendered");
+        return "/mainPage";
     }
 }
 

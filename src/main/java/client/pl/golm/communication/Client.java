@@ -14,7 +14,7 @@ public class Client
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
-    //private GameController controller = GameController.getInstance();
+    private GameController controller = GameController.getInstance();
 
     public void configure() throws Exception
     {
@@ -48,6 +48,7 @@ public class Client
             //todo collect info from server(nie wiem co mi wysylasz tu)
             //message = you won, your points: client.readline() ..i tak dalej
             //controller.opponentSurrendered(message);
+            controller.opponentSurrender = true;
         }
         return message;
     }

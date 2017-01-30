@@ -11,6 +11,10 @@
 <#assign x = ((size+1)*20)> <#-- replace variable x -->
 
 <canvas id="myCanvas" width="${x}" height="${x}"></canvas>
+<form action="/surrender" method="post">
+    <input type="hidden" name="player" value="${player}"/>
+    <br><br><input type="submit" value="SURRENDER"/>
+</form>
 
 <script>
 function generateGrid( rows, cols ) {
