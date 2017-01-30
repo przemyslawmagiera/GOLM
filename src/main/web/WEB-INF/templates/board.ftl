@@ -157,10 +157,26 @@ function generateGrid( rows, cols ) {
         circles.push(circle);
     };
     var i,j;
+    var table = new Array(10);
+    for (i = 0; i < 10; i++)
+    {
+        table[i] = new Array(10);
+    }
+    for (i=0;i<10;i++)
+        for(j=0;j<10;j++)
+            table[i][j] = 0; // table of occupied and not circles
+    //here to extract from occupied but not working
+
     for (i=1;i<10;i++)
     {
         for(j=1;j<10;j++)
-            drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+        {
+            if (j == 2)// check if table[i][j]..
+                drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+            else
+                drawCircle(context, i*20, j*20, "green", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+        }
+
     }
 
     canvas.onmousedown=handleMousedown;
