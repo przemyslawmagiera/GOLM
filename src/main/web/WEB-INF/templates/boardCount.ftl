@@ -11,18 +11,8 @@
 <#assign x = ((size+1)*20)> <#-- replace variable x -->
 
 <canvas id="myCanvas" width="${x}" height="${x}"></canvas>
-<form action="/surrender" method="post">
-    <input type="hidden" name="player" value="${player}"/>
-    <br><br><input type="submit" value="SURRENDER"/>
-</form>
-
-<form action="/game/moveRequest" method="post">
-    <input type="hidden" name="player" value="${player}"/>
-    <input type="hidden" name="x" value="-1"/>
-    <input type="hidden" name="y" value="-1"/>
-    <input type="hidden" name="size" value="${size}"/>
-    <br><br><input type="submit" value="PASS"/>
-</form>
+<br>
+<button onclick="sendForm()" name="OK">REQUEST</button>
 
 <script>
 function generateGrid( rows, cols ) {
@@ -144,24 +134,14 @@ function generateGrid( rows, cols ) {
 
 
     canvas.onmousedown=handleMousedown;
-
-    function handleMousedown(e){
-        var clickedX = e.pageX - this.offsetLeft;
-        var clickedY = e.pageY - this.offsetTop;
-        for (var i = 0; i < circles.length; i++) {
-            if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
-                var xNew = clickedX / 20;
-                var yNew = clickedY / 20;
-            }
-        }
-
+    var selected = "";
+    function sendForm() {
         var form = document.createElement("form");
         var x = document.createElement("input");
-        var y = document.createElement("input");
         var player = document.createElement("input");
         var size = document.createElement("input");
         form.method = "POST";
-        form.action = "/game/moveRequest";
+        form.action = "/proceedPassRequest";
 
         player.value=${player};
         player.name="player";
@@ -171,16 +151,29 @@ function generateGrid( rows, cols ) {
         size.name="size";
         form.appendChild(size);
 
-        x.value=(Math.round(clickedX / 20) - 1);
-        x.name="x";
+        x.value=selected;
+        x.name="selected";
         form.appendChild(x);
-
-        y.value=(Math.round(clickedY / 20) - 1);
-        y.name="y";
-        form.appendChild(y);
 
         document.body.appendChild(form);
         form.submit();
+    }
+
+    function handleMousedown(e){
+        var check = 0;
+        var clickedX = e.pageX - this.offsetLeft;
+        var clickedY = e.pageY - this.offsetTop;
+        for (var i = 0; i < circles.length; i++) {
+            if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
+                var xNew = (Math.round(clickedX / 20) - 1);
+                var yNew = (Math.round(clickedY / 20) - 1);
+                if(check == 0) {
+                    drawCircle(context, 20 * (Math.floor(i /${size}) + 1), (i % ${size}+1) * 20, "green", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+                    selected = selected + xNew + "," + yNew + " ";
+                    check = 1;
+                }
+            }
+        }
     }
 </script>
 

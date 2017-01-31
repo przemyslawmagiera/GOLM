@@ -37,6 +37,8 @@ public class GameController implements Runnable
     public DialogFactory errorDialogFactory;
     public BoardPanel board;
     public boolean surrendered = false;
+    public BoardPanel circlesToCount;
+    public String opponentSelected = "";
 
     public GameController()
     {
@@ -131,14 +133,7 @@ public class GameController implements Runnable
                     BasicOperationParser.parseMappingToCircles(message, board.getCircles());
                     message = client.readMessage();
                 }
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        waitForOpponent();
-                    }
-                }).start();
+                waitForOpponent();
             } else if (answer.contains("Second"))
             {
                 handleCountDeadGroups();
@@ -183,7 +178,7 @@ public class GameController implements Runnable
         List<String> message = new ArrayList<>();
         message.add("surrender");
         client.sendMessage(message);
-        surrendered = false;
+        surrendered = true;
         //dialogFactory.showMessageDialog(mainWindow, "You surrendered, you lost...");
        // mainWindow.setVisible(false);
     }
@@ -202,19 +197,20 @@ public class GameController implements Runnable
         gameDto.setGameState(GameState.COUNTING_DEAD_GROUPS);
         String answer = client.readMessage(); //first suggested or end
         //deadGroupsWindow = new DeadGroupsWindow(gameDto);
-        ArrayList<ArrayList<Circle>> circlesToCount = deadGroupsWindow.getBoard().getCircles();
-        copyBoard(circlesToCount);
+        circlesToCount = new BoardPanelImpl(gameDto);
+        circlesToCount.setCircles(new ArrayList<>(board.getCircles()));
+        //copyBoard(circlesToCount);
         while (!answer.contains("End"))
         {
-            BasicOperationParser.prepareMappingForCounting(answer, circlesToCount);
+            //BasicOperationParser.prepareMappingForCounting(answer, circlesToCount.getCircles());
             answer = client.readMessage();
         }
-        deadGroupsWindow.getBoard().setCircles(circlesToCount);
+        //deadGroupsWindow.getBoard().setCircles(circlesToCount);
     }
 
     private void waitForSelectingDeadGroups()
     {
-        mainWindow.setEnabled(false);
+       // mainWindow.setEnabled(false);
         if (deadGroupsWindow == null || PlayerColor.BLACK.equals(gameDto.getPlayerColor()))//check if we are first time here
         {
             //dialogFactory.showMessageDialog(mainWindow, "Please wait for opponent to select dead groups.");
@@ -227,13 +223,13 @@ public class GameController implements Runnable
         } else
         {
             gameDto.setGameState(GameState.ACCEPTING_DEAD_GROUPS);
-            deadGroupsWindow = new DeadGroupsWindow(gameDto);
-            ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
+            //ArrayList<ArrayList<Circle>> circlesToAccept = deadGroupsWindow.getBoard().getCircles();
             answer = client.readMessage();
-            copyBoard(circlesToAccept);
+            //copyBoard(circlesToAccept);
             while (!answer.contains("End"))
             {
-                BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+                //BasicOperationParser.prepareMappingForCounting(answer, circlesToAccept);
+                opponentSelected = opponentSelected + answer + ",";
                 answer = client.readMessage();
             }
         }
@@ -246,14 +242,7 @@ public class GameController implements Runnable
             prepareDeadGroupsFrame();
         } else
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    waitForSelectingDeadGroups();
-                }
-            }).start();
+            waitForSelectingDeadGroups();
         }
     }
 
@@ -378,7 +367,7 @@ public class GameController implements Runnable
         List<String> message = new ArrayList<>();
         message.add("false");
         client.sendMessage(message);
-        mainWindow.setEnabled(true);
+        //mainWindow.setEnabled(true);
         gameDto.setGameState(GameState.RUNNING);
         setYourTurn(true);
     }
@@ -387,33 +376,33 @@ public class GameController implements Runnable
     {
         List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(deadGroupsWindow.getBoard().getCircles(), gameDto.getSize());
         client.sendMessage(messages);
-        deadGroupsWindow.setVisible(false);
-        dialogFactory.showMessageDialog(mainWindow, "Wait for acceptance");
+        //deadGroupsWindow.setVisible(false);
+        //dialogFactory.showMessageDialog(mainWindow, "Wait for acceptance");
         String message = client.readMessage();
         if (message.equals("true"))
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    waitForSelectingDeadGroups();
-                }
-            }).start();
+            waitForSelectingDeadGroups();
         } else if (message.equals("false"))
         {
-            mainWindow.setEnabled(true);
+            //mainWindow.setEnabled(true);
             gameDto.setGameState(GameState.RUNNING);
             setYourTurn(false);
-            dialogFactory.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    waitForOpponent();
-                }
-            }).start();
+            //dialogFactory.showMessageDialog(mainWindow, "Opponent declined your dead groups request, his turn.");
+            waitForOpponent();
+        }
+    }
+    public void requestDeadGroups(List<String> messages)
+    {
+        client.sendMessage(messages);
+        String message = client.readMessage();
+        if (message.equals("true"))
+        {
+            waitForSelectingDeadGroups();
+        } else if (message.equals("false"))
+        {
+            gameDto.setGameState(GameState.RUNNING);
+            setYourTurn(false);
+            waitForOpponent();
         }
     }
 

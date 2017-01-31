@@ -61,10 +61,10 @@ public class nowykontr
         newGameDto.setSize(Integer.parseInt(size));
         newGameDto.setPlayerName(name);
         newContorller.gameDto = newGameDto;
-        new Thread(newContorller).start();
+        newContorller.run();
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", newGameDto.getPlayerName());
-        model.addAttribute("occupied", "");
+        model.addAttribute("occupied", newContorller.board.toString());
         clientControllers.put(name, newContorller);
         return "/board";
     }
@@ -76,30 +76,58 @@ public class nowykontr
         String player = params.get("player");
         String x = params.get("x");
         String y = params.get("y");
-
         GameController gameController = clientControllers.get(player);
-        if(clientControllers.get(gameController.gameDto.getOpponentName()) != null)
-            if(clientControllers.get(gameController.gameDto.getOpponentName()).surrendered)
-            {
-                return opponentSurr(model);
-            }
 
-        gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
-        //gameController.waitForOpponent();
+        if (clientControllers.get(gameController.gameDto.getOpponentName()) != null) if (clientControllers.get(gameController.gameDto.getOpponentName()).surrendered)
+        {
+            return opponentSurr(model);
+        }
+        if(x.equals("-1"))
+        {
+            gameController.passRequest();
+            if(gameController.gameDto.getGameState().equals(GameState.COUNTING_DEAD_GROUPS))
+            {
+                model.addAttribute("occupied", gameController.board.toString());
+                model.addAttribute("size", Integer.parseInt(size));
+                model.addAttribute("player", player);
+                return "/boardCount";
+            }
+            if(gameController.gameDto.getGameState().equals(GameState.ACCEPTING_DEAD_GROUPS))
+            {
+                model.addAttribute("occupied", gameController.opponentSelected);
+                model.addAttribute("size", Integer.parseInt(size));
+                model.addAttribute("player", player);
+                return "/acceptRequested";
+            }
+        }
+        else
+        {
+            gameController.moveRequest(Integer.parseInt(x), Integer.parseInt(y));
+        }
         model.addAttribute("occupied", gameController.board.toString());
-        //zamiast occupied tu je alternetywa:
-//        try
-//        {
-//            greeting(new GameInfo(gameController.board.toString()));
-//        }
-//        catch (Exception e)
-//        {
-//
-//        }
-        // "1,2,W,4,3,W,6,5,B,3,8,W,7,5,B," - that is how the string looks like
         model.addAttribute("size", Integer.parseInt(size));
         model.addAttribute("player", player);
         return "/board";
+    }
+
+    @RequestMapping(value = "/proceedPassRequest", method = RequestMethod.POST)
+    public String proceedPassRequest(@RequestParam Map<String, String> params, Model model)
+    {
+        String selected = params.get("selected");
+        String player = params.get("player");
+        String size = params.get("size");
+        GameController gameController = clientControllers.get(player);
+        List<String> messages = BasicOperationParser.prepareCountedTerritoriesMessage(selected, gameController.gameDto.getSize());
+        gameController.requestDeadGroups(messages);
+        if(gameController.gameDto.getGameState().equals(GameState.RUNNING))
+        {
+            model.addAttribute("occupied", gameController.board.toString());
+            model.addAttribute("size", Integer.parseInt(size));
+            model.addAttribute("player", player);
+            return "/board";
+        }
+
+        return "/mainPage";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -119,9 +147,23 @@ public class nowykontr
         return "/mainPage";
     }
 
+    @RequestMapping(value = "/declinedDeadGroups", method = RequestMethod.POST)
+    public String declined(@RequestParam Map<String, String> params, Model model)
+    {
+        String player = params.get("player");
+        GameController gameController = clientControllers.get(player);
+        gameController.declineDeadGroups();
+        String size = params.get("size");
+
+        model.addAttribute("occupied", gameController.board.toString());
+        model.addAttribute("size", Integer.parseInt(size));
+        model.addAttribute("player", player);
+        return "/board";
+    }
+
     public String opponentSurr(Model model)
     {
-        model.addAttribute("msg","you surrendered");
+        model.addAttribute("msg","you won, opponent surrendered");
         return "/mainPage";
     }
 }

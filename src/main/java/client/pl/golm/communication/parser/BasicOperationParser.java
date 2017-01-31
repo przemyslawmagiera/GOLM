@@ -70,6 +70,21 @@ public class BasicOperationParser
         messages.add("End dead groups");
         return messages;
     }
+    public static List<String> prepareCountedTerritoriesMessage(String selected, int size)
+    {
+        List<String> messages = new ArrayList<>();
+        messages.add("Dead groups");
+        String[] selectedPoints = selected.split(" ");
+        for (String selectedPoint : selectedPoints)
+        {
+            String[] xy = selectedPoint.split(",");
+            int x = Integer.parseInt(xy[0]);
+            int y = Integer.parseInt(xy[1]);
+            messages.add(y + "," + x);
+        }
+        messages.add("End dead groups");
+        return messages;
+    }
 
     public static List<String> prepareCountedTerritoriesMessageWhichIsIndeedTerritories(ArrayList<ArrayList<Circle>> circles, int size)
     {

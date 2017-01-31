@@ -11,19 +11,9 @@
 <#assign x = ((size+1)*20)> <#-- replace variable x -->
 
 <canvas id="myCanvas" width="${x}" height="${x}"></canvas>
-<form action="/surrender" method="post">
-    <input type="hidden" name="player" value="${player}"/>
-    <br><br><input type="submit" value="SURRENDER"/>
-</form>
-
-<form action="/game/moveRequest" method="post">
-    <input type="hidden" name="player" value="${player}"/>
-    <input type="hidden" name="x" value="-1"/>
-    <input type="hidden" name="y" value="-1"/>
-    <input type="hidden" name="size" value="${size}"/>
-    <br><br><input type="submit" value="PASS"/>
-</form>
-
+<br>
+<button onclick="sendForm()" name="OK">ACCEPT</button>
+<button onclick="declineForm()" name="OK">DECLINE</button>
 <script>
 function generateGrid( rows, cols ) {
     rows = ${size}
@@ -123,9 +113,9 @@ function generateGrid( rows, cols ) {
     var occupied = "${occupied}";
     var parts = occupied.split(",");
     var length = parts.length;
-    for(i=0; i<length-1;i=i+3)
+    for(i=0; i<length-1;i=i+2)
     {
-        table[parts[i+1]][parts[i]] = parts[i+2];
+        table[parts[i+1]][parts[i]] = "G";
     }
 
         for (i=1;i<newSize;i++)
@@ -134,34 +124,22 @@ function generateGrid( rows, cols ) {
             {
                 if (table[i-1][j-1]=="F")// check if table[i][j]..
                     drawCircle(context, i*20, j*20, "yellow", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
-                else if(table[i-1][j-1]=="W")
-                    drawCircle(context, i*20, j*20, "white", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
-                else
-                    drawCircle(context, i*20, j*20, "black", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
+                else if(table[i-1][j-1]=="G")
+                    drawCircle(context, i*20, j*20, "green", 10, 1, "#003300", "white", "center", "bold 32px Arial", "1", circles);
             }
 
         }
 
 
-    canvas.onmousedown=handleMousedown;
-
-    function handleMousedown(e){
-        var clickedX = e.pageX - this.offsetLeft;
-        var clickedY = e.pageY - this.offsetTop;
-        for (var i = 0; i < circles.length; i++) {
-            if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
-                var xNew = clickedX / 20;
-                var yNew = clickedY / 20;
-            }
-        }
-
+    //canvas.onmousedown=handleMousedown;
+    var selected = "";
+    function sendForm() {
         var form = document.createElement("form");
         var x = document.createElement("input");
-        var y = document.createElement("input");
         var player = document.createElement("input");
         var size = document.createElement("input");
         form.method = "POST";
-        form.action = "/game/moveRequest";
+        form.action = "/proceedPassRequest";
 
         player.value=${player};
         player.name="player";
@@ -171,17 +149,33 @@ function generateGrid( rows, cols ) {
         size.name="size";
         form.appendChild(size);
 
-        x.value=(Math.round(clickedX / 20) - 1);
-        x.name="x";
+        x.value=selected;
+        x.name="selected";
         form.appendChild(x);
-
-        y.value=(Math.round(clickedY / 20) - 1);
-        y.name="y";
-        form.appendChild(y);
 
         document.body.appendChild(form);
         form.submit();
     }
+    function declineForm() {
+        var form = document.createElement("form");
+        var player = document.createElement("input");
+        var size = document.createElement("input");
+        form.method = "POST";
+        form.action = "/declinedDeadGroups";
+
+        player.value=${player};
+        player.name="player";
+        form.appendChild(player);
+
+        size.value=${size};
+        size.name="size";
+        form.appendChild(size);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+
 </script>
 
 </body>
